@@ -30,4 +30,5 @@ public class RectangleTest {
 		
 		assertEquals(Rectangle.toString(width, height), correctString);
 	}
+	
 }

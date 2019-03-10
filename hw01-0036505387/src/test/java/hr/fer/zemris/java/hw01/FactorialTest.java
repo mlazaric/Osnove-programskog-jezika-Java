@@ -50,4 +50,5 @@ public class FactorialTest {
 	public void testNegativeNumber() {
 		assertThrows(IllegalArgumentException.class, () -> Factorial.factorial(-5));
 	}
+	
 }
