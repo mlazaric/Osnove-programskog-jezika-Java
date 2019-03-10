@@ -2,33 +2,26 @@ package hr.fer.zemris.java.hw01;
 
 import java.util.Scanner;
 
+import hr.fer.zemris.java.hw01.PromptHelper.EndOfInputReachedException;
+
 public class Factorial {
 
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		
 		while (true) {
-			System.out.print("Unesite broj > ");
-			
-			if (sc.hasNextInt()) {
-				try {
-					int number = sc.nextInt();
-					long factorial = Factorial.factorial(number);
-					
-					System.out.format("%d! = %d%n", number, factorial);
-				} catch (IllegalArgumentException exc) {
-					System.out.println(exc.getMessage());
-				}
+			try {
+				int number = PromptHelper.promptInteger(sc, "broj");
+				long factorial = factorial(number);
+				
+				System.out.format("%d! = %d%n", number, factorial);
+			} 
+			catch (IllegalArgumentException exc) {
+				System.out.println(exc.getMessage());
 			}
-			else {
-				String input = sc.next();
-				
-				if (input.toLowerCase().equals("kraj")) {
-					System.out.println("Doviđenja.");
-					break;
-				}
-				
-				System.out.format("'%s' nije cijeli broj.%n", input);
+			catch (EndOfInputReachedException exc) {
+				System.out.println(exc.getMessage());
+				break;
 			}
 		}
 		
