@@ -8,23 +8,44 @@ import java.util.Scanner;
  * @author Marko Lazarić
  *
  */
-public class PromptHelper {
+public class Prompt {
+	
+	/**
+	 * String used to indicate that the user wants to close the prompt.
+	 */
+	private final String ending;
+	
+	/**
+	 * Creates a new {@link Prompt} with a null {@link #ending}.
+	 */
+	public Prompt() {
+		this(null);
+	}
+	
+	/**
+	 * Creates a new {@link Prompt} with the given {@link #ending}.
+	 * 
+	 * @param ending string used to indicate that the user wants to close the prompt.
+	 */
+	public Prompt(String ending) {
+		this.ending = ending;
+	}
 	
 	/**
 	 *   <p>Continually prompts the user for a valid integer. If the user has entered
      * a valid integer, the integer is returned. Otherwise a helpful message is
      * printed to the console and the user is prompted again.</p>
      * 
-     *   <p>If the user enters "kraj", an exception is thrown to indicated that the
-     * end of the input stream has been reached.</p>
+     *   <p>If the user enters {@link #ending}, an exception is thrown to indicated that
+     * the end of the input stream has been reached.</p>
 	 *   
 	 * @param sc instance of {@link Scanner}, used for input
 	 * @param name name of the attribute being prompted
 	 * @return the first valid integer entered by the user
 	 * 
-	 * @throws EndOfInputReachedException when the user inputs "kraj".
+	 * @throws EndOfInputReachedException when the user enters {@link #ending}.
 	 */
-	public static int promptInteger(Scanner sc, String name) {
+	public int promptInteger(Scanner sc, String name) {
 		while (true) {
 			System.out.format("Unesite %s > ", name);
 			
@@ -34,7 +55,7 @@ public class PromptHelper {
 			
 			String input = sc.next();
 			
-			if (input.toLowerCase().equals("kraj")) {
+			if (input.toLowerCase().equals(ending)) {
 				throw new EndOfInputReachedException("Doviđenja");
 			}
 			
@@ -42,7 +63,7 @@ public class PromptHelper {
 		}
 	}
 	
-	public static double promptPositiveDouble(Scanner sc, String name) {
+	public double promptPositiveDouble(Scanner sc, String name) {
 		while (true) {
 			System.out.format("Unesite %s > ", name);
 			
@@ -53,9 +74,13 @@ public class PromptHelper {
 				
 				if (value < 0) {
 					System.out.println("Unijeli ste negativnu vrijednost.");
+					
+					continue;
 				}
+				
+				return value;
 			} catch (NumberFormatException e) {
-				if (input.toLowerCase().equals("kraj")) {
+				if (input.toLowerCase().equals(ending)) {
 					throw new EndOfInputReachedException("Doviđenja");
 				}
 				

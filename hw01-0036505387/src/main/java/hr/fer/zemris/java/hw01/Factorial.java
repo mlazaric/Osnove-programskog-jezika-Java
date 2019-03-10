@@ -2,7 +2,7 @@ package hr.fer.zemris.java.hw01;
 
 import java.util.Scanner;
 
-import hr.fer.zemris.java.hw01.PromptHelper.EndOfInputReachedException;
+import hr.fer.zemris.java.hw01.Prompt.EndOfInputReachedException;
 
 /**
  * A program for calculating the factorial of a number.
@@ -24,10 +24,11 @@ public class Factorial {
 	 */
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
+		Prompt prompt = new Prompt("kraj");
 		
 		while (true) {
 			try {
-				int number = PromptHelper.promptInteger(sc, "broj");
+				int number = prompt.promptInteger(sc, "broj");
 				long factorial = factorial(number);
 				
 				System.out.format("%d! = %d%n", number, factorial);
