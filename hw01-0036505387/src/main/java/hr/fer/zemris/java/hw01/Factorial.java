@@ -11,14 +11,11 @@ import java.util.Scanner;
 public class Factorial {
 
 	/**
-	 *   <p>Continually prompts the user for an integer and calculates the factorial
-	 * of the given number if it is within the accepted range. Exits when the user 
-	 * inputs "kraj".</p>
-	 *  
-	 *   <p>If the user inputs an invalid number or an integer outside the accepted 
-	 * range, a relevant message is printed to the console.</p>
+	 *   Continually prompts the user for an integer. If the user has entered a 
+	 * valid integer within the accepted interval, it prints the factorial of the 
+	 * entered number. Otherwise it prints a relevant error message to the console.
 	 * 
-	 * @param args the arguments are ignored
+	 * @param args the arguments passed to the program are ignored
 	 */
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
@@ -56,14 +53,14 @@ public class Factorial {
 	}
 	
 	/**
-	 *   <p>Calculates the factorial of the argument if it is within the accepted
-	 * range.</p>
+	 *   If the argument is within the accepted range (3 <= number <= 20), it
+	 * returns the factorial of the argument. Otherwise it throws an exception.
 	 * 
 	 * @param number number for which to calculate the factorial
 	 * @return factorial of the number
 	 * 
 	 * @throws IllegalArgumentException if the number is not within the accepted
-	 *                                  range [3, 20]
+	 *                                  range (3 <= number <= 20)
 	 */
 	public static long factorial(int number) {
 		if (number < 3 || number > 20) {
