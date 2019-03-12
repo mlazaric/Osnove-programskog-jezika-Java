@@ -14,8 +14,8 @@ public class UniqueNumbers {
 	 *   Continually asks the user for integers and adds them to the ordered
 	 * binary tree. If the user enters an invalid integer or a duplicate, a 
 	 * relevant error message is printed to the console. If the user enters
-	 * "kraj", it prints all the valid integers the user has entered (without
-	 * duplicates, in ascending and descending order. 
+	 * "kraj", it prints all the valid integers that have been entered (without
+	 * duplicates), in ascending and descending order. 
 	 * 
 	 * @param args the arguments passed to the program are ignored
 	 */
@@ -89,7 +89,8 @@ public class UniqueNumbers {
 	}
 	
 	/**
-	 * Adds the value to the ordered binary tree if it does not already exist.
+	 *   Adds the value to the ordered binary tree if it does not already already
+	 * contain it.
 	 * 
 	 * @param root the root of the ordered binary tree
 	 * @param value the value to be added
@@ -153,7 +154,7 @@ public class UniqueNumbers {
 	/**
 	 * Recursively searches for the value in the ordered binary tree.
 	 * 
-	 * @param root the current node it is recursively checking
+	 * @param root the root of the tree to check in
 	 * @param value the value it is checking for
 	 * @return true if the value was found, false otherwise
 	 */
@@ -174,12 +175,13 @@ public class UniqueNumbers {
 	}
 	
 	/**
-	 * Represents a node in the ordered binary tree.
+	 * Represents a node in an ordered binary tree.
 	 * 
 	 * @author Marko Lazarić
 	 *
 	 */
 	public static class TreeNode {
+		
 		/**
 		 *   The left and right children of this node. The value of the right child
 		 * (if it exists) will be greater than the value of its parent, while the
@@ -193,6 +195,7 @@ public class UniqueNumbers {
 		 * The value stored in this node. 
 		 */
 		public int value;
+		
 	}
 
 }

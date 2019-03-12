@@ -1,6 +1,8 @@
 package hr.fer.zemris.java.hw01;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +26,10 @@ public class UniqueNumbersTest {
 		assertEquals(root.right.value, 76);
 		
 		assertEquals(UniqueNumbers.treeSize(root), 4);
+		
+		assertTrue(UniqueNumbers.containsValue(root, 76));
+		assertFalse(UniqueNumbers.containsValue(root, 3));
+		assertFalse(UniqueNumbers.containsValue(root, -100));
 	}
 	
 	@Test
