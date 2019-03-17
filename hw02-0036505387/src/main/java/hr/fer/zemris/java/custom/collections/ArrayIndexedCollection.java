@@ -39,6 +39,49 @@ public class ArrayIndexedCollection extends Collection {
 		addAll(collection);
 	}
 	
+	@Override
+	public int size() {
+		return size;
+	}
+	
+	@Override
+	public boolean contains(Object value) {
+		if (value == null) {
+			return false;
+		}
+		
+		return indexOf(value) != -1;
+	}
+	
+	@Override
+	public boolean remove(Object value) {
+		if (value == null) {
+			return false;
+		}
+		
+		int index = indexOf(value);
+		
+		if (index == -1) {
+			return false;
+		}
+		
+		remove(index);
+		
+		return true;
+	}
+	
+	@Override
+	public Object[] toArray() {
+		return Arrays.copyOf(elements, size);
+	}
+	
+	@Override
+	public void forEach(Processor processor) {
+		for (int index = 0; index < size; ++index) {
+			processor.process(elements[index]);
+		}
+	}
+	
 	private void doubleIfNecessary() {
 		if (size == capacity) {
 			capacity *= 2;
@@ -80,8 +123,8 @@ public class ArrayIndexedCollection extends Collection {
 		
 		doubleIfNecessary();
 		
-		for (int index = position; index < size; ++index) {
-			elements[index + 1] = elements[index];
+		for (int index = size + 1; index > position; --index) {
+			elements[index] = elements[index - 1];
 		}
 		
 		elements[position] = value;

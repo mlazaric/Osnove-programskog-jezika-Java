@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.custom.collections;
 
+import java.util.Objects;
+
 public class Collection {
 	
 	protected Collection() {}
@@ -29,6 +31,8 @@ public class Collection {
 	public void forEach(Processor processor) {}
 	
 	public void addAll(Collection other) {
+		Objects.requireNonNull(other);
+		
 		Processor addAllProcessor = new Processor() {
 			
 			@Override
@@ -38,7 +42,7 @@ public class Collection {
 			
 		};
 		
-		forEach(addAllProcessor);
+		other.forEach(addAllProcessor);
 	}
 	
 	public void clear() {}
