@@ -33,16 +33,16 @@ public class Collection {
 	public void addAll(Collection other) {
 		Objects.requireNonNull(other);
 		
-		Processor addAllProcessor = new Processor() {
+		class AddAllProcessor extends Processor {
 			
 			@Override
 			public void process(Object value) {
 				add(value);
 			}
 			
-		};
+		}
 		
-		other.forEach(addAllProcessor);
+		other.forEach(new AddAllProcessor());
 	}
 	
 	public void clear() {}

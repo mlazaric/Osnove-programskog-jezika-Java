@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-class ArrayIndexedCollectionTest {
+public class LinkedListIndexedCollectionTest {
 
-	static ArrayIndexedCollection createCollectionWithNElements(int numberOfElements) {
-		ArrayIndexedCollection collection = new ArrayIndexedCollection();
+	static LinkedListIndexedCollection createCollectionWithNElements(int numberOfElements) {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
 
 		for (int i = 0; i < numberOfElements; ++i) {
 			collection.add(i);
@@ -43,7 +43,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testAddWithNotFullCollection() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		assertEquals(collection.size(), 5);
 
@@ -55,7 +55,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testAddWithFullCollection() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(16);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(16);
 
 		assertEquals(collection.size(), 16);
 
@@ -67,7 +67,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testAddWithDuplicate() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		assertEquals(collection.size(), 5);
 
@@ -84,7 +84,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testAddInsertsAtTheEnd() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		collection.add("Test");
 		collection.add("stefica");
@@ -102,7 +102,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testContainsUsesEquals() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(1);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(1);
 
 		collection.add(new String("Test"));
 
@@ -121,7 +121,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testRemoveUsesEquals() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(1);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(1);
 
 		collection.add(new String("Test"));
 
@@ -142,7 +142,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testRemoveRemovesOnlyOne() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(1);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(1);
 
 		collection.add(new String("Test"));
 		collection.add(new String("Test"));
@@ -196,7 +196,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testAddAllWithEmptyCollection() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		collection.addAll(createCollectionWithNElements(0));
 
@@ -210,7 +210,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testAddAllWithNonEmptyCollection() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		collection.addAll(createCollectionWithNElements(5));
 
@@ -219,7 +219,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testClearWithEmptyCollection() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(0);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(0);
 
 		collection.clear();
 
@@ -229,70 +229,12 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testClearWithNonEmptyCollection() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		collection.clear();
 
 		assertEquals(collection.size(), 0);
 		assertArrayEquals(new Object[] {}, collection.toArray());
-	}
-
-	@Test
-	void testInitialCapacityConstructorWithValidCapacity() {
-		assertNotNull(new ArrayIndexedCollection(5));
-	}
-
-	@Test
-	void testInitialCapacityConstructorWithZeroCapacity() {
-		assertThrows(IllegalArgumentException.class, () -> new ArrayIndexedCollection(0));
-	}
-
-	@Test
-	void testInitialCapacityConstructorWithNegativeCapacity() {
-		assertThrows(IllegalArgumentException.class, () -> new ArrayIndexedCollection(-5));
-	}
-
-	@Test
-	void testCollectionConstructorWithEmptyCollection() {
-		ArrayIndexedCollection oldCollection = createCollectionWithNElements(0);
-		ArrayIndexedCollection newCollection = new ArrayIndexedCollection(oldCollection);
-
-		assertEquals(newCollection.size(), oldCollection.size());
-		assertArrayEquals(newCollection.toArray(), oldCollection.toArray());
-	}
-
-	@Test
-	void testCollectionConstructorWithNonEmptyCollection() {
-		ArrayIndexedCollection oldCollection = createCollectionWithNElements(5);
-		ArrayIndexedCollection newCollection = new ArrayIndexedCollection(oldCollection);
-
-		assertEquals(newCollection.size(), oldCollection.size());
-		assertArrayEquals(newCollection.toArray(), oldCollection.toArray());
-	}
-
-	@Test
-	void testCollectionConstructorWithNull() {
-		assertThrows(NullPointerException.class, () -> new ArrayIndexedCollection(null));
-	}
-
-	@Test
-	void testTwoArgumentConstructorWithNonEmptyCollectionAndNegativeCapacity() {
-		ArrayIndexedCollection oldCollection = createCollectionWithNElements(5);
-		ArrayIndexedCollection newCollection = new ArrayIndexedCollection(oldCollection, -5);
-
-		assertEquals(newCollection.size(), oldCollection.size());
-		assertArrayEquals(newCollection.toArray(), oldCollection.toArray());
-	}
-
-	@Test
-	void testTwoArgumentConstructorWithEmptyCollectionAndNegativeCapacity() {
-		assertThrows(IllegalArgumentException.class,
-				() -> new ArrayIndexedCollection(createCollectionWithNElements(0), -5));
-	}
-
-	@Test
-	void testTwoArgumentConstructorWithNullCollection() {
-		assertThrows(NullPointerException.class, () -> new ArrayIndexedCollection(null, 5));
 	}
 
 	@Test
@@ -307,7 +249,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testGetWithNormalValues() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		for (int index = 0; index < collection.size(); index++) {
 			assertEquals(collection.get(index), index);
@@ -316,7 +258,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testInsertDoesNotOverwrite() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 		Object[] array = new Object[] { "start", 0, 1, 2, 3, "Test", 4, "stefica" };
 
 		collection.insert("Test", 4);
@@ -328,7 +270,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testInsertWithFullCollection() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(16);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(16);
 		Object[] array = new Object[] { "start", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
 		collection.insert("start", 0);
@@ -338,7 +280,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testInsertIntoEmptyCollection() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(0);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(0);
 		Object[] array = new Object[] { "start" };
 
 		collection.insert("start", 0);
@@ -363,7 +305,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testIndexOfNonEmptyCollection() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		for (int index = 0; index < collection.size(); index++) {
 			assertEquals(collection.indexOf(index), index);
@@ -379,7 +321,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testIndexOfUsesEquals() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		collection.add(new String("Test"));
 
@@ -388,7 +330,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testRemoveShiftsRemainingValues() {
-		ArrayIndexedCollection collection = createCollectionWithNElements(5);
+		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 		Object[] array = new Object[] { 0, 2, 4 };
 
 		collection.remove(3);
@@ -411,5 +353,4 @@ class ArrayIndexedCollectionTest {
 	void testRemoveIndexWithEmptyCollection() {
 		assertThrows(IndexOutOfBoundsException.class, () -> createCollectionWithNElements(0).remove(0));
 	}
-
 }
