@@ -208,6 +208,13 @@ public class ComplexNumberTest {
 	}
 
 	@Test
+	void testParseWithMultipleComplexNumbers() {
+		assertThrows(IllegalArgumentException.class, () -> parse("2i+3i"));
+		assertThrows(IllegalArgumentException.class, () -> parse("2+3"));
+		assertThrows(IllegalArgumentException.class, () -> parse("1+i-3+i"));
+	}
+
+	@Test
 	void testGetReal() {
 		for (int index = 0; index < numbers.length; index++) {
 			assertEquals(realParts[index], numbers[index].getReal(), ComplexNumber.THRESHOLD);
