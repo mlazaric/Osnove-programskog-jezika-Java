@@ -301,11 +301,6 @@ public class ComplexNumberTest {
 	}
 
 	@Test
-	void testDivWithZero() {
-		assertThrows(IllegalArgumentException.class, () -> ComplexNumber.MINUS_ONE.div(ComplexNumber.ZERO));
-	}
-
-	@Test
 	void testPowerWithOne() {
 		for (int n = 0; n < 10; ++n) {
 			assertEquals(ComplexNumber.ONE, ComplexNumber.ONE.power(n));

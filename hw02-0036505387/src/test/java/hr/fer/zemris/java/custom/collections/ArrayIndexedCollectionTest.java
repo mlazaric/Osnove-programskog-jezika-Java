@@ -277,11 +277,8 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testTwoArgumentConstructorWithNonEmptyCollectionAndNegativeCapacity() {
-		ArrayIndexedCollection oldCollection = createCollectionWithNElements(5);
-		ArrayIndexedCollection newCollection = new ArrayIndexedCollection(oldCollection, -5);
-
-		assertEquals(newCollection.size(), oldCollection.size());
-		assertArrayEquals(newCollection.toArray(), oldCollection.toArray());
+		assertThrows(IllegalArgumentException.class,
+				() -> new ArrayIndexedCollection(createCollectionWithNElements(5), -5));
 	}
 
 	@Test

@@ -198,6 +198,8 @@ public class ComplexNumber {
 		}
 	}
 
+	// Getters
+
 	/**
 	 * Returns the real part of the complex number.
 	 *
@@ -247,6 +249,8 @@ public class ComplexNumber {
 
 		return angle;
 	}
+
+	// Methods for calculating and manipulating complex numbers
 
 	/**
 	 * Returns a conjugated a complex number.
@@ -307,14 +311,8 @@ public class ComplexNumber {
 	 *
 	 * @param d the scalar with which to divide the complex number
 	 * @return a new complex number representing the result of dividing {@code this} by {@code d}
-	 *
-	 * @throws IllegalArgumentException if zero is passed as the argument
 	 */
 	private ComplexNumber div(double d) {
-		if (d == 0.0) {
-			throw new IllegalArgumentException("Error: cannot divide by zero.");
-		}
-
 		return mul(1.0 / d);
 	}
 
@@ -323,14 +321,8 @@ public class ComplexNumber {
 	 *
 	 * @param c the complex number to divide {@code this} by
 	 * @return a new complex number representing the result of dividing {@code this} by {@code c}
-	 *
-	 * @throws IllegalArgumentException if zero is passed as the argument
 	 */
 	public ComplexNumber div(ComplexNumber c) {
-		if (c.equals(ZERO)) {
-			throw new IllegalArgumentException("Error: cannot divide by zero.");
-		}
-
 		return mul(c.conjugate()).div(c.getMagnitude() * c.getMagnitude());
 	}
 

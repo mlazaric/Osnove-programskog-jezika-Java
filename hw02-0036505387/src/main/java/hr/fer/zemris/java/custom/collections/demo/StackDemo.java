@@ -58,8 +58,8 @@ public class StackDemo {
 	 *
 	 * @param stack the stack used for parsing the postfix expression,
 	 *               contains the numbers parsed and the result calculated
-	 * @param operator one of the following charcters: +, -, *, / or %
-	 *                                       (remainder of integer divison)
+	 * @param operator one of the following characters: +, -, *, / or %
+	 *                                       (remainder of integer division)
 	 *
 	 * @throws IllegalArgumentException if there aren't enough numbers on the stack
 	 *                                  to evaluate the operator
