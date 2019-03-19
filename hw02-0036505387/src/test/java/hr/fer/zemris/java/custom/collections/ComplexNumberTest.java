@@ -251,9 +251,9 @@ public class ComplexNumberTest {
 
 	@Test
 	void testAddKnownNumbers() {
-		assertEquals(ComplexNumber.ONE.add(ComplexNumber.MINUS_I), new ComplexNumber(1, -1));
-		assertEquals(ComplexNumber.ONE.add(ComplexNumber.MINUS_ONE), ComplexNumber.ZERO);
-		assertEquals(new ComplexNumber(50, 25).add(new ComplexNumber(13, -18)), new ComplexNumber(50 + 13, 25 - 18));
+		assertEquals(new ComplexNumber(1, -1), ComplexNumber.ONE.add(ComplexNumber.MINUS_I));
+		assertEquals(ComplexNumber.ZERO, ComplexNumber.ONE.add(ComplexNumber.MINUS_ONE));
+		assertEquals(new ComplexNumber(50 + 13, 25 - 18), new ComplexNumber(50, 25).add(new ComplexNumber(13, -18)));
 	}
 
 	@Test
@@ -265,9 +265,9 @@ public class ComplexNumberTest {
 
 	@Test
 	void testSubKnownNumbers() {
-		assertEquals(ComplexNumber.ONE.sub(ComplexNumber.MINUS_I), new ComplexNumber(1, 1));
-		assertEquals(ComplexNumber.ONE.sub(ComplexNumber.MINUS_ONE), fromReal(2));
-		assertEquals(new ComplexNumber(50, 25).sub(new ComplexNumber(13, -18)), new ComplexNumber(50 - 13, 25 + 18));
+		assertEquals(new ComplexNumber(1, 1), ComplexNumber.ONE.sub(ComplexNumber.MINUS_I));
+		assertEquals(fromReal(2), ComplexNumber.ONE.sub(ComplexNumber.MINUS_ONE));
+		assertEquals(new ComplexNumber(50 - 13, 25 + 18), new ComplexNumber(50, 25).sub(new ComplexNumber(13, -18)));
 	}
 
 	@Test
@@ -279,10 +279,10 @@ public class ComplexNumberTest {
 
 	@Test
 	void testMulWithKnownNumbers() {
-		assertEquals(ComplexNumber.ONE.mul(ComplexNumber.MINUS_I), fromImaginary(-1));
-		assertEquals(ComplexNumber.ONE.mul(ComplexNumber.MINUS_ONE), fromReal(-1));
-		assertEquals(new ComplexNumber(50, 25).mul(new ComplexNumber(13, -18)),
-				new ComplexNumber(50 * 13 + 25 * 18, -50 * 18 + 25 * 13));
+		assertEquals(fromImaginary(-1), ComplexNumber.ONE.mul(ComplexNumber.MINUS_I));
+		assertEquals(fromReal(-1), ComplexNumber.ONE.mul(ComplexNumber.MINUS_ONE));
+		assertEquals(new ComplexNumber(50 * 13 + 25 * 18, -50 * 18 + 25 * 13),
+				new ComplexNumber(50, 25).mul(new ComplexNumber(13, -18)));
 	}
 
 	@Test
@@ -294,10 +294,10 @@ public class ComplexNumberTest {
 
 	@Test
 	void testDivWithKnownNumbers() {
-		assertEquals(ComplexNumber.ONE.div(ComplexNumber.MINUS_I), fromImaginary(1));
-		assertEquals(ComplexNumber.ONE.div(ComplexNumber.MINUS_ONE), fromReal(-1));
-		assertEquals(new ComplexNumber(50, 25).div(new ComplexNumber(13, -18)),
-				new ComplexNumber(200.0/493, 1225.0/493));
+		assertEquals(fromImaginary(1), ComplexNumber.ONE.div(ComplexNumber.MINUS_I));
+		assertEquals(fromReal(-1), ComplexNumber.ONE.div(ComplexNumber.MINUS_ONE));
+		assertEquals(new ComplexNumber(200.0/493, 1225.0/493),
+				new ComplexNumber(50, 25).div(new ComplexNumber(13, -18)));
 	}
 
 	@Test

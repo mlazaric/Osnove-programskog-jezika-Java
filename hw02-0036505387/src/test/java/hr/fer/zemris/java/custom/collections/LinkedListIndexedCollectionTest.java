@@ -33,23 +33,23 @@ public class LinkedListIndexedCollectionTest {
 
 	@Test
 	void testSizeWithEmptyCollection() {
-		assertEquals(createCollectionWithNElements(0).size(), 0);
+		assertEquals(0, createCollectionWithNElements(0).size());
 	}
 
 	@Test
 	void testSizeWithNonEmptyCollection() {
-		assertEquals(createCollectionWithNElements(5).size(), 5);
+		assertEquals(5, createCollectionWithNElements(5).size());
 	}
 
 	@Test
 	void testAddWithNotFullCollection() {
 		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
-		assertEquals(collection.size(), 5);
+		assertEquals(5, collection.size());
 
 		collection.add("Test");
 
-		assertEquals(collection.size(), 6);
+		assertEquals(6, collection.size());
 		assertTrue(collection.contains("Test"));
 	}
 
@@ -57,11 +57,11 @@ public class LinkedListIndexedCollectionTest {
 	void testAddWithFullCollection() {
 		LinkedListIndexedCollection collection = createCollectionWithNElements(16);
 
-		assertEquals(collection.size(), 16);
+		assertEquals(16, collection.size());
 
 		collection.add("Test");
 
-		assertEquals(collection.size(), 17);
+		assertEquals(17, collection.size());
 		assertTrue(collection.contains("Test"));
 	}
 
@@ -69,12 +69,12 @@ public class LinkedListIndexedCollectionTest {
 	void testAddWithDuplicate() {
 		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
-		assertEquals(collection.size(), 5);
+		assertEquals(5, collection.size());
 
 		collection.add("Test");
 		collection.add("Test");
 
-		assertEquals(collection.size(), 7);
+		assertEquals(7, collection.size());
 	}
 
 	@Test
@@ -125,9 +125,9 @@ public class LinkedListIndexedCollectionTest {
 
 		collection.add(new String("Test"));
 
-		assertEquals(collection.size(), 2);
+		assertEquals(2, collection.size());
 		assertTrue(collection.remove(new String("Test")));
-		assertEquals(collection.size(), 1);
+		assertEquals(1, collection.size());
 	}
 
 	@Test
@@ -147,9 +147,9 @@ public class LinkedListIndexedCollectionTest {
 		collection.add(new String("Test"));
 		collection.add(new String("Test"));
 
-		assertEquals(collection.size(), 3);
+		assertEquals(3, collection.size());
 		assertTrue(collection.remove(new String("Test")));
-		assertEquals(collection.size(), 2);
+		assertEquals(2, collection.size());
 		assertTrue(collection.contains(new String("Test")));
 	}
 
@@ -200,7 +200,7 @@ public class LinkedListIndexedCollectionTest {
 
 		collection.addAll(createCollectionWithNElements(0));
 
-		assertEquals(collection.size(), 5);
+		assertEquals(5, collection.size());
 	}
 
 	@Test
@@ -214,7 +214,7 @@ public class LinkedListIndexedCollectionTest {
 
 		collection.addAll(createCollectionWithNElements(5));
 
-		assertEquals(collection.size(), 10);
+		assertEquals(10, collection.size());
 	}
 
 	@Test
@@ -223,7 +223,7 @@ public class LinkedListIndexedCollectionTest {
 
 		collection.clear();
 
-		assertEquals(collection.size(), 0);
+		assertEquals(0, collection.size());
 		assertArrayEquals(new Object[] {}, collection.toArray());
 	}
 
@@ -233,7 +233,7 @@ public class LinkedListIndexedCollectionTest {
 
 		collection.clear();
 
-		assertEquals(collection.size(), 0);
+		assertEquals(0, collection.size());
 		assertArrayEquals(new Object[] {}, collection.toArray());
 	}
 
@@ -252,7 +252,7 @@ public class LinkedListIndexedCollectionTest {
 		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		for (int index = 0; index < collection.size(); index++) {
-			assertEquals(collection.get(index), index);
+			assertEquals(index, collection.get(index));
 		}
 	}
 
@@ -308,15 +308,15 @@ public class LinkedListIndexedCollectionTest {
 		LinkedListIndexedCollection collection = createCollectionWithNElements(5);
 
 		for (int index = 0; index < collection.size(); index++) {
-			assertEquals(collection.indexOf(index), index);
+			assertEquals(index, collection.indexOf(index));
 
-			assertEquals(collection.indexOf(index + 100), -1);
+			assertEquals(LinkedListIndexedCollection.VALUE_NOT_FOUND_RETURN_VALUE, collection.indexOf(index + 100));
 		}
 	}
 
 	@Test
 	void testIndexOfWithNull() {
-		assertEquals(createCollectionWithNElements(5).indexOf(null), -1);
+		assertEquals(LinkedListIndexedCollection.VALUE_NOT_FOUND_RETURN_VALUE, createCollectionWithNElements(5).indexOf(null));
 	}
 
 	@Test
@@ -325,7 +325,7 @@ public class LinkedListIndexedCollectionTest {
 
 		collection.add(new String("Test"));
 
-		assertEquals(collection.indexOf(new String("Test")), collection.size() - 1);
+		assertEquals(LinkedListIndexedCollection.VALUE_NOT_FOUND_RETURN_VALUE, collection.indexOf(new String("Test")), collection.size());
 	}
 
 	@Test

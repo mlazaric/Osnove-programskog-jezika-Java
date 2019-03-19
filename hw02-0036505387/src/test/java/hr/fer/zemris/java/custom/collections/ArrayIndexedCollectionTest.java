@@ -33,23 +33,23 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testSizeWithEmptyCollection() {
-		assertEquals(createCollectionWithNElements(0).size(), 0);
+		assertEquals(0, createCollectionWithNElements(0).size());
 	}
 
 	@Test
 	void testSizeWithNonEmptyCollection() {
-		assertEquals(createCollectionWithNElements(5).size(), 5);
+		assertEquals(5, createCollectionWithNElements(5).size());
 	}
 
 	@Test
 	void testAddWithNotFullCollection() {
 		ArrayIndexedCollection collection = createCollectionWithNElements(5);
 
-		assertEquals(collection.size(), 5);
+		assertEquals(5, collection.size());
 
 		collection.add("Test");
 
-		assertEquals(collection.size(), 6);
+		assertEquals(6, collection.size());
 		assertTrue(collection.contains("Test"));
 	}
 
@@ -57,11 +57,11 @@ class ArrayIndexedCollectionTest {
 	void testAddWithFullCollection() {
 		ArrayIndexedCollection collection = createCollectionWithNElements(16);
 
-		assertEquals(collection.size(), 16);
+		assertEquals(16, collection.size());
 
 		collection.add("Test");
 
-		assertEquals(collection.size(), 17);
+		assertEquals(17, collection.size());
 		assertTrue(collection.contains("Test"));
 	}
 
@@ -69,12 +69,12 @@ class ArrayIndexedCollectionTest {
 	void testAddWithDuplicate() {
 		ArrayIndexedCollection collection = createCollectionWithNElements(5);
 
-		assertEquals(collection.size(), 5);
+		assertEquals(5, collection.size());
 
 		collection.add("Test");
 		collection.add("Test");
 
-		assertEquals(collection.size(), 7);
+		assertEquals(7, collection.size());
 	}
 
 	@Test
@@ -125,9 +125,9 @@ class ArrayIndexedCollectionTest {
 
 		collection.add(new String("Test"));
 
-		assertEquals(collection.size(), 2);
+		assertEquals(2, collection.size());
 		assertTrue(collection.remove(new String("Test")));
-		assertEquals(collection.size(), 1);
+		assertEquals(1, collection.size());
 	}
 
 	@Test
@@ -147,9 +147,9 @@ class ArrayIndexedCollectionTest {
 		collection.add(new String("Test"));
 		collection.add(new String("Test"));
 
-		assertEquals(collection.size(), 3);
+		assertEquals(3, collection.size());
 		assertTrue(collection.remove(new String("Test")));
-		assertEquals(collection.size(), 2);
+		assertEquals(2, collection.size());
 		assertTrue(collection.contains(new String("Test")));
 	}
 
@@ -200,7 +200,7 @@ class ArrayIndexedCollectionTest {
 
 		collection.addAll(createCollectionWithNElements(0));
 
-		assertEquals(collection.size(), 5);
+		assertEquals(5, collection.size());
 	}
 
 	@Test
@@ -214,7 +214,7 @@ class ArrayIndexedCollectionTest {
 
 		collection.addAll(createCollectionWithNElements(5));
 
-		assertEquals(collection.size(), 10);
+		assertEquals(10, collection.size());
 	}
 
 	@Test
@@ -223,7 +223,7 @@ class ArrayIndexedCollectionTest {
 
 		collection.clear();
 
-		assertEquals(collection.size(), 0);
+		assertEquals(0, collection.size());
 		assertArrayEquals(new Object[] {}, collection.toArray());
 	}
 
@@ -233,7 +233,7 @@ class ArrayIndexedCollectionTest {
 
 		collection.clear();
 
-		assertEquals(collection.size(), 0);
+		assertEquals(0, collection.size());
 		assertArrayEquals(new Object[] {}, collection.toArray());
 	}
 
@@ -355,7 +355,7 @@ class ArrayIndexedCollectionTest {
 
 	@Test
 	void testIndexOfWithEmptyCollection() {
-		assertEquals(createCollectionWithNElements(0).indexOf(0), -1);
+		assertEquals(createCollectionWithNElements(0).indexOf(0), ArrayIndexedCollection.VALUE_NOT_FOUND_RETURN_VALUE);
 	}
 
 	@Test
@@ -363,9 +363,10 @@ class ArrayIndexedCollectionTest {
 		ArrayIndexedCollection collection = createCollectionWithNElements(5);
 
 		for (int index = 0; index < collection.size(); index++) {
-			assertEquals(collection.indexOf(index), index);
+			assertEquals(index, collection.indexOf(index));
 
-			assertEquals(collection.indexOf(index + 100), -1);
+			assertEquals(ArrayIndexedCollection.VALUE_NOT_FOUND_RETURN_VALUE,
+					collection.indexOf(index + 100));
 		}
 	}
 
@@ -380,7 +381,7 @@ class ArrayIndexedCollectionTest {
 
 		collection.add(new String("Test"));
 
-		assertEquals(collection.indexOf(new String("Test")), collection.size() - 1);
+		assertEquals(collection.size() - 1, collection.indexOf(new String("Test")));
 	}
 
 	@Test
