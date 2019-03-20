@@ -128,10 +128,14 @@ public class ComplexNumber {
 	 * @throws IllegalArgumentException if the string is not a valid complex number
 	 */
 	public static ComplexNumber parse(String s) {
+		if (s.isBlank()) {
+			throw new IllegalArgumentException("Invalid complex number: blank string.");
+		}
+
 		String[] parts = s.split("(?=[+-])");
 
 		if (parts.length > 2) {
-			throw new IllegalArgumentException("Invalid complex number.");  // Don't parse "2i+3i+5+8"
+			throw new IllegalArgumentException("Invalid complex number: too many terms.");  // Don't parse "2i+3i+5+8"
 		}
 
 		ComplexNumber returnValue = ZERO;
@@ -194,7 +198,9 @@ public class ComplexNumber {
 
 			return fromReal(real);
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Invalid complex number.");
+			String message = String.format("Invalid complex number: '%s' is not a valid term", s);
+
+			throw new IllegalArgumentException(message);
 		}
 	}
 
@@ -289,7 +295,7 @@ public class ComplexNumber {
 	 * @param d the scalar with which to multiply the complex number
 	 * @return a new complex number representing the result of multiplying {@code this} by {@code d}
 	 */
-	private ComplexNumber mul(double d) {
+	public ComplexNumber mul(double d) {
 		return new ComplexNumber(real * d, imaginary * d);
 	}
 
@@ -312,7 +318,7 @@ public class ComplexNumber {
 	 * @param d the scalar with which to divide the complex number
 	 * @return a new complex number representing the result of dividing {@code this} by {@code d}
 	 */
-	private ComplexNumber div(double d) {
+	public ComplexNumber div(double d) {
 		return mul(1.0 / d);
 	}
 

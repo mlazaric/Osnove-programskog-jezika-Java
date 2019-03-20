@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.custom.collections;
+package hr.fer.zemris.java.hw02;
 
 import static hr.fer.zemris.java.hw02.ComplexNumber.fromImaginary;
 import static hr.fer.zemris.java.hw02.ComplexNumber.fromMagnitudeAndAngle;
@@ -9,8 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-
-import hr.fer.zemris.java.hw02.ComplexNumber;
 
 public class ComplexNumberTest {
 
@@ -215,6 +213,13 @@ public class ComplexNumberTest {
 	}
 
 	@Test
+	void testParseWithBlankStrings() {
+		assertThrows(IllegalArgumentException.class, () -> parse(""));
+		assertThrows(IllegalArgumentException.class, () -> parse("  "));
+		assertThrows(IllegalArgumentException.class, () -> parse(" +  "));
+	}
+
+	@Test
 	void testGetReal() {
 		for (int index = 0; index < numbers.length; index++) {
 			assertEquals(realParts[index], numbers[index].getReal(), ComplexNumber.THRESHOLD);
@@ -240,6 +245,15 @@ public class ComplexNumberTest {
 		for (int index = 0; index < numbers.length; index++) {
 			assertEquals(angles[index], numbers[index].getAngle(), ComplexNumber.THRESHOLD);
 		}
+	}
+
+	@Test
+	void testConjugate() {
+		assertEquals(ComplexNumber.ZERO, ComplexNumber.ZERO.conjugate());
+		assertEquals(ComplexNumber.ONE, ComplexNumber.ONE.conjugate());
+		assertEquals(ComplexNumber.MINUS_ONE, ComplexNumber.MINUS_ONE.conjugate());
+		assertEquals(ComplexNumber.MINUS_I, ComplexNumber.I.conjugate());
+		assertEquals(new ComplexNumber(53, 63), new ComplexNumber(53, -63).conjugate());
 	}
 
 	@Test
@@ -271,6 +285,14 @@ public class ComplexNumberTest {
 	}
 
 	@Test
+	void testMulWithScalar() {
+		assertEquals(fromReal(5), ComplexNumber.ONE.mul(5));
+		assertEquals(ComplexNumber.MINUS_ONE, ComplexNumber.ONE.mul(-1));
+		assertEquals(new ComplexNumber(-25 * 13,  25 * 16),
+				new ComplexNumber(13, -16).mul(-25));
+	}
+
+	@Test
 	void testMulWithOne() {
 		for (int index = 0; index < numbers.length; index++) {
 			assertEquals(numbers[index], numbers[index].mul(ComplexNumber.ONE));
@@ -283,6 +305,14 @@ public class ComplexNumberTest {
 		assertEquals(fromReal(-1), ComplexNumber.ONE.mul(ComplexNumber.MINUS_ONE));
 		assertEquals(new ComplexNumber(50 * 13 + 25 * 18, -50 * 18 + 25 * 13),
 				new ComplexNumber(50, 25).mul(new ComplexNumber(13, -18)));
+	}
+
+	@Test
+	void testDivWithScalar() {
+		assertEquals(fromReal(1/5.0), ComplexNumber.ONE.div(5));
+		assertEquals(ComplexNumber.MINUS_ONE, ComplexNumber.ONE.div(-1));
+		assertEquals(new ComplexNumber(13,  -16),
+				new ComplexNumber(-25 * 13, 25 * 16).div(-25));
 	}
 
 	@Test

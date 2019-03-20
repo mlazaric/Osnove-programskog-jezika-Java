@@ -19,10 +19,10 @@ public class ArrayIndexedCollection extends Collection {
 	/**
 	 * The default capacity of the underlying array.
 	 */
-	public static final int DEFAULT_CAPACITY = 16;
+	private static final int DEFAULT_CAPACITY = 16;
 
 	/**
-	 * Current number of elements stored in the collection.
+	 * Number of elements stored in the collection.
 	 */
 	private int size;
 
@@ -46,8 +46,6 @@ public class ArrayIndexedCollection extends Collection {
 	 * @param initialCapacity capacity of the underlying array
 	 *
 	 * @throws IllegalArgumentException if {@code initialCapacity} is less than 1
-	 *
-	 * @see #elements
 	 */
 	public ArrayIndexedCollection(int initialCapacity) {
 		requireValidCapacity(initialCapacity);
@@ -200,8 +198,9 @@ public class ArrayIndexedCollection extends Collection {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.java.custom.collections.Collection#add(java.lang.Object)
+	/**
+	 * {@inheritDoc}
+	 * The average complexity of this method is amortised O(1).
 	 */
 	@Override
 	public void add(Object value) {
@@ -214,7 +213,8 @@ public class ArrayIndexedCollection extends Collection {
 	}
 
 	/**
-	 * Returns the object at the specified index.
+	 * Returns the object at the specified index. The average complexity of
+	 * this method is O(1).
 	 *
 	 * @param index the index of the element within the array
 	 * @return the object at the specified index
@@ -240,7 +240,8 @@ public class ArrayIndexedCollection extends Collection {
 	}
 
 	/**
-	 * Inserts the value at the specified position in the collection.
+	 * Inserts the value at the specified position in the collection. The
+	 * average complexity of this method is O(n).
 	 *
 	 * @param value the value to insert
 	 * @param position the position to insert at
@@ -266,7 +267,8 @@ public class ArrayIndexedCollection extends Collection {
 
 	/**
 	 * Returns the index of the element in the collection. If the element is not in the
-	 * collection, it returns {@link #VALUE_NOT_FOUND_RETURN_VALUE}.
+	 * collection, it returns {@link #VALUE_NOT_FOUND_RETURN_VALUE}. The average complexity
+	 * of this method is O(n).
 	 *
 	 * @param value the object to find
 	 * @return the index of the object in the collection or {@link #VALUE_NOT_FOUND_RETURN_VALUE}
@@ -302,6 +304,14 @@ public class ArrayIndexedCollection extends Collection {
 		}
 
 		--size;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return Arrays.toString(elements);
 	}
 
 }

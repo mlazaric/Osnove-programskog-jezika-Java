@@ -21,12 +21,12 @@ public class LinkedListIndexedCollection extends Collection {
 	private int size;
 
 	/**
-	 * The first element of the collection.
+	 * The first element in the collection.
 	 */
 	private ListNode first;
 
 	/**
-	 * The last element of the collection.
+	 * The last element in the collection.
 	 */
 	private ListNode last;
 
@@ -178,8 +178,9 @@ public class LinkedListIndexedCollection extends Collection {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.java.custom.collections.Collection#add(java.lang.Object)
+	/**
+	 * {@inheritDoc}
+	 * The average complexity of this method is O(1).
 	 */
 	@Override
 	public void add(Object value) {
@@ -196,7 +197,8 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 
 	/**
-	 * Returns the object at the specified index.
+	 * Returns the object at the specified index. The average complexity of this
+	 * method is O(n), specifically it will make at most n/2 + 1 comparisons.
 	 *
 	 * @param index the index of the element within the collection
 	 * @return the object at the specified index
@@ -222,7 +224,8 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 
 	/**
-	 * Inserts the value at the specified position in the collection.
+	 * Inserts the value at the specified position in the collection. The
+	 * average complexity of this method is O(n).
 	 *
 	 * @param value the value to insert
 	 * @param position the position to insert at
@@ -254,7 +257,8 @@ public class LinkedListIndexedCollection extends Collection {
 
 	/**
 	 * Returns the index of the element in the collection. If the element is not in the
-	 * collection, it returns {@link #VALUE_NOT_FOUND_RETURN_VALUE}.
+	 * collection, it returns {@link #VALUE_NOT_FOUND_RETURN_VALUE}. The average complexity
+	 * of this method is O(n).
 	 *
 	 * @param value the object to find
 	 * @return the index of the object in the collection or {@link #VALUE_NOT_FOUND_RETURN_VALUE}
@@ -340,7 +344,7 @@ public class LinkedListIndexedCollection extends Collection {
 	 * @author Marko Lazarić
 	 *
 	 */
-	private class ListNode {
+	private static class ListNode {
 		/**
 		 * The previous node.
 		 */

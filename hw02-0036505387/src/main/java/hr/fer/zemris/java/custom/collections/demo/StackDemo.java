@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.custom.collections.demo;
 
-import hr.fer.zemris.java.custom.collections.EmptyStackException;
 import hr.fer.zemris.java.custom.collections.ObjectStack;
 
 /**
@@ -13,11 +12,14 @@ import hr.fer.zemris.java.custom.collections.ObjectStack;
 public class StackDemo {
 
 	/**
-	 * Evaluates a postfix expression using {@link ObjectStack}. Every term and operator in the expression
-	 * should be separated by one (or more) spaces. If it is not a valid expression or a wrong number of
-	 * arguments has been passed to the program, a relevant error message will be printed and it will exit.
+	 * Evaluates a postfix expression using {@link ObjectStack} passed as the one
+	 * and only argument to the program. Every term and operator in the expression
+	 * should be separated by one (or more) spaces. If it is not a valid expression
+	 * or a wrong number of arguments has been passed to the program, a relevant
+	 * error message will be printed and it will exit.
 	 *
-	 * @param args should contain a single {@link String} containing the postfix expression to be evaluated
+	 * @param args should contain a single {@link String} containing the postfix
+	 * 				expression to be evaluated
 	 */
 	public static void main(String[] args) {
 		if (args.length != 1) {
@@ -26,8 +28,27 @@ public class StackDemo {
 			return;
 		}
 
+		try {
+			System.out.format("Expression evaluates to %d.", evaluatePostfixExpression(args[0]));
+		} catch (IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	/**
+	 * Evaluates a postfix expression using {@link ObjectStack}. Every term
+	 * and operator in the expression should be separated by one (or more) spaces.
+	 * If it is not a valid expression, an {@link IllegalArgumentException} will
+	 * be thrown.
+	 *
+	 * @param expression the postfix expression to be evaluated
+	 *
+	 * @throws IllegalArgumentException if the passed argument is not a valid
+	 * 									postfix expression
+	 */
+	public static int evaluatePostfixExpression(String expression) {
 		ObjectStack stack = new ObjectStack();
-		String[] parts = args[0].split(" +");
+		String[] parts = expression.split(" +");
 
 		for (String part : parts) {
 			try {
@@ -35,21 +56,21 @@ public class StackDemo {
 
 				stack.push(number);
 			} catch (NumberFormatException e) {
-				try {
-					operate(stack, part.charAt(0));
-				} catch(EmptyStackException | IllegalArgumentException exc) {
-					System.out.println(e.getMessage());
-					System.exit(1);
+				if (part.length() != 1) {
+					String message = String.format("Invalid operator: '%s'", part);
+
+					throw new IllegalArgumentException(message);
 				}
+
+				operate(stack, part.charAt(0));
 			}
 		}
 
 		if (stack.size() != 1) {
-			System.out.println("Invalid expression.");
-			System.exit(1);
+			throw new IllegalArgumentException("Invalid expression");
 		}
 
-		System.out.format("Expression evaluates to %d.", stack.pop());
+		return (int) stack.pop();
 	}
 
 	/**
@@ -63,9 +84,9 @@ public class StackDemo {
 	 *
 	 * @throws IllegalArgumentException if there aren't enough numbers on the stack
 	 *                                  to evaluate the operator
-	 *                                  
-	 * @throws IllegalArgumentException if division by 0 is attempted 
-	 * 
+	 *
+	 * @throws IllegalArgumentException if division by 0 is attempted
+	 *
 	 * @throws IllegalArgumentException if an unsupported operator is passed to
 	 *                                  the function
 	 */
@@ -78,32 +99,36 @@ public class StackDemo {
 		int first = (int) stack.pop();
 
 		switch (operator) {
-			case '+':
-				stack.push(first + second);
-				break;
-	
-			case '-':
-				stack.push(first - second);
-				break;
-	
-			case '/':
-				if (second == 0) {
-					throw new IllegalArgumentException("Cannot divide by 0.");
-				}
-	
-				stack.push(first / second);
-				break;
-	
-			case '*':
-				stack.push(first * second);
-				break;
-	
-			case '%':
-				stack.push(first % second);
-				break;
-	
-			default:
-				throw new IllegalArgumentException("Unsupported operator passed to the function.");
+		case '+':
+			stack.push(first + second);
+			break;
+
+		case '-':
+			stack.push(first - second);
+			break;
+
+		case '/':
+			if (second == 0) {
+				throw new IllegalArgumentException("Cannot divide by 0.");
+			}
+
+			stack.push(first / second);
+			break;
+
+		case '*':
+			stack.push(first * second);
+			break;
+
+		case '%':
+			if (second == 0) {
+				throw new IllegalArgumentException("Cannot perform modulo 0.");
+			}
+
+			stack.push(first % second);
+			break;
+
+		default:
+			throw new IllegalArgumentException("Unsupported operator passed to the function.");
 		}
 	}
 
