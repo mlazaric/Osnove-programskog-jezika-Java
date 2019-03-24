@@ -1,8 +1,9 @@
-package hr.fer.zemris.java.hw03.prob1;
+package hr.fer.zemris.java.custom.scripting.lexer;
 
 import java.util.Objects;
 
 public class Token {
+
 	private final TokenType type;
 	private final Object value;
 
@@ -11,11 +12,11 @@ public class Token {
 		this.value = value;
 	}
 
-	public Object getValue() {
-		return value;
-	}
-
 	public TokenType getType() {
 		return type;
+	}
+
+	public Object getValue() {
+		return value;
 	}
 }
