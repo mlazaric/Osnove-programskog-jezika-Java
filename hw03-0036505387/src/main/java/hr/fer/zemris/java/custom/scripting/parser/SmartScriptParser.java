@@ -14,10 +14,10 @@ import hr.fer.zemris.java.custom.scripting.elems.ElementFunction;
 import hr.fer.zemris.java.custom.scripting.elems.ElementOperator;
 import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 import hr.fer.zemris.java.custom.scripting.elems.ElementVariable;
-import hr.fer.zemris.java.custom.scripting.lexer.LexerState;
 import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptLexer;
-import hr.fer.zemris.java.custom.scripting.lexer.Token;
-import hr.fer.zemris.java.custom.scripting.lexer.TokenType;
+import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptLexerState;
+import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptToken;
+import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptTokenType;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
 import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
@@ -45,18 +45,18 @@ public class SmartScriptParser {
 		stack.push(new DocumentNode());
 
 		while (true) {
-			Token token = lexer.nextToken();
+			SmartScriptToken token = lexer.nextToken();
 
-			if (token.getType() == TokenType.EOF) {
+			if (token.getType() == SmartScriptTokenType.EOF) {
 				break;
 			}
-			else if (token.getType() == TokenType.TEXT) {
+			else if (token.getType() == SmartScriptTokenType.TEXT) {
 				((Node) stack.peek()).addChildNode(new TextNode((String) token.getValue()));
 			}
-			else if (token.getType() == TokenType.TAG_START) {
-				lexer.setState(LexerState.INSIDE_TAG);
+			else if (token.getType() == SmartScriptTokenType.TAG_START) {
+				lexer.setState(SmartScriptLexerState.INSIDE_TAG);
 			}
-			else if (token.getType() == TokenType.IDENTIFIER) {
+			else if (token.getType() == SmartScriptTokenType.IDENTIFIER) {
 				String identifier = (String) token.getValue();
 
 				if (identifier.equals("=")) {
@@ -74,6 +74,12 @@ public class SmartScriptParser {
 					}
 
 					stack.pop();
+
+					SmartScriptToken nextToken = lexer.nextToken();
+
+					if (nextToken.getType() != SmartScriptTokenType.TAG_END) {
+						throw new SmartScriptParserException("Invalid end tag");
+					}
 				}
 				else {
 					String message = String.format("Invalid identifier '%s'.", identifier);
@@ -81,7 +87,12 @@ public class SmartScriptParser {
 					throw new SmartScriptParserException(message);
 				}
 
-				lexer.setState(LexerState.BASIC);
+				lexer.setState(SmartScriptLexerState.BASIC);
+			}
+			else {
+				String message = String.format("Invalid token '%s'", token.getValue());
+
+				throw new SmartScriptParserException(message);
 			}
 		}
 
@@ -96,27 +107,27 @@ public class SmartScriptParser {
 		Collection collection = new ArrayIndexedCollection();
 
 		while (true) {
-			Token token = lexer.nextToken();
+			SmartScriptToken token = lexer.nextToken();
 
-			if (token.getType() == TokenType.EOF) {
+			if (token.getType() == SmartScriptTokenType.EOF) {
 				throw new SmartScriptParserException("Echo tag was not closed.");
 			}
-			else if (token.getType() == TokenType.TAG_END) {
+			else if (token.getType() == SmartScriptTokenType.TAG_END) {
 				break;
 			}
-			else if (token.getType() == TokenType.DOUBLE) {
+			else if (token.getType() == SmartScriptTokenType.DOUBLE) {
 				collection.add(new ElementConstantDouble((Double) token.getValue()));
 			}
-			else if (token.getType() == TokenType.INTEGER) {
+			else if (token.getType() == SmartScriptTokenType.INTEGER) {
 				collection.add(new ElementConstantInteger((Integer) token.getValue()));
 			}
-			else if (token.getType() == TokenType.OPERATOR) {
+			else if (token.getType() == SmartScriptTokenType.OPERATOR) {
 				collection.add(new ElementOperator((String) token.getValue()));
 			}
-			else if (token.getType() == TokenType.TEXT) {
+			else if (token.getType() == SmartScriptTokenType.TEXT) {
 				collection.add(new ElementString((String) token.getValue()));
 			}
-			else if (token.getType() == TokenType.IDENTIFIER) {
+			else if (token.getType() == SmartScriptTokenType.IDENTIFIER) {
 				String identifier = (String) token.getValue();
 
 				if (FUNCTION_PATTERN.matcher(identifier).find()) {
@@ -143,24 +154,24 @@ public class SmartScriptParser {
 		List collection = new ArrayIndexedCollection();
 
 		while (true) {
-			Token token = lexer.nextToken();
+			SmartScriptToken token = lexer.nextToken();
 
-			if (token.getType() == TokenType.EOF) {
+			if (token.getType() == SmartScriptTokenType.EOF) {
 				throw new SmartScriptParserException("For loop tag was not closed.");
 			}
-			else if (token.getType() == TokenType.TAG_END) {
+			else if (token.getType() == SmartScriptTokenType.TAG_END) {
 				break;
 			}
-			else if (token.getType() == TokenType.DOUBLE) {
+			else if (token.getType() == SmartScriptTokenType.DOUBLE) {
 				collection.add(new ElementConstantDouble((Double) token.getValue()));
 			}
-			else if (token.getType() == TokenType.INTEGER) {
+			else if (token.getType() == SmartScriptTokenType.INTEGER) {
 				collection.add(new ElementConstantInteger((Integer) token.getValue()));
 			}
-			else if (token.getType() == TokenType.TEXT) {
+			else if (token.getType() == SmartScriptTokenType.TEXT) {
 				collection.add(new ElementString((String) token.getValue()));
 			}
-			else if (token.getType() == TokenType.IDENTIFIER) {
+			else if (token.getType() == SmartScriptTokenType.IDENTIFIER) {
 				String identifier = (String) token.getValue();
 
 				if (VARIABLE_PATTERN.matcher(identifier).find()) {

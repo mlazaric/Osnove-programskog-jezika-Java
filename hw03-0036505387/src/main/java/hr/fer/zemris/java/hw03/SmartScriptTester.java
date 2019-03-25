@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
-import hr.fer.zemris.java.custom.scripting.nodes.Node;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 
@@ -14,7 +13,7 @@ public class SmartScriptTester {
 
 	public static void main(String[] args) throws IOException {
 		String docBody = new String(
-				Files.readAllBytes(Paths.get("src/main/resources/document1.txt")),
+				Files.readAllBytes(Paths.get("src/main/resources/document40.txt")),
 				StandardCharsets.UTF_8);
 
 		SmartScriptParser parser = null;
@@ -40,26 +39,7 @@ public class SmartScriptTester {
 	}
 
 	private static String createOriginalDocumentBody(DocumentNode document) {
-		/*StringBuilder sb = new StringBuilder();
-
-		recursiveCreateOriginalDocumentBody(document, sb);
-
-		return sb.toString();*/
-
 		return document.toString();
-	}
-
-	private static void recursiveCreateOriginalDocumentBody(Node node, StringBuilder sb) {
-		int numberOfChildren = node.numberOfChildren();
-
-		for (int index = 0; index < numberOfChildren; ++index) {
-			Node currentNode = node.getChild(index);
-
-			recursiveCreateOriginalDocumentBody(currentNode, sb);
-
-			sb.append(currentNode);
-			sb.append('\n');
-		}
 	}
 
 

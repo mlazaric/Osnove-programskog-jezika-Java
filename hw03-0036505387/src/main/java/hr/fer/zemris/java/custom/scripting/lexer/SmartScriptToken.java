@@ -2,17 +2,17 @@ package hr.fer.zemris.java.custom.scripting.lexer;
 
 import java.util.Objects;
 
-public class Token {
+public class SmartScriptToken {
 
-	private final TokenType type;
+	private final SmartScriptTokenType type;
 	private final Object value;
 
-	public Token(TokenType type, Object value) {
+	public SmartScriptToken(SmartScriptTokenType type, Object value) {
 		this.type = Objects.requireNonNull(type, "Type of token cannot be null.");
 		this.value = value;
 	}
 
-	public TokenType getType() {
+	public SmartScriptTokenType getType() {
 		return type;
 	}
 

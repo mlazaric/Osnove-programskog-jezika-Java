@@ -1,5 +1,5 @@
 package hr.fer.zemris.java.custom.scripting.lexer;
 
-public enum LexerState {
+public enum SmartScriptLexerState {
 	BASIC, INSIDE_TAG;
 }

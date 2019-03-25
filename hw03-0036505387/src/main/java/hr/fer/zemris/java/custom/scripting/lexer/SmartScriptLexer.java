@@ -5,29 +5,29 @@ import java.util.Objects;
 public class SmartScriptLexer {
 
 	private final char[] data;
-	private Token token;
+	private SmartScriptToken token;
 	private int currentIndex;
-	private LexerState state;
+	private SmartScriptLexerState state;
 
 	public SmartScriptLexer(String text) {
 		Objects.requireNonNull(text, "Text cannot be null.");
 
 		data = text.toCharArray();
 		currentIndex = 0;
-		state = LexerState.BASIC;
+		state = SmartScriptLexerState.BASIC;
 	}
 
-	public Token nextToken() {
+	public SmartScriptToken nextToken() {
 		token = extractNextToken();
 
 		return getToken();
 	}
 
-	public Token getToken() {
+	public SmartScriptToken getToken() {
 		return token;
 	}
 
-	public void setState(LexerState state) {
+	public void setState(SmartScriptLexerState state) {
 		this.state = Objects.requireNonNull(state, "State of lexer cannot be null.");
 	}
 
@@ -41,16 +41,16 @@ public class SmartScriptLexer {
 		}
 	}
 
-	private Token extractNextToken() {
-		if (token != null && token.getType() == TokenType.EOF) {
-			throw new LexerException("End of document already reached.");
+	private SmartScriptToken extractNextToken() {
+		if (token != null && token.getType() == SmartScriptTokenType.EOF) {
+			throw new SmartScriptLexerException("End of document already reached.");
 		}
 
 		if (currentIndex >= data.length) {
-			return new Token(TokenType.EOF, null);
+			return new SmartScriptToken(SmartScriptTokenType.EOF, null);
 		}
 
-		if (state == LexerState.BASIC) {
+		if (state == SmartScriptLexerState.BASIC) {
 			if (data[currentIndex] == '{') {
 				return extractNextTagStartToken();
 			}
@@ -62,7 +62,7 @@ public class SmartScriptLexer {
 			skipWhitespace();
 
 			if (!isValidIndex(currentIndex)) {
-				return new Token(TokenType.EOF, null);
+				return new SmartScriptToken(SmartScriptTokenType.EOF, null);
 			}
 
 			if (data[currentIndex] == '$') {
@@ -72,7 +72,7 @@ public class SmartScriptLexer {
 			if (data[currentIndex] == '-' && isValidIndex(currentIndex + 1) && !isValidNumberCharacter(data[currentIndex + 1])) {
 				++currentIndex;
 
-				return new Token(TokenType.OPERATOR, "-");
+				return new SmartScriptToken(SmartScriptTokenType.OPERATOR, "-");
 			}
 
 			if (isValidNumberCharacter(data[currentIndex])) {
@@ -82,7 +82,7 @@ public class SmartScriptLexer {
 			if (isValidOperatorCharacter(data[currentIndex])) {
 				++currentIndex;
 
-				return new Token(TokenType.OPERATOR, String.valueOf(data[currentIndex - 1]));
+				return new SmartScriptToken(SmartScriptTokenType.OPERATOR, String.valueOf(data[currentIndex - 1]));
 			}
 
 			if (isValidIdentifierCharacter(data[currentIndex])) {
@@ -97,11 +97,11 @@ public class SmartScriptLexer {
 
 		String message = String.format("Could not tokenise '%c'.", data[currentIndex]);
 
-		throw new LexerException(message);
+		throw new SmartScriptLexerException(message);
 	}
 
 	private boolean isValidNumberCharacter(char character) {
-		return ('0' <= character && character <= '9') || character == '.' || character == '+' || character == '-';
+		return ('0' <= character && character <= '9') || character == '.' || character == '-';
 	}
 
 	private boolean isValidOperatorCharacter(char character) {
@@ -120,7 +120,7 @@ public class SmartScriptLexer {
 		return character == '_' || character == '@' || character == '=';
 	}
 
-	private Token extractNextTextToken() {
+	private SmartScriptToken extractNextTextToken() {
 		StringBuilder sb = new StringBuilder();
 
 		while (isValidIndex(currentIndex) && data[currentIndex] != '{') {
@@ -129,7 +129,7 @@ public class SmartScriptLexer {
 					sb.append(data[currentIndex + 1]);
 				}
 				else {
-					throw new LexerException("Invalid escaping outside of tag.");
+					throw new SmartScriptLexerException("Invalid escaping outside of tag.");
 				}
 
 				currentIndex += 2;
@@ -141,10 +141,10 @@ public class SmartScriptLexer {
 			++currentIndex;
 		}
 
-		return new Token(TokenType.TEXT, sb.toString());
+		return new SmartScriptToken(SmartScriptTokenType.TEXT, sb.toString());
 	}
 
-	private Token extractNextTagStartToken() {
+	private SmartScriptToken extractNextTagStartToken() {
 		StringBuilder sb = new StringBuilder();
 
 		if (isValidIndex(currentIndex) && data[currentIndex] == '{') {
@@ -156,14 +156,14 @@ public class SmartScriptLexer {
 				++currentIndex;
 			}
 			else {
-				throw new LexerException("Invalid start of tag.");
+				throw new SmartScriptLexerException("Invalid start of tag.");
 			}
 		}
 
-		return new Token(TokenType.TAG_START, sb.toString());
+		return new SmartScriptToken(SmartScriptTokenType.TAG_START, sb.toString());
 	}
 
-	private Token extractNextTagEndToken() {
+	private SmartScriptToken extractNextTagEndToken() {
 		StringBuilder sb = new StringBuilder();
 
 		if (isValidIndex(currentIndex) && data[currentIndex] == '$') {
@@ -175,14 +175,14 @@ public class SmartScriptLexer {
 				++currentIndex;
 			}
 			else {
-				throw new LexerException("Invalid end of tag.");
+				throw new SmartScriptLexerException("Invalid end of tag.");
 			}
 		}
 
-		return new Token(TokenType.TAG_END, sb.toString());
+		return new SmartScriptToken(SmartScriptTokenType.TAG_END, sb.toString());
 	}
 
-	private Token extractNextNumberToken() {
+	private SmartScriptToken extractNextNumberToken() {
 		StringBuilder sb = new StringBuilder();
 
 		while (isValidIndex(currentIndex) && isValidNumberCharacter(data[currentIndex])) {
@@ -196,22 +196,22 @@ public class SmartScriptLexer {
 		try {
 			int integer = Integer.parseInt(number);
 
-			return new Token(TokenType.INTEGER, integer);
+			return new SmartScriptToken(SmartScriptTokenType.INTEGER, integer);
 		} catch (NumberFormatException e) {}
 
 		try {
 			double doubleNumber = Double.parseDouble(number);
 
-			return new Token(TokenType.DOUBLE, doubleNumber);
+			return new SmartScriptToken(SmartScriptTokenType.DOUBLE, doubleNumber);
 		}
 		catch (NumberFormatException e) {
 			String message = String.format("'%s' is not a valid integer nor a valid double.", number);
 
-			throw new LexerException(message);
+			throw new SmartScriptLexerException(message);
 		}
 	}
 
-	private Token extractNextIdentifierToken() {
+	private SmartScriptToken extractNextIdentifierToken() {
 		StringBuilder sb = new StringBuilder();
 
 		while (isValidIndex(currentIndex) && isValidIdentifierCharacter(data[currentIndex])) {
@@ -228,36 +228,37 @@ public class SmartScriptLexer {
 			++currentIndex;
 		}
 
-		return new Token(TokenType.IDENTIFIER, sb.toString());
+		return new SmartScriptToken(SmartScriptTokenType.IDENTIFIER, sb.toString());
 	}
 
-	private Token extractNextStringToken() {
+	private SmartScriptToken extractNextStringToken() {
 		StringBuilder sb = new StringBuilder();
-
+		
+		sb.append('"');
 		++currentIndex; // Skip "
 
 		while (isValidIndex(currentIndex) && data[currentIndex] != '"') {
 			if (data[currentIndex] == '\\') {
 
 				switch (data[currentIndex + 1]) {
-				case '\\':
-				case '"':
-					sb.append(data[currentIndex + 1]);
-					break;
-
-				case 'n':
-					sb.append('\n');
-					break;
-				case 'r':
-					sb.append('\r');
-					break;
-				case 't':
-					sb.append('\t');
-					break;
-
-
-				default:
-					throw new LexerException("Invalid escape in tag string.");
+					case '\\':
+					case '"':
+						sb.append(data[currentIndex + 1]);
+						break;
+	
+					case 'n':
+						sb.append('\n');
+						break;
+					case 'r':
+						sb.append('\r');
+						break;
+					case 't':
+						sb.append('\t');
+						break;
+	
+	
+					default:
+						throw new SmartScriptLexerException("Invalid escape in tag string.");
 				}
 
 				currentIndex += 2;
@@ -270,8 +271,9 @@ public class SmartScriptLexer {
 		}
 
 		++currentIndex;
+		sb.append('"');
 
-		return new Token(TokenType.TEXT, sb.toString());
+		return new SmartScriptToken(SmartScriptTokenType.TEXT, sb.toString());
 	}
 
 }
