@@ -179,7 +179,7 @@ public class SmartScriptLexer {
 			}
 		}
 
-		return new Token(TokenType.TAG_START, sb.toString());
+		return new Token(TokenType.TAG_END, sb.toString());
 	}
 
 	private Token extractNextNumberToken() {
@@ -215,6 +215,14 @@ public class SmartScriptLexer {
 		StringBuilder sb = new StringBuilder();
 
 		while (isValidIndex(currentIndex) && isValidIdentifierCharacter(data[currentIndex])) {
+			if (data[currentIndex] == '=') {
+				sb.append('=');
+
+				++currentIndex;
+
+				break;
+			}
+
 			sb.append(data[currentIndex]);
 
 			++currentIndex;

@@ -36,5 +36,34 @@ public class ForLoopNode extends Node {
 	public Element getStepExpression() {
 		return stepExpression;
 	}
-
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("{$ FOR ")
+		  .append(variable.asText())
+		  .append(' ')
+		  .append(startExpression.asText())
+		  .append(' ')
+		  .append(endExpression.asText());
+		
+		if (stepExpression != null) {
+			sb.append(' ').append(stepExpression.asText());
+		}
+		
+		sb.append(" $}");
+		
+		int numberOfChildren = numberOfChildren();
+		
+		for (int index = 0; index < numberOfChildren; index++) {
+			Node child = getChild(index);
+			
+			sb.append(child.toString());
+		}
+		
+		sb.append("{$END$}");
+		
+		return sb.toString();
+	}
 }

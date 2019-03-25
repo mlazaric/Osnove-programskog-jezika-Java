@@ -16,4 +16,19 @@ public class EchoNode extends Node {
 		return elements;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("{$=");
+
+		for (Element element : elements) {
+			sb.append(element.asText()).append(' ');
+		}
+
+		sb.append("$}");
+
+		return sb.toString();
+	}
+
 }
