@@ -126,8 +126,11 @@ public class ComplexNumber {
 	 * @return the parsed complex number
 	 *
 	 * @throws IllegalArgumentException if the string is not a valid complex number
+	 * @throws NullPointerException if {@code s} is {@code null}
 	 */
 	public static ComplexNumber parse(String s) {
+		Objects.requireNonNull(s, "Cannot parse null.");
+
 		if (s.isBlank()) {
 			throw new IllegalArgumentException("Invalid complex number: blank string.");
 		}
@@ -274,8 +277,12 @@ public class ComplexNumber {
 	 *
 	 * @param c the complex number to add to {@code this}
 	 * @return a new complex number representing the sum of {@code this} and {@code c}
+	 *
+	 * @throws NullPointerException if {@code c} is {@code null}
 	 */
 	public ComplexNumber add(ComplexNumber c) {
+		Objects.requireNonNull(c, "Cannot add null to a complex number.");
+
 		return new ComplexNumber(real + c.real, imaginary + c.imaginary);
 	}
 
@@ -284,8 +291,12 @@ public class ComplexNumber {
 	 *
 	 * @param c the complex number to subtract from {@code this}
 	 * @return a new complex number representing the result of subtracting {@code c} from {code this}
+	 *
+	 * @throws NullPointerException if {@code c} is {@code null}
 	 */
 	public ComplexNumber sub(ComplexNumber c) {
+		Objects.requireNonNull(c, "Cannot subtract null from a complex number.");
+
 		return add(c.mul(MINUS_ONE));
 	}
 
@@ -304,8 +315,12 @@ public class ComplexNumber {
 	 *
 	 * @param c the complex number to multiply with {@code this}
 	 * @return a new complex number representing the result of multiplying {@code this} with {@code d}
+	 *
+	 * @throws NullPointerException if {@code c} is {@code null}
 	 */
 	public ComplexNumber mul(ComplexNumber c) {
+		Objects.requireNonNull(c, "Cannot multiply a complex number with null.");
+
 		double real = this.real * c.real - this.imaginary * c.imaginary;
 		double imaginary = this.real * c.imaginary + this.imaginary * c.real;
 
@@ -327,8 +342,12 @@ public class ComplexNumber {
 	 *
 	 * @param c the complex number to divide {@code this} by
 	 * @return a new complex number representing the result of dividing {@code this} by {@code c}
+	 *
+	 * @throws NullPointerException if {@code c} is {@code null}
 	 */
 	public ComplexNumber div(ComplexNumber c) {
+		Objects.requireNonNull(c, "Cannot divide a complex number with null.");
+
 		return mul(c.conjugate()).div(c.getMagnitude() * c.getMagnitude());
 	}
 

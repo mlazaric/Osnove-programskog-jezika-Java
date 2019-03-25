@@ -161,7 +161,7 @@ public class ArrayIndexedCollection extends Collection {
 			return false;
 		}
 
-		return indexOf(value) != -1;
+		return indexOf(value) != VALUE_NOT_FOUND_RETURN_VALUE;
 	}
 
 	/* (non-Javadoc)
@@ -171,7 +171,7 @@ public class ArrayIndexedCollection extends Collection {
 	public boolean remove(Object value) {
 		int index = indexOf(value);
 
-		if (index == -1) {
+		if (index == VALUE_NOT_FOUND_RETURN_VALUE) {
 			return false;
 		}
 
@@ -302,6 +302,8 @@ public class ArrayIndexedCollection extends Collection {
 		for (int current = index; current < size; ++current) {
 			elements[current] = elements[current + 1];
 		}
+
+		elements[size - 1] = null;
 
 		--size;
 	}

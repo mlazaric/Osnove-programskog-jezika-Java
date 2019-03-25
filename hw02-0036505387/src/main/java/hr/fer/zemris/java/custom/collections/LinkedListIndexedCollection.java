@@ -314,6 +314,13 @@ public class LinkedListIndexedCollection extends Collection {
 
 		ListNode toRemove = findNodeByIndex(index);
 
+		if (first == toRemove) {
+			first = toRemove.next;
+		}
+		if (last == toRemove) {
+			last = toRemove.prev;
+		}
+
 		toRemove.prev.next = toRemove.next;
 		toRemove.next.prev = toRemove.prev;
 
