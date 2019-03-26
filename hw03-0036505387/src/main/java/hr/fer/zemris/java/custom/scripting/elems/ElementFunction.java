@@ -12,7 +12,7 @@ public class ElementFunction extends Element {
 
 	@Override
 	public String asText() {
-		return name;
+		return "@" + name;
 	}
 
 	public String getName() {
