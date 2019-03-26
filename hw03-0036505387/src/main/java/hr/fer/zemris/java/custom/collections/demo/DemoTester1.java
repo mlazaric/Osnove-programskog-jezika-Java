@@ -2,6 +2,11 @@ package hr.fer.zemris.java.custom.collections.demo;
 
 import hr.fer.zemris.java.custom.collections.Tester;
 
+/**
+ * Demo program for third homework.
+ *
+ * @author Marko Lazarić
+ */
 public class DemoTester1 {
 
 	public static void main(String[] args) {

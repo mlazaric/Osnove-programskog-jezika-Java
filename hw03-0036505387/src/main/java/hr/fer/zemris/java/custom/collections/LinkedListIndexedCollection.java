@@ -397,12 +397,12 @@ public class LinkedListIndexedCollection implements List {
 		 */
 		@Override
 		public Object getNextElement() {
-			if (!hasNextElement()) {
-				throw new NoSuchElementException("Element getter has reached the end of the collection.");
-			}
-
 			if (savedModificationCount != collection.modificationCount) {
 				throw new ConcurrentModificationException("The collection has been modified.");
+			}
+
+			if (!hasNextElement()) {
+				throw new NoSuchElementException("Element getter has reached the end of the collection.");
 			}
 
 			Object value = current.value;

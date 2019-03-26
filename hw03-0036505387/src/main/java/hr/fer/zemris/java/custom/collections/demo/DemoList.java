@@ -5,6 +5,11 @@ import hr.fer.zemris.java.custom.collections.Collection;
 import hr.fer.zemris.java.custom.collections.LinkedListIndexedCollection;
 import hr.fer.zemris.java.custom.collections.List;
 
+/**
+ * Demo program for third homework.
+ *
+ * @author Marko Lazarić
+ */
 public class DemoList {
 
 	public static void main(String[] args) {

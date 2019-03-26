@@ -5,9 +5,15 @@ import hr.fer.zemris.java.custom.collections.Collection;
 import hr.fer.zemris.java.custom.collections.ElementsGetter;
 import hr.fer.zemris.java.custom.collections.LinkedListIndexedCollection;
 
+/**
+ * Demo program for third homework.
+ *
+ * @author Marko Lazarić
+ */
 public class Demo1 {
 
 	public static void main(String[] args) {
+		// Test the demo code with both an ArrayIndexedCollection and a LinkedListIndexedCollection
 		try {
 			demo1(new ArrayIndexedCollection());
 		} catch (Exception e) {
