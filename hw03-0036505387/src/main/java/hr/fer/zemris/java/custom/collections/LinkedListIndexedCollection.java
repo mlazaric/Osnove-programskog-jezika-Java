@@ -347,29 +347,54 @@ public class LinkedListIndexedCollection implements List {
 		return sb.toString();
 	}
 
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.java.custom.collections.Collection#createElementsGetter()
+	 */
 	@Override
 	public ElementsGetter createElementsGetter()
 	{
 		return new LinkedListElementGetter(this);
 	}
 
+	/**
+	 * An {@link ElementGetter} implementation for the {@link LinkedListElementGetter}.
+	 *
+	 * @author Marko Lazarić
+	 *
+	 */
 	private static class LinkedListElementGetter implements ElementsGetter {
 
 		private long savedModificationCount;
 		private ListNode current;
 		private LinkedListIndexedCollection collection;
 
+		/**
+		 * Constructs a new {@link LinkedListElementGetter} from the given {@link LinkedListIndexedCollection}
+		 * reference.
+		 *
+		 * @param collection the collection to iterate over
+		 *
+		 * @throws NullPointerException if {@code collection} is {@code null}
+		 */
 		private LinkedListElementGetter(LinkedListIndexedCollection collection) {
+			Objects.requireNonNull(collection, "Cannot create a LinkedListElementGetter for a null collection.");
+
 			this.savedModificationCount = collection.modificationCount;
 			this.current = collection.first;
 			this.collection = collection;
 		}
 
+		/* (non-Javadoc)
+		 * @see hr.fer.zemris.java.custom.collections.ElementsGetter#hasNextElement()
+		 */
 		@Override
 		public boolean hasNextElement() {
 			return current != null;
 		}
 
+		/* (non-Javadoc)
+		 * @see hr.fer.zemris.java.custom.collections.ElementsGetter#getNextElement()
+		 */
 		@Override
 		public Object getNextElement() {
 			if (!hasNextElement()) {

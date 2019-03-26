@@ -318,6 +318,9 @@ public class ArrayIndexedCollection implements List {
 		return Arrays.toString(elements);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -329,6 +332,9 @@ public class ArrayIndexedCollection implements List {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -347,29 +353,65 @@ public class ArrayIndexedCollection implements List {
 				&& size == other.size;
 	}
 
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.java.custom.collections.Collection#createElementsGetter()
+	 */
 	@Override
 	public ElementsGetter createElementsGetter()
 	{
 		return new ArrayElementGetter(this);
 	}
 
+	/**
+	 * An {@link ElementGetter} implementation for the {@link ArrayIndexedCollection}.
+	 *
+	 * @author Marko Lazarić
+	 *
+	 */
 	private static class ArrayElementGetter implements ElementsGetter {
 
+		/**
+		 * The index of the next element.
+		 */
 		private int currentIndex;
+
+		/**
+		 * The modification count saved during initialisation.
+		 */
 		private long savedModificationCount;
+
+		/**
+		 * A reference to the {@link ArrayIndexedCollection} it is iterating over.
+		 */
 		private ArrayIndexedCollection collection;
 
+		/**
+		 * Constructs a new {@link ArrayElementGetter} from the given {@link ArrayIndexedCollection}
+		 * reference.
+		 *
+		 * @param collection the collection to iterate over
+		 *
+		 * @throws NullPointerException if {@code collection} is {@code null}
+		 */
 		private ArrayElementGetter(ArrayIndexedCollection collection) {
+			Objects.requireNonNull(collection, "Cannot create an ArrayElementGetter for a null collection.");
+
 			this.currentIndex = 0;
 			this.savedModificationCount = collection.modificationCount;
 			this.collection = collection;
 		}
 
+		/* (non-Javadoc)
+		 * @see hr.fer.zemris.java.custom.collections.ElementsGetter#hasNextElement()
+		 */
 		@Override
 		public boolean hasNextElement() {
 			return currentIndex < collection.size;
 		}
 
+		/* (non-Javadoc)
+		 * @see hr.fer.zemris.java.custom.collections.ElementsGetter#getNextElement()
+		 */
 		@Override
 		public Object getNextElement() {
 			if (!hasNextElement()) {

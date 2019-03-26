@@ -3,7 +3,7 @@ package hr.fer.zemris.java.custom.collections;
 import java.util.Objects;
 
 /**
- * Models a simple "abstract" collection.
+ * Models a simple abstract collection.
  *
  * @author Marko Lazarić
  *
@@ -100,8 +100,24 @@ public interface Collection {
 	 */
 	void clear();
 
+	/**
+	 * Creates a new {@link ElementsGetter}.
+	 *
+	 * @return the newly created {@link ElementsGetter}
+	 */
 	ElementsGetter createElementsGetter();
 
+	/**
+	 * Adds all elements from {@code col} to this collection which
+	 * satisfy {@code tester}'s condition.
+	 *
+	 * @param col the collection whose elements should be checked and
+	 *            added to this one
+	 * @param tester the tester used to check whether an element should
+	 *               be added to this collection
+	 *
+	 * @throws if {@code col} or {@code tester} is null
+	 */
 	default void addAllSatisfying(Collection col, Tester tester) {
 		Objects.requireNonNull(col, "Collection cannot be null.");
 		Objects.requireNonNull(tester, "Tester cannot be null.");
