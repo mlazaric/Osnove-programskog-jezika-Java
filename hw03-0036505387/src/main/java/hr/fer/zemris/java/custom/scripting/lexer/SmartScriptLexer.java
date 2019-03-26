@@ -233,32 +233,31 @@ public class SmartScriptLexer {
 
 	private SmartScriptToken extractNextStringToken() {
 		StringBuilder sb = new StringBuilder();
-		
-		sb.append('"');
+
 		++currentIndex; // Skip "
 
 		while (isValidIndex(currentIndex) && data[currentIndex] != '"') {
 			if (data[currentIndex] == '\\') {
 
 				switch (data[currentIndex + 1]) {
-					case '\\':
-					case '"':
-						sb.append(data[currentIndex + 1]);
-						break;
-	
-					case 'n':
-						sb.append('\n');
-						break;
-					case 'r':
-						sb.append('\r');
-						break;
-					case 't':
-						sb.append('\t');
-						break;
-	
-	
-					default:
-						throw new SmartScriptLexerException("Invalid escape in tag string.");
+				case '\\':
+				case '"':
+					sb.append(data[currentIndex + 1]);
+					break;
+
+				case 'n':
+					sb.append('\n');
+					break;
+				case 'r':
+					sb.append('\r');
+					break;
+				case 't':
+					sb.append('\t');
+					break;
+
+
+				default:
+					throw new SmartScriptLexerException("Invalid escape in tag string.");
 				}
 
 				currentIndex += 2;
@@ -271,9 +270,8 @@ public class SmartScriptLexer {
 		}
 
 		++currentIndex;
-		sb.append('"');
 
-		return new SmartScriptToken(SmartScriptTokenType.TEXT, sb.toString());
+		return new SmartScriptToken(SmartScriptTokenType.STRING, sb.toString());
 	}
 
 }

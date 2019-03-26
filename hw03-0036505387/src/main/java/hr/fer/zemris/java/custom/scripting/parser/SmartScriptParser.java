@@ -124,14 +124,14 @@ public class SmartScriptParser {
 			else if (token.getType() == SmartScriptTokenType.OPERATOR) {
 				collection.add(new ElementOperator((String) token.getValue()));
 			}
-			else if (token.getType() == SmartScriptTokenType.TEXT) {
+			else if (token.getType() == SmartScriptTokenType.STRING) {
 				collection.add(new ElementString((String) token.getValue()));
 			}
 			else if (token.getType() == SmartScriptTokenType.IDENTIFIER) {
 				String identifier = (String) token.getValue();
 
 				if (FUNCTION_PATTERN.matcher(identifier).find()) {
-					collection.add(new ElementFunction(identifier));
+					collection.add(new ElementFunction(identifier.substring(1)));
 				}
 				else if (VARIABLE_PATTERN.matcher(identifier).find()) {
 					collection.add(new ElementVariable(identifier));
@@ -168,7 +168,7 @@ public class SmartScriptParser {
 			else if (token.getType() == SmartScriptTokenType.INTEGER) {
 				collection.add(new ElementConstantInteger((Integer) token.getValue()));
 			}
-			else if (token.getType() == SmartScriptTokenType.TEXT) {
+			else if (token.getType() == SmartScriptTokenType.STRING) {
 				collection.add(new ElementString((String) token.getValue()));
 			}
 			else if (token.getType() == SmartScriptTokenType.IDENTIFIER) {

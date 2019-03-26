@@ -1,9 +1,11 @@
 package hr.fer.zemris.java.custom.scripting.lexer;
 
 public enum SmartScriptTokenType {
-	INTEGER, DOUBLE, TEXT, OPERATOR, EOF,
+	TEXT,
+
+	STRING, INTEGER, DOUBLE, OPERATOR,
 
 	IDENTIFIER,
 
-	TAG_START, TAG_END;
+	TAG_START, TAG_END, EOF;
 }

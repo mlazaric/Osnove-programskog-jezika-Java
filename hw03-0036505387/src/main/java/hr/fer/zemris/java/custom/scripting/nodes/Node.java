@@ -4,9 +4,9 @@ import java.util.Objects;
 
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
 
-public class Node {
+public abstract class Node {
 
-	private ArrayIndexedCollection collection;
+	protected ArrayIndexedCollection collection;
 
 	public void addChildNode(Node child) {
 		Objects.requireNonNull(child, "Child node cannot be null.");
@@ -37,5 +37,34 @@ public class Node {
 
 		return (Node) collection.get(index);
 	}
+
+	@Override
+	public String toString() {
+		return "Node [collection=" + collection + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(collection);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Node)) {
+			return false;
+		}
+
+		Node other = (Node) obj;
+
+		return Objects.equals(collection, other.collection);
+	}
+
+
 
 }

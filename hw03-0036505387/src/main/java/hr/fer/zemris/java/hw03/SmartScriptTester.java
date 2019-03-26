@@ -13,7 +13,7 @@ public class SmartScriptTester {
 
 	public static void main(String[] args) throws IOException {
 		String docBody = new String(
-				Files.readAllBytes(Paths.get("src/main/resources/document40.txt")),
+				Files.readAllBytes(Paths.get("src/test/resources/document40.txt")),
 				StandardCharsets.UTF_8);
 
 		SmartScriptParser parser = null;

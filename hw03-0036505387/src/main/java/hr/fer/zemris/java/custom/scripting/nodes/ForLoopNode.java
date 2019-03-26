@@ -36,34 +36,65 @@ public class ForLoopNode extends Node {
 	public Element getStepExpression() {
 		return stepExpression;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append("{$ FOR ")
-		  .append(variable.asText())
-		  .append(' ')
-		  .append(startExpression.asText())
-		  .append(' ')
-		  .append(endExpression.asText());
-		
+		.append(variable.asText())
+		.append(' ')
+		.append(startExpression.asText())
+		.append(' ')
+		.append(endExpression.asText());
+
 		if (stepExpression != null) {
 			sb.append(' ').append(stepExpression.asText());
 		}
-		
+
 		sb.append(" $}");
-		
+
 		int numberOfChildren = numberOfChildren();
-		
+
 		for (int index = 0; index < numberOfChildren; index++) {
 			Node child = getChild(index);
-			
+
 			sb.append(child.toString());
 		}
-		
+
 		sb.append("{$END$}");
-		
+
 		return sb.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+
+		result = prime * result + Objects.hash(endExpression, startExpression, stepExpression, variable);
+
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof ForLoopNode)) {
+			return false;
+		}
+
+		ForLoopNode other = (ForLoopNode) obj;
+
+		return Objects.equals(endExpression, other.endExpression)
+				&& Objects.equals(startExpression, other.startExpression)
+				&& Objects.equals(stepExpression, other.stepExpression) && Objects.equals(variable, other.variable);
+	}
+
+
 }

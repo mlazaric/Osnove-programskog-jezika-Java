@@ -19,4 +19,33 @@ public class SmartScriptToken {
 	public Object getValue() {
 		return value;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(type, value);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof SmartScriptToken)) {
+			return false;
+		}
+
+		SmartScriptToken other = (SmartScriptToken) obj;
+
+		return type == other.type && Objects.equals(value, other.value);
+	}
+
+
+	@Override
+	public String toString() {
+		return String.format("Token[type=%s, value='%s']", type, value);
+	}
+
 }

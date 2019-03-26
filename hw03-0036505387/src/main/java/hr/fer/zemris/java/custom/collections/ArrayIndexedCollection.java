@@ -319,6 +319,35 @@ public class ArrayIndexedCollection implements List {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+
+		result = prime * result + Arrays.deepHashCode(elements);
+		result = prime * result + Objects.hash(modificationCount, size);
+
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof ArrayIndexedCollection)) {
+			return false;
+		}
+
+		ArrayIndexedCollection other = (ArrayIndexedCollection) obj;
+
+		return Arrays.deepEquals(elements, other.elements) && modificationCount == other.modificationCount
+				&& size == other.size;
+	}
+
+	@Override
 	public ElementsGetter createElementsGetter()
 	{
 		return new ArrayElementGetter(this);
