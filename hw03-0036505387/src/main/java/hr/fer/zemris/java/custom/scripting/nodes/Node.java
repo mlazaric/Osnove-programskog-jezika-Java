@@ -3,31 +3,61 @@ package hr.fer.zemris.java.custom.scripting.nodes;
 import java.util.Objects;
 
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
+import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 
+/**
+ * Represents a node in the syntax tree built by {@link SmartScriptParser}.
+ *
+ * @author Marko Lazarić
+ *
+ */
 public abstract class Node {
 
-	protected ArrayIndexedCollection collection;
+	/**
+	 * The children nodes of this node.
+	 */
+	protected ArrayIndexedCollection children;
 
+	/**
+	 * Adds a new child to this node.
+	 *
+	 * @param child the new child node
+	 *
+	 * @throws NullPointerException if {@code child} is {@code null}
+	 */
 	public void addChildNode(Node child) {
 		Objects.requireNonNull(child, "Child node cannot be null.");
 
-		if (collection == null) {
-			collection = new ArrayIndexedCollection();
+		if (children == null) {
+			children = new ArrayIndexedCollection();
 		}
 
-		collection.add(child);
+		children.add(child);
 	}
 
+	/**
+	 * Returns the number of children this node has.
+	 *
+	 * @return the number of children this node has
+	 */
 	public int numberOfChildren() {
-		if (collection == null) {
+		if (children == null) {
 			return 0;
 		}
 
-		return collection.size();
+		return children.size();
 	}
 
+	/**
+	 * Returns the child at the specified index in the collection of children.
+	 *
+	 * @param index the index of the child in the collection
+	 * @return the child node
+	 *
+	 * @throws IndexOutOfBoundsException if {@code index} is not a valid index
+	 */
 	public Node getChild(int index) {
-		if (collection == null) {
+		if (children == null) {
 			throw new IndexOutOfBoundsException("Node has no children.");
 		}
 
@@ -35,19 +65,28 @@ public abstract class Node {
 			throw new IndexOutOfBoundsException("Invalid index for node children.");
 		}
 
-		return (Node) collection.get(index);
+		return (Node) children.get(index);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "Node [collection=" + collection + "]";
+		return "Node [collection=" + children + "]";
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection);
+		return Objects.hash(children);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -62,9 +101,7 @@ public abstract class Node {
 
 		Node other = (Node) obj;
 
-		return Objects.equals(collection, other.collection);
+		return Objects.equals(children, other.children);
 	}
-
-
 
 }

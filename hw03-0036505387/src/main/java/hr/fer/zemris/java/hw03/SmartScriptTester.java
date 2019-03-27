@@ -9,11 +9,17 @@ import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 
+/**
+ * A simple demonstration of {@link SmartScriptParser}.
+ *
+ * @author Marko Lazarić
+ *
+ */
 public class SmartScriptTester {
 
 	public static void main(String[] args) throws IOException {
 		String docBody = new String(
-				Files.readAllBytes(Paths.get("src/test/resources/document40.txt")),
+				Files.readAllBytes(Paths.get("examples/doc1.txt")),
 				StandardCharsets.UTF_8);
 
 		SmartScriptParser parser = null;
