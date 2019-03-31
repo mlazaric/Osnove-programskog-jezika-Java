@@ -48,7 +48,7 @@ public class ElementVariable extends Element {
 	 */
 	@Override
 	public String toString() {
-		return "ElementVariable [name=" + name + "]";
+		return name;
 	}
 
 	/* (non-Javadoc)

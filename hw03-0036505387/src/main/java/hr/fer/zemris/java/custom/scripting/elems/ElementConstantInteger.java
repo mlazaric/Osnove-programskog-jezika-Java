@@ -46,7 +46,7 @@ public class ElementConstantInteger extends Element {
 	 */
 	@Override
 	public String toString() {
-		return "ElementConstantInteger [value=" + value + "]";
+		return Integer.toString(value);
 	}
 
 	/* (non-Javadoc)

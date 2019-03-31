@@ -9,10 +9,6 @@ import java.util.Objects;
  * @author Marko Lazarić
  *
  */
-/**
- * @author quentin
- *
- */
 public class SmartScriptToken {
 
 	/**

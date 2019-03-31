@@ -48,7 +48,7 @@ public class ElementOperator extends Element {
 	 */
 	@Override
 	public String toString() {
-		return "ElementOperator [symbol=" + symbol + "]";
+		return symbol;
 	}
 
 	/* (non-Javadoc)

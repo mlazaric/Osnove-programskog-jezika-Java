@@ -46,7 +46,7 @@ public class ElementConstantDouble extends Element {
 	 */
 	@Override
 	public String toString() {
-		return "ElementConstantDouble [value=" + value + "]";
+		return Double.toString(value);
 	}
 
 	/* (non-Javadoc)

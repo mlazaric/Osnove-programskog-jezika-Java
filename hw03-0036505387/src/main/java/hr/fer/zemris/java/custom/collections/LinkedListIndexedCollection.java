@@ -364,8 +364,19 @@ public class LinkedListIndexedCollection implements List {
 	 */
 	private static class LinkedListElementGetter implements ElementsGetter {
 
-		private long savedModificationCount;
+		/**
+		 * The current node.
+		 */
 		private ListNode current;
+
+		/**
+		 * The modification count saved during initialisation.
+		 */
+		private long savedModificationCount;
+
+		/**
+		 * A reference to the {@link LinkedListIndexedCollection} it is iterating over.
+		 */
 		private LinkedListIndexedCollection collection;
 
 		/**

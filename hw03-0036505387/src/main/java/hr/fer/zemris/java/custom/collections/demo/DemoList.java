@@ -6,7 +6,7 @@ import hr.fer.zemris.java.custom.collections.LinkedListIndexedCollection;
 import hr.fer.zemris.java.custom.collections.List;
 
 /**
- * Demo program for third homework.
+ * Demo program for the first task of third homework.
  *
  * @author Marko Lazarić
  */

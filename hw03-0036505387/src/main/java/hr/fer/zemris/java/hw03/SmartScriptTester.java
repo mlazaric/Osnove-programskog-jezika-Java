@@ -17,10 +17,24 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
  */
 public class SmartScriptTester {
 
-	public static void main(String[] args) throws IOException {
-		String docBody = new String(
-				Files.readAllBytes(Paths.get("examples/doc1.txt")),
-				StandardCharsets.UTF_8);
+	public static void main(String[] args) {
+		if (args.length != 1) {
+			System.out.println("Program requires exactly one argument.");
+			return;
+		}
+
+		String docBody;
+
+		try {
+			docBody = new String(
+					Files.readAllBytes(Paths.get(args[0])),
+					StandardCharsets.UTF_8);
+		}
+		catch (IOException e) {
+			System.out.format("Could not open '%s'.%n", args[0]);
+			return;
+		}
+
 
 		SmartScriptParser parser = null;
 

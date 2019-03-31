@@ -98,25 +98,19 @@ public class ForLoopNode extends Node {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("{$ FOR ")
-		.append(variable.asText())
+		.append(variable.toString())
 		.append(' ')
-		.append(startExpression.asText())
+		.append(startExpression.toString())
 		.append(' ')
-		.append(endExpression.asText());
+		.append(endExpression.toString());
 
 		if (stepExpression != null) {
-			sb.append(' ').append(stepExpression.asText());
+			sb.append(' ').append(stepExpression.toString());
 		}
 
 		sb.append(" $}");
 
-		int numberOfChildren = numberOfChildren();
-
-		for (int index = 0; index < numberOfChildren; index++) {
-			Node child = getChild(index);
-
-			sb.append(child.toString());
-		}
+		sb.append(super.toString());
 
 		sb.append("{$END$}");
 
@@ -155,7 +149,8 @@ public class ForLoopNode extends Node {
 
 		return Objects.equals(endExpression, other.endExpression)
 				&& Objects.equals(startExpression, other.startExpression)
-				&& Objects.equals(stepExpression, other.stepExpression) && Objects.equals(variable, other.variable);
+				&& Objects.equals(stepExpression, other.stepExpression)
+				&& Objects.equals(variable, other.variable);
 	}
 
 }

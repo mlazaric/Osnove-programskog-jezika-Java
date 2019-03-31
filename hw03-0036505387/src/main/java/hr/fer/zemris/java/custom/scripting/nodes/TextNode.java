@@ -34,7 +34,7 @@ public class TextNode extends Node {
 	 * @return the text of this node
 	 */
 	public String getText() {
-		return text.replace("{", "\\{").replace("\\", "\\\\");
+		return text;
 	}
 
 	/* (non-Javadoc)
@@ -42,7 +42,7 @@ public class TextNode extends Node {
 	 */
 	@Override
 	public String toString() {
-		return getText();
+		return text.replace("{", "\\{").replace("\\", "\\\\");
 	}
 
 	/* (non-Javadoc)

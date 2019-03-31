@@ -3,6 +3,7 @@ package hr.fer.zemris.java.custom.scripting.nodes;
 import java.util.Objects;
 
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
+import hr.fer.zemris.java.custom.collections.ElementsGetter;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 
 /**
@@ -73,7 +74,13 @@ public abstract class Node {
 	 */
 	@Override
 	public String toString() {
-		return "Node [collection=" + children + "]";
+		StringBuilder sb = new StringBuilder();
+
+		for (ElementsGetter eg = children.createElementsGetter(); eg.hasNextElement();) {
+			sb.append(eg.getNextElement().toString());
+		}
+
+		return sb.toString();
 	}
 
 	/* (non-Javadoc)

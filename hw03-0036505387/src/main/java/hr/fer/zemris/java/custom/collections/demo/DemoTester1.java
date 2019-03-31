@@ -3,7 +3,7 @@ package hr.fer.zemris.java.custom.collections.demo;
 import hr.fer.zemris.java.custom.collections.Tester;
 
 /**
- * Demo program for third homework.
+ * Demo program for the first task of third homework.
  *
  * @author Marko Lazarić
  */

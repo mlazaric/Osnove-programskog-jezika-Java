@@ -49,7 +49,7 @@ public class EchoNode extends Node {
 		sb.append("{$=");
 
 		for (Element element : elements) {
-			sb.append(element.asText()).append(' ');
+			sb.append(element.toString()).append(' ');
 		}
 
 		sb.append("$}");

@@ -31,7 +31,7 @@ public class ElementFunction extends Element {
 	 */
 	@Override
 	public String asText() {
-		return "@" + name;
+		return name;
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class ElementFunction extends Element {
 	 */
 	@Override
 	public String toString() {
-		return "ElementFunction [name=" + name + "]";
+		return "@" + name;
 	}
 
 	/* (non-Javadoc)

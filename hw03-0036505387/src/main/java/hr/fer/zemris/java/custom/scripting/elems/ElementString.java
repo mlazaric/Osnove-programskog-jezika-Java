@@ -31,13 +31,7 @@ public class ElementString extends Element {
 	 */
 	@Override
 	public String asText() {
-		String value = this.value.replace("\\", "\\\\")
-				.replace("\"", "\\\"")
-				.replace("\n", "\\n")
-				.replace("\t", "\\t")
-				.replace("\r", "\\r");
-
-		return String.format("\"%s\"", value);
+		return value;
 	}
 
 	/**
@@ -54,7 +48,13 @@ public class ElementString extends Element {
 	 */
 	@Override
 	public String toString() {
-		return "ElementString [value=" + value + "]";
+		String value = this.value.replace("\\", "\\\\")
+				.replace("\"", "\\\"")
+				.replace("\n", "\\n")
+				.replace("\t", "\\t")
+				.replace("\r", "\\r");
+
+		return "\"" + value + "\"";
 	}
 
 	/* (non-Javadoc)

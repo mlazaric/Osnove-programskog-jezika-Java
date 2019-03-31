@@ -2,6 +2,7 @@ package hr.fer.zemris.java.custom.collections;
 
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * Implements an abstract iterator.
@@ -39,6 +40,8 @@ public interface ElementsGetter {
 	 * @param p the processor to process the elements with
 	 */
 	default void processRemaining(Processor p) {
+		Objects.requireNonNull(p, "Cannot process using null.");
+
 		while (hasNextElement()) {
 			p.process(getNextElement());
 		}

@@ -3,10 +3,10 @@ package hr.fer.zemris.java.custom.scripting.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
@@ -23,88 +23,104 @@ import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
 
 class SmartScriptParserTest {
 
-	private static DocumentNode runParserOnFile(String filepath) throws IOException {
-		String docBody = new String(
-				Files.readAllBytes(Paths.get(filepath)),
-				StandardCharsets.UTF_8);
+	private String loader(String filename) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-		SmartScriptParser parser = null;
+		try(InputStream is =
+				this.getClass().getClassLoader().getResourceAsStream(filename)) {
 
-		parser = new SmartScriptParser(docBody);
+			byte[] buffer = new byte[1024];
+
+			while(true) {
+				int read = is.read(buffer);
+				if(read<1) {
+					break;
+				}
+				bos.write(buffer, 0, read);
+			}
+
+			return new String(bos.toByteArray(), StandardCharsets.UTF_8);
+		} catch(IOException ex) {
+			return null;
+		}
+	}
+
+	private DocumentNode runParserOnFile(String filepath) {
+		SmartScriptParser parser = new SmartScriptParser(loader(filepath));
 
 		return parser.getDocumentNode();
 	}
 
 	@Test
-	void testParseForLoopTagWithoutEndTag() throws IOException {
-		assertThrows(SmartScriptParserException.class, () -> runParserOnFile("src/test/resources/invalid/forLoopWithoutEndTag.txt"));
+	void testParseForLoopTagWithoutEndTag()  {
+		assertThrows(SmartScriptParserException.class, () -> runParserOnFile("invalid/forLoopWithoutEndTag.txt"));
 	}
 
 	@Test
-	void testParseUndefinedTag() throws IOException {
-		assertThrows(SmartScriptParserException.class, () -> runParserOnFile("src/test/resources/invalid/undefinedTagName.txt"));
+	void testParseUndefinedTag()  {
+		assertThrows(SmartScriptParserException.class, () -> runParserOnFile("invalid/undefinedTagName.txt"));
 	}
 
 	@Test
-	void testParseTooManyArgumentsToForLoop() throws IOException {
-		assertThrows(SmartScriptParserException.class, () -> runParserOnFile("src/test/resources/invalid/tooManyArgumentsToForLoop.txt"));
+	void testParseTooManyArgumentsToForLoop()  {
+		assertThrows(SmartScriptParserException.class, () -> runParserOnFile("invalid/tooManyArgumentsToForLoop.txt"));
 	}
 
 	@Test
-	void testParseTooFewArgumentsToForLoop() throws IOException {
-		assertThrows(SmartScriptParserException.class, () -> runParserOnFile("src/test/resources/invalid/tooFewArgumentsToForLoop.txt"));
+	void testParseTooFewArgumentsToForLoop()  {
+		assertThrows(SmartScriptParserException.class, () -> runParserOnFile("invalid/tooFewArgumentsToForLoop.txt"));
 	}
 
 	@Test
-	void testParseInvalidVariableName() throws IOException {
-		assertThrows(SmartScriptParserException.class, () -> runParserOnFile("src/test/resources/invalid/invalidVariableName.txt"));
+	void testParseInvalidVariableName()  {
+		assertThrows(SmartScriptParserException.class, () -> runParserOnFile("invalid/invalidVariableName.txt"));
 	}
 
 	@Test
-	void testReparsingDocument1() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document1.txt");
+	void testReparsingDocument1()  {
+		DocumentNode parsed = runParserOnFile("document1.txt");
 
 		assertEquals(parsed, new SmartScriptParser(parsed.toString()).getDocumentNode());
 	}
 
 	@Test
-	void testReparsingDocument2() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document2.txt");
+	void testReparsingDocument2()  {
+		DocumentNode parsed = runParserOnFile("document2.txt");
 
 		assertEquals(parsed, new SmartScriptParser(parsed.toString()).getDocumentNode());
 	}
 
 	@Test
-	void testReparsingDocument3() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document3.txt");
+	void testReparsingDocument3()  {
+		DocumentNode parsed = runParserOnFile("document3.txt");
 
 		assertEquals(parsed, new SmartScriptParser(parsed.toString()).getDocumentNode());
 	}
 
 	@Test
-	void testReparsingDocument4() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document4.txt");
+	void testReparsingDocument4()  {
+		DocumentNode parsed = runParserOnFile("document4.txt");
 
 		assertEquals(parsed, new SmartScriptParser(parsed.toString()).getDocumentNode());
 	}
 
 	@Test
-	void testReparsingDocument5() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document5.txt");
+	void testReparsingDocument5()  {
+		DocumentNode parsed = runParserOnFile("document5.txt");
 
 		assertEquals(parsed, new SmartScriptParser(parsed.toString()).getDocumentNode());
 	}
 
 	@Test
-	void testReparsingDocument6() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document6.txt");
+	void testReparsingDocument6()  {
+		DocumentNode parsed = runParserOnFile("document6.txt");
 
 		assertEquals(parsed, new SmartScriptParser(parsed.toString()).getDocumentNode());
 	}
 
 	@Test
-	void testParsingDocument1Manually() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document1.txt");
+	void testParsingDocument1Manually()  {
+		DocumentNode parsed = runParserOnFile("document1.txt");
 
 		DocumentNode expected = new DocumentNode();
 
@@ -156,8 +172,8 @@ class SmartScriptParserTest {
 	}
 
 	@Test
-	void testParsingDocument2Manually() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document2.txt");
+	void testParsingDocument2Manually()  {
+		DocumentNode parsed = runParserOnFile("document2.txt");
 
 		DocumentNode expected = new DocumentNode();
 
@@ -193,8 +209,8 @@ class SmartScriptParserTest {
 	}
 
 	@Test
-	void testParsingDocument3Manually() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document3.txt");
+	void testParsingDocument3Manually()  {
+		DocumentNode parsed = runParserOnFile("document3.txt");
 
 		DocumentNode expected = new DocumentNode();
 
@@ -222,8 +238,8 @@ class SmartScriptParserTest {
 	}
 
 	@Test
-	void testParsingDocument4Manually() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document4.txt");
+	void testParsingDocument4Manually()  {
+		DocumentNode parsed = runParserOnFile("document4.txt");
 
 		DocumentNode expected = new DocumentNode();
 
@@ -273,8 +289,8 @@ class SmartScriptParserTest {
 	}
 
 	@Test
-	void testParsingDocument5Manually() throws IOException {
-		DocumentNode parsed = runParserOnFile("src/test/resources/document5.txt");
+	void testParsingDocument5Manually()  {
+		DocumentNode parsed = runParserOnFile("document5.txt");
 
 		DocumentNode expected = new DocumentNode();
 

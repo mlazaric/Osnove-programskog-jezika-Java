@@ -153,8 +153,7 @@ public class Lexer {
 		while (currentIndex < data.length && isValidPartOfWord(data[currentIndex])) {
 			if (data[currentIndex] == '\\') {
 				if (data.length > (currentIndex + 1) &&
-						(data[currentIndex + 1] == '\\' ||
-						isDigit(data[currentIndex + 1]))) {
+						(data[currentIndex + 1] == '\\' || isDigit(data[currentIndex + 1]))) {
 
 					sb.append(data[currentIndex + 1]);
 
