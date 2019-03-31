@@ -1,6 +1,10 @@
 package hr.fer.zemris.math;
 
+import java.util.Objects;
+
 public class Vector2D {
+
+	private static double THRESHOLD = 1E-6;
 
 	private double x, y;
 
@@ -62,4 +66,32 @@ public class Vector2D {
 	public Vector2D copy() {
 		return new Vector2D(x, y);
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(x, y);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Vector2D)) {
+			return false;
+		}
+
+		Vector2D other = (Vector2D) obj;
+
+		return Math.abs(x - other.x) < THRESHOLD && Math.abs(y - other.y) < THRESHOLD;
+	}
+
+	@Override
+	public String toString() {
+		return "Vector2D [x=" + x + ", y=" + y + "]";
+	}
+
 }
