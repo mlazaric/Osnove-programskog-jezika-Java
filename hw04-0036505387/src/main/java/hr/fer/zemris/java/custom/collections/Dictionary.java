@@ -6,8 +6,6 @@ public class Dictionary<K, V> {
 
 	private final ArrayIndexedCollection<DictionaryEntry<K, V>> entries;
 
-
-
 	public Dictionary() {
 		this.entries = new ArrayIndexedCollection<>();
 	}
@@ -24,31 +22,49 @@ public class Dictionary<K, V> {
 		entries.clear();
 	}
 
+	private DictionaryEntry<K, V> findKeyOrReturnNull(Object key) {
+		if (isEmpty()) {
+			return null;
+		}
+
+		ElementsGetter<DictionaryEntry<K, V>> iterator = entries.createElementsGetter();
+
+		for (DictionaryEntry<K, V> entry = iterator.getNextElement(); ; entry = iterator.getNextElement()) {
+			if (entry.key.equals(key)) {
+				return entry;
+			}
+
+			if (!iterator.hasNextElement()) {
+				return null;
+			}
+		}
+	}
+
 	public void put(K key, V value) {
 		Objects.requireNonNull(key, "Key cannot be null.");
 
-		int index = entries.indexOf(key);
+		DictionaryEntry<K, V> entry = findKeyOrReturnNull(key);
 
-		if (index == ArrayIndexedCollection.VALUE_NOT_FOUND_RETURN_VALUE) {
+		if (entry == null) {
 			entries.add(new DictionaryEntry<>(key, value));
 		}
 		else {
-			entries.get(index).value = value;
+			entry.value = value;
 		}
 	}
 
 	public V get(Object key) {
-		int index = entries.indexOf(key);
+		DictionaryEntry<K, V> entry = findKeyOrReturnNull(key);
 
-		if (index == ArrayIndexedCollection.VALUE_NOT_FOUND_RETURN_VALUE) {
+		if (entry == null) {
 			return null;
 		}
 
-		return entries.get(index).value;
+		return entry.value;
 	}
 
 	private static class DictionaryEntry<K, V> {
-		private K key;
+		private final K key;
 		private V value;
 
 		public DictionaryEntry(K key, V value) {
@@ -57,25 +73,10 @@ public class Dictionary<K, V> {
 		}
 
 		@Override
-		public int hashCode() {
-			return Objects.hash(key);
+		public String toString() {
+			return key + "=" + value;
 		}
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (!(obj instanceof DictionaryEntry)) {
-				return false;
-			}
 
-			DictionaryEntry<?, ?> other = (DictionaryEntry<?, ?>) obj;
-
-			return Objects.equals(key, other.key);
-		}
 	}
 }
