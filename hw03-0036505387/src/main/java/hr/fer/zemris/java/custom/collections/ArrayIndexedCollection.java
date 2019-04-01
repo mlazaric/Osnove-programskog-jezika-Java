@@ -33,6 +33,9 @@ public class ArrayIndexedCollection implements List {
 	 */
 	private Object[] elements;
 
+	/**
+	 * Number of modifications made to the collection, used for {@link ArrayElementGetter}.
+	 */
 	private long modificationCount = 0;
 
 	/**
@@ -406,6 +409,10 @@ public class ArrayIndexedCollection implements List {
 		 */
 		@Override
 		public boolean hasNextElement() {
+			if (savedModificationCount != collection.modificationCount) {
+				throw new ConcurrentModificationException("The collection has been modified.");
+			}
+
 			return currentIndex < collection.size;
 		}
 

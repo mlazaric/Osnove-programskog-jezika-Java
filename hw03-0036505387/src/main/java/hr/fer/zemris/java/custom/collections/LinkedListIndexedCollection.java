@@ -32,6 +32,9 @@ public class LinkedListIndexedCollection implements List {
 	 */
 	private ListNode last;
 
+	/**
+	 * Number of modifications made to the collection, used for {@link LinkedListElementGetter}.
+	 */
 	private long modificationCount = 0;
 
 	/**
@@ -400,6 +403,10 @@ public class LinkedListIndexedCollection implements List {
 		 */
 		@Override
 		public boolean hasNextElement() {
+			if (savedModificationCount != collection.modificationCount) {
+				throw new ConcurrentModificationException("The collection has been modified.");
+			}
+
 			return current != null;
 		}
 
