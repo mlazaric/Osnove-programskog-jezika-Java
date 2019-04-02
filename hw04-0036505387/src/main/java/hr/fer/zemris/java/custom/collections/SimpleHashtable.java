@@ -5,7 +5,8 @@ import java.util.Objects;
 
 public class SimpleHashtable<K, V> {
 
-	private static final int DEFAULT_CAPACITY = 16;
+	public static final int MINIMUM_CAPACITY = 1;
+	public static final int DEFAULT_CAPACITY = 16;
 	private static final double CUTOFF_POINT = 0.75;
 
 	private TableEntry<K, V>[] table;
@@ -17,11 +18,11 @@ public class SimpleHashtable<K, V> {
 
 	@SuppressWarnings("unchecked")
 	public SimpleHashtable(int capacity) {
-		if (capacity < 1) {
+		if (capacity < MINIMUM_CAPACITY) {
 			throw new IllegalArgumentException("Number of slots must be greater than 0.");
 		}
 
-		this.table = (TableEntry<K, V>[]) new Object[greaterThanOrEqualPowerOf2(capacity)];
+		this.table = new TableEntry[greaterThanOrEqualPowerOf2(capacity)];
 	}
 
 	private int greaterThanOrEqualPowerOf2(int number) {
@@ -37,7 +38,7 @@ public class SimpleHashtable<K, V> {
 	private int getSlotFromKey(Object key) {
 		Objects.requireNonNull(key, "Key cannot be null.");
 
-		return key.hashCode() % table.length;
+		return Math.abs(key.hashCode()) % table.length;
 	}
 
 	private TableEntry<K, V> findKey(Object key) {
@@ -53,10 +54,10 @@ public class SimpleHashtable<K, V> {
 		return prev;
 	}
 
-	private TableEntry<K, V> findValue(Object key) {
+	private TableEntry<K, V> findValue(Object value) {
 		for (TableEntry<K, V> slot : table) {
 			for (TableEntry<K, V> current = slot; current != null; current = current.next) {
-				if (current.value.equals(key)) {
+				if (Objects.equals(value, current.value)) {
 					return current;
 				}
 			}
@@ -71,7 +72,7 @@ public class SimpleHashtable<K, V> {
 
 		if (percentFilled >= CUTOFF_POINT) {
 			TableEntry<K, V>[] oldTable = table;
-			table = (TableEntry<K, V>[]) new Object[this.table.length * 2];
+			table = new TableEntry[this.table.length * 2];
 
 			for (TableEntry<K, V> firstInSlot : oldTable) {
 				for (TableEntry<K, V> current = firstInSlot; current != null; current = current.next) {
@@ -143,7 +144,7 @@ public class SimpleHashtable<K, V> {
 	}
 
 	public boolean containsValue(Object value) {
-		return findValue(value) == null;
+		return findValue(value) != null;
 	}
 
 	public void remove(Object key) {
@@ -198,6 +199,10 @@ public class SimpleHashtable<K, V> {
 
 	public void clear() {
 		Arrays.fill(table, null);
+	}
+
+	public int getCapacity() {
+		return table.length;
 	}
 
 	private static class TableEntry<K, V> {
