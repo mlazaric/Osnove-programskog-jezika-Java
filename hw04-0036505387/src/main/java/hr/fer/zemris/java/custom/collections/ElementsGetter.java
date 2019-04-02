@@ -9,6 +9,7 @@ import java.util.Objects;
  *
  * @author Marko Lazarić
  *
+ * @param <T> type of objects it is iterating over
  */
 public interface ElementsGetter<T> {
 

@@ -1,6 +1,7 @@
 package hr.fer.zemris.math;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -34,8 +35,18 @@ class Vector2DTest {
 	}
 
 	@Test
+	void testTranslateByNull() {
+		assertThrows(NullPointerException.class, () -> new Vector2D(1, 2).translate(null));
+	}
+
+	@Test
 	void testTranslated() {
 		assertEquals(new Vector2D(-5, -10), new Vector2D(5, 10).translated(new Vector2D(-10, -20)));
+	}
+
+	@Test
+	void testTranslatedByNull() {
+		assertThrows(NullPointerException.class, () -> new Vector2D(1, 2).translated(null));
 	}
 
 	@Test

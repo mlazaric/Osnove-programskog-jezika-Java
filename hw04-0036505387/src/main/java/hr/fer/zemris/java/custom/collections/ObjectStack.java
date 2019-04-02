@@ -6,6 +6,8 @@ package hr.fer.zemris.java.custom.collections;
  *
  * @author Marko Lazarić
  *
+ * @param <E> type of elements on the stack
+ *
  */
 public class ObjectStack<E> {
 

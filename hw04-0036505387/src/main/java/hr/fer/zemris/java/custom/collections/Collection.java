@@ -7,6 +7,8 @@ import java.util.Objects;
  *
  * @author Marko Lazarić
  *
+ * @param <E> type of elements in the collection
+ *
  */
 public interface Collection<E> {
 

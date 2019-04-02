@@ -5,6 +5,8 @@ package hr.fer.zemris.java.custom.collections;
  *
  * @author Marko Lazarić
  *
+ * @param <E> type of elements in the list
+ *
  */
 public interface List<E> extends Collection<E> {
 

@@ -10,6 +10,8 @@ import java.util.Objects;
  *
  * @author Marko Lazarić
  *
+ * @param <E> type of elements in the collection
+ *
  */
 public class ArrayIndexedCollection<E> implements List<E> {
 
@@ -33,6 +35,9 @@ public class ArrayIndexedCollection<E> implements List<E> {
 	 */
 	private E[] elements;
 
+	/**
+	 * Number of modifications made to the collection, used for {@link ArrayElementGetter}.
+	 */
 	private long modificationCount = 0;
 
 	/**
@@ -409,6 +414,10 @@ public class ArrayIndexedCollection<E> implements List<E> {
 		 */
 		@Override
 		public boolean hasNextElement() {
+			if (savedModificationCount != collection.modificationCount) {
+				throw new ConcurrentModificationException("The collection has been modified.");
+			}
+
 			return currentIndex < collection.size;
 		}
 
