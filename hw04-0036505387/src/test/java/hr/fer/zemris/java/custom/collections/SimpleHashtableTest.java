@@ -6,7 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ConcurrentModificationException;
+
 import org.junit.jupiter.api.Test;
+
+import hr.fer.zemris.java.custom.collections.SimpleHashtable.TableEntry;
 
 class SimpleHashtableTest {
 
@@ -251,4 +255,129 @@ class SimpleHashtableTest {
 		assertFalse(createHashTableWithNElements(5).isEmpty());
 	}
 
+	@Test
+	void testDoublesSize() {
+		var table = new SimpleHashtable<Integer, Integer>(1);
+
+		assertEquals(1, table.getCapacity());
+
+		table.put(1, 1); // 1 / 1 slots filled = 100% - needs to double the capacity
+
+		assertEquals(2, table.getCapacity());
+
+		table.put(2, 2); // 2 / 2 slots filled = 100% - needs to double the capacity
+
+		assertEquals(4, table.getCapacity());
+
+		table.put(3, 3); // 3 / 4 slots filled = 75% - needs to double the capacity
+
+		assertEquals(8, table.getCapacity());
+
+		table.put(4, 4); // 4 / 8 slots filled = 50%
+
+		assertEquals(8, table.getCapacity());
+
+		table.put(5, 5); // 5 / 8 slots filled = 62.5%
+
+		assertEquals(8, table.getCapacity());
+
+		table.put(6, 6); // 6 / 8 slots filled = 75% - needs to double the capacity
+
+		assertEquals(16, table.getCapacity());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testIteratingExampleFromPDF() {
+		// create collection:
+		SimpleHashtable<String, Integer> examMarks = new SimpleHashtable<>(2);
+		SimpleHashtable.TableEntry<String, Integer>[] table = new TableEntry[]{
+				new SimpleHashtable.TableEntry<>("Ante", 2),
+				new SimpleHashtable.TableEntry<>("Ivana", 5),
+				new SimpleHashtable.TableEntry<>("Jasna", 2),
+				new SimpleHashtable.TableEntry<>("Kristina", 5),
+		};
+
+		int index = 0;
+
+		// fill data:
+		examMarks.put("Ivana", 2);
+		examMarks.put("Ante", 2);
+		examMarks.put("Jasna", 2);
+		examMarks.put("Kristina", 5);
+		examMarks.put("Ivana", 5); // overwrites old grade for Ivana
+
+		for(SimpleHashtable.TableEntry<String, Integer> pair : examMarks) {
+			assertEquals(table[index], pair);
+
+			++index;
+		}
+	}
+
+	@Test
+	void testIteratingAndRemovingElementThroughIteratorOnce() {
+		var table = createHashTableWithNElements(10);
+		var iterator = table.iterator();
+
+		while (iterator.hasNext()) {
+			var current = iterator.next();
+
+			if (current.getKey().equals("5")) {
+				iterator.remove();
+			}
+		}
+
+		assertEquals(9, table.size());
+	}
+
+	@Test
+	void testIteratingAndRemovingElementThroughIteratorTwice() {
+		var table = createHashTableWithNElements(10);
+		var iterator = table.iterator();
+
+		while (iterator.hasNext()) {
+			var current = iterator.next();
+
+			if (current.getKey().equals("5")) {
+				iterator.remove();
+
+				assertThrows(IllegalStateException.class, iterator::remove);
+			}
+		}
+	}
+
+	@Test
+	void testIteratingAndRemovingElementThroughTheHashTable() {
+		var table = createHashTableWithNElements(10);
+		var iterator = table.iterator();
+
+		while (iterator.hasNext()) {
+			var current = iterator.next();
+
+			if (current.getKey().equals("5")) {
+				table.remove("0");
+
+				assertThrows(ConcurrentModificationException.class, iterator::hasNext);
+				assertThrows(ConcurrentModificationException.class, iterator::next);
+				assertThrows(ConcurrentModificationException.class, iterator::remove);
+
+				return;
+			}
+		}
+	}
+
+	@Test
+	void testIteratingAndRemovingExampleFromPDF() {
+		var table = createHashTableWithNElements(5);
+		var iter = table.iterator();
+
+		while(iter.hasNext()) {
+			iter.next();
+
+			iter.remove();
+		}
+
+		assertEquals(0, table.size());
+		assertTrue(table.isEmpty());
+	}
 }
