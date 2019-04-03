@@ -60,6 +60,10 @@ public class Dictionary<K, V> {
 	 *         {@code null} if no such {@link DictionaryEntry} has been found.
 	 */
 	private DictionaryEntry<K, V> findKeyOrReturnNull(Object key) {
+		if (key == null) {
+			return null;
+		}
+
 		if (isEmpty()) {
 			return null;
 		}

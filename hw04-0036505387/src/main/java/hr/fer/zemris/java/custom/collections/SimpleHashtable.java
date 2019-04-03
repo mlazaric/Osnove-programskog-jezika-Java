@@ -45,11 +45,6 @@ public class SimpleHashtable<K, V> implements Iterable<TableEntry<K, V>>{
 	private int size;
 
 	/**
-	 * Number of slots which have at least one key-value pair in them.
-	 */
-	private int numberOfFilledSlots;
-
-	/**
 	 * Number of modifications of this table, used by {@link IteratorImpl}.
 	 */
 	private long modificationCount;
@@ -153,23 +148,16 @@ public class SimpleHashtable<K, V> implements Iterable<TableEntry<K, V>>{
 	 */
 	@SuppressWarnings("unchecked")
 	private void doubleIfNecessary() {
-		double percentFilled = numberOfFilledSlots / (double) table.length;
+		double percentFilled = size / (double) table.length;
 
 		if (percentFilled >= CUTOFF_POINT) {
 			TableEntry<K, V>[] oldTable = table;
-			table = new TableEntry[this.table.length * 2];
-			numberOfFilledSlots = 0;
+			table = new TableEntry[2 * table.length];
+			size = 0;
 
 			for (TableEntry<K, V> firstInSlot : oldTable) {
 				for (TableEntry<K, V> current = firstInSlot; current != null; current = current.next) {
-					int slot = getSlotFromKey(current.key);
-
-					if (table[slot] == null) {
-						++numberOfFilledSlots;
-					}
-
-					current.next = table[slot];
-					table[slot] = current;
+					put(current.key, current.value);
 				}
 			}
 
@@ -192,7 +180,6 @@ public class SimpleHashtable<K, V> implements Iterable<TableEntry<K, V>>{
 		if (slotIsEmpty(key)) { // If the slot is empty, we know it doesn't contain the specified key
 			table[getSlotFromKey(key)] = new TableEntry<>(key, value);
 			++size;
-			++numberOfFilledSlots;
 			modificationCount++;
 		}
 		else {
@@ -352,7 +339,7 @@ public class SimpleHashtable<K, V> implements Iterable<TableEntry<K, V>>{
 					first = false;
 				}
 
-				sb.append(slot.toString());
+				sb.append(current.toString());
 			}
 		}
 
@@ -395,7 +382,7 @@ public class SimpleHashtable<K, V> implements Iterable<TableEntry<K, V>>{
 	 * @param <K> type of keys
 	 * @param <V> type of values
 	 */
-	protected static class TableEntry<K, V> {
+	public static class TableEntry<K, V> {
 
 		/**
 		 * The key of this key-value pair.
