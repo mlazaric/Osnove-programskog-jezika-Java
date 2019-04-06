@@ -6,4 +6,9 @@ public class SkipCommand extends MoveCommand {
 		super(step, false);
 	}
 
+	@Override
+	public String toString() {
+		return "SkipCommand [toString()=" + super.toString() + "]";
+	}
+
 }

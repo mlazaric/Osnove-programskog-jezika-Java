@@ -6,4 +6,9 @@ public class DrawCommand extends MoveCommand {
 		super(step, true);
 	}
 
+	@Override
+	public String toString() {
+		return "DrawCommand [toString()=" + super.toString() + "]";
+	}
+
 }

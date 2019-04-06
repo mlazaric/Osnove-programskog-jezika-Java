@@ -31,4 +31,9 @@ public class PopCommand implements Command {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "PopCommand []";
+	}
+
 }

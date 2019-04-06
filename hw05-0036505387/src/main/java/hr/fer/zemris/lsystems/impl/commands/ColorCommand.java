@@ -42,4 +42,9 @@ public class ColorCommand implements Command {
 		return Objects.equals(color, other.color);
 	}
 
+	@Override
+	public String toString() {
+		return "ColorCommand [color=" + color + "]";
+	}
+
 }

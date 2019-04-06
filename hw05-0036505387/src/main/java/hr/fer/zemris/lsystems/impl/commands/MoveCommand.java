@@ -55,4 +55,9 @@ public abstract class MoveCommand implements Command {
 		return drawLine == other.drawLine && Double.doubleToLongBits(step) == Double.doubleToLongBits(other.step);
 	}
 
+	@Override
+	public String toString() {
+		return "MoveCommand [step=" + step + ", drawLine=" + drawLine + "]";
+	}
+
 }

@@ -31,4 +31,9 @@ public class PushCommand implements Command {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "PushCommand []";
+	}
+
 }

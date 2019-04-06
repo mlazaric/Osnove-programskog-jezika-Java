@@ -40,4 +40,9 @@ public class RotateCommand implements Command {
 
 		return Double.doubleToLongBits(angle) == Double.doubleToLongBits(other.angle);
 	}
+
+	@Override
+	public String toString() {
+		return "RotateCommand [angle=" + angle + "]";
+	}
 }

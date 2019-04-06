@@ -41,6 +41,9 @@ public class ScaleCommand implements Command {
 		return Double.doubleToLongBits(factor) == Double.doubleToLongBits(other.factor);
 	}
 
-
+	@Override
+	public String toString() {
+		return "ScaleCommand [factor=" + factor + "]";
+	}
 
 }
