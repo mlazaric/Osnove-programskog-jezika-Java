@@ -38,6 +38,14 @@
       <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>hr.fer.zemris.java.jmbag0036505387</groupId>
+      <artifactId>lsystems</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/lsystems.jar</systemPath>
+	</dependency>
   </dependencies>
 
   <build>
