@@ -1,5 +1,7 @@
 package hr.fer.zemris.lsystems.impl;
 
+import java.awt.Color;
+
 import hr.fer.zemris.java.custom.collections.Dictionary;
 import hr.fer.zemris.lsystems.LSystem;
 import hr.fer.zemris.lsystems.LSystemBuilder;
@@ -89,7 +91,19 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 
 		@Override
 		public void draw(int level, Painter painter) {
-			// TODO
+			Context context = new Context();
+			context.pushState(new TurtleState(origin.copy(), new Vector2D(1, 0).rotated(angle), Color.BLACK, unitLength * Math.pow(unitLengthDegreeScaler, level)));
+
+			String generated = generate(level);
+			char[] commandCharacters = generated.toCharArray();
+
+			for (char command : commandCharacters) {
+				Command com = commands.get(command);
+
+				if (com != null) {
+					com.execute(context, painter);
+				}
+			}
 		}
 
 		@Override

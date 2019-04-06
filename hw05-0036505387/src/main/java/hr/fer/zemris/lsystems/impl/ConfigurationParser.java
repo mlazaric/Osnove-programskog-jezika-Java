@@ -45,7 +45,7 @@ public abstract class ConfigurationParser {
 				break;
 	
 			case "production":
-				throwIfWrongNumberOfArguments(3, numberOfArguments);
+				throwIfWrongNumberOfArguments(2, numberOfArguments);
 				builder.registerProduction(parts[1].charAt(0), parts[2]);
 				break;
 	

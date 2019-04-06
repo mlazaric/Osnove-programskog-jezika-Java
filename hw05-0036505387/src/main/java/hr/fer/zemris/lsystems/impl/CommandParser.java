@@ -55,7 +55,7 @@ public abstract class CommandParser {
 
 	private static Color parseColorOrThrow(String color) {
 		try {
-			return Color.decode(color);
+			return Color.decode("#" + color);
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("'" + color + "' is not a valid color.");
 		}
