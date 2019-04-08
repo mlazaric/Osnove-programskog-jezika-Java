@@ -2,7 +2,9 @@ package hr.fer.zemris.lsystems.impl;
 
 import hr.fer.zemris.lsystems.LSystemBuilder;
 
-public abstract class ConfigurationParser {
+public final class ConfigurationParser {
+	
+	private ConfigurationParser() {}
 
 	public static void parse(String line, LSystemBuilder builder) {
 		if (line.isBlank()) {

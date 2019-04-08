@@ -11,8 +11,10 @@ import hr.fer.zemris.lsystems.impl.commands.RotateCommand;
 import hr.fer.zemris.lsystems.impl.commands.ScaleCommand;
 import hr.fer.zemris.lsystems.impl.commands.SkipCommand;
 
-public abstract class CommandParser {
+public final class CommandParser {
 
+	private CommandParser() {}
+	
 	public static Command parse(String command) {
 		Objects.requireNonNull(command, "Cannot parse a null command.");
 
