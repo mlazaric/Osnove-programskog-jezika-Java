@@ -5,15 +5,17 @@ package hr.fer.zemris.java.custom.collections;
  *
  * @author Marko Lazarić
  *
+ * @param <T> type of object to process
+ *
  */
 @FunctionalInterface
-public interface Processor {
+public interface Processor<T> {
 
 	/**
 	 * Performs an operation on the {@code value}.
 	 *
 	 * @param value the object to process
 	 */
-	void process(Object value);
+	void process(T value);
 
 }
