@@ -217,7 +217,7 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 			Objects.requireNonNull(painter, "Cannot paint using null painter");
 
 			Context context = new Context();
-			context.pushState(new TurtleState(origin.copy(), new Vector2D(1, 0).rotated(angle), Color.BLACK, unitLength * Math.pow(unitLengthDegreeScaler, level)));
+			context.pushState(new TurtleState(origin.copy(), new Vector2D(1, 0).rotated(Math.toRadians(angle)), Color.BLACK, unitLength * Math.pow(unitLengthDegreeScaler, level)));
 
 			String generated = generate(level);
 			char[] commandCharacters = generated.toCharArray();

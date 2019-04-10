@@ -14,7 +14,21 @@ import hr.fer.zemris.java.hw05.db.RecordFormatter;
 import hr.fer.zemris.java.hw05.db.StudentDatabase;
 import hr.fer.zemris.java.hw05.db.StudentRecord;
 
+/**
+ * Demonstration program for the student database.
+ *
+ * @author Marko Lazarić
+ *
+ */
 public class StudentDB {
+
+	/**
+	 * Continually asks the user for input and if the user inputs a valid query
+	 * prints the results in a nice table. Otherwise, it prints a relevant error
+	 * message.
+	 *
+	 * @param args arguments are ignored
+	 */
 	public static void main(String[] args) {
 		StudentDatabase database = safeParseDatabase(safeReadLinesFromFile());
 		Scanner sc = new Scanner(System.in);
@@ -26,7 +40,9 @@ public class StudentDB {
 
 			if (keyWord.equals("query")) {
 				try {
-					printQueryResults(database, query);
+					List<StudentRecord> records = getQueryResults(database, query);
+
+					RecordFormatter.format(records).forEach(System.out::println);
 				}
 				catch (IllegalArgumentException e) {
 					System.out.println(e.getMessage());
@@ -47,7 +63,14 @@ public class StudentDB {
 		sc.close();
 	}
 
-	private static void printQueryResults(StudentDatabase database, String query) {
+	/**
+	 * Queries the database and returns the result.
+	 *
+	 * @param database the database to query
+	 * @param query the query to use
+	 * @return the results of the query
+	 */
+	private static List<StudentRecord> getQueryResults(StudentDatabase database, String query) {
 		QueryParser parser = new QueryParser(query);
 		List<StudentRecord> records;
 
@@ -66,9 +89,15 @@ public class StudentDB {
 			records = database.filter(new QueryFilter(parser.getQuery()));
 		}
 
-		RecordFormatter.format(records).forEach(System.out::println);
+		return records;
 	}
 
+	/**
+	 * Safely parse the database from the list of lines.
+	 *
+	 * @param lines the list of records in textual format
+	 * @return the parsed database
+	 */
 	private static StudentDatabase safeParseDatabase(List<String> lines) {
 		StudentDatabase database = null;
 
@@ -82,6 +111,11 @@ public class StudentDB {
 		return database;
 	}
 
+	/**
+	 * Safely read all lines from ./database.txt.
+	 *
+	 * @return list of lines read from ./database.txt
+	 */
 	private static List<String> safeReadLinesFromFile() {
 		List<String> lines = null;
 
