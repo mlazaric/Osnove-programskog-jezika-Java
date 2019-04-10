@@ -5,22 +5,26 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 class StudentDatabaseTest {
 
-	private static IFilter ALL = e -> true;
-	private static IFilter NONE = e -> false;
+	// Query tests are in QueryFilterTest
 
-	private static StudentDatabase getDatabase() {
+	static IFilter ALL = e -> true;
+	static IFilter NONE = e -> false;
+
+	static StudentDatabase getDatabase() {
 		try {
-			Object[] objs = Files.lines(Paths.get("src/test/resources/database.txt")).toArray();
-			String[] lines = Arrays.copyOf(objs, objs.length, String[].class);
+			List<String> lines = Files.readAllLines(
+					Paths.get("src/test/resources/database.txt"),
+					StandardCharsets.UTF_8
+					);
 
 			return new StudentDatabase(lines);
 		} catch (IOException e) {
