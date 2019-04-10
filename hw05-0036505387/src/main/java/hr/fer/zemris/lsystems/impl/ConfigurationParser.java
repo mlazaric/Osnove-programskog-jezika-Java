@@ -1,12 +1,35 @@
 package hr.fer.zemris.lsystems.impl;
 
+import java.util.Objects;
+
 import hr.fer.zemris.lsystems.LSystemBuilder;
 
+/**
+ * Helper class for parsing configuration strings.
+ *
+ * @author Marko Lazarić
+ *
+ */
 public final class ConfigurationParser {
-	
+
+	/**
+	 * This class should not be instanced.
+	 */
 	private ConfigurationParser() {}
 
+	/**
+	 * Parse a configuration line.
+	 *
+	 * @param line the line to parse
+	 * @param builder the builder to configure
+	 *
+	 * @throws IllegalArgumentException if it is not a valid configuration line
+	 * @throws NullPointerException if either argument is {@code null}
+	 */
 	public static void parse(String line, LSystemBuilder builder) {
+		Objects.requireNonNull(line, "Cannot parse a null line.");
+		Objects.requireNonNull(builder, "Cannot configure a null builder.");
+		
 		if (line.isBlank()) {
 			return;
 		}
@@ -56,6 +79,14 @@ public final class ConfigurationParser {
 		}
 	}
 
+	/**
+	 * Parses a line configuring unitLengthDegreeScaler.
+	 *
+	 * @param line the line to parse
+	 * @param builder the builder to configure
+	 *
+	 * @throws IllegalArgumentException if it is not a valid unitLengthDegreeScaler configuration line
+	 */
 	private static void parseUnitLengthDegreeScaler(String line, LSystemBuilder builder) {
 		if (line.contains("/")) {
 			// unitLengthDegreeScaler 1.0 / 3.0
@@ -76,6 +107,14 @@ public final class ConfigurationParser {
 		}
 	}
 
+	/**
+	 * Parses a double from string or throws {@link IllegalArgumentException}.
+	 *
+	 * @param number the string to parse as double
+	 * @return the parsed double
+	 *
+	 * @throws IllegalArgumentException if the string does not represent a valid double
+	 */
 	private static double parseDoubleOrThrow(String number) {
 		try {
 			return Double.parseDouble(number);
@@ -84,6 +123,14 @@ public final class ConfigurationParser {
 		}
 	}
 
+	/**
+	 * Checks expected and real number of arguments, if they are not equal, it throws an {@link IllegalArgumentException}.
+	 *
+	 * @param expectedNumberOfArguments the expected number of arguments
+	 * @param realNumberOfArguments the real number of arguments
+	 *
+	 * @throws IllegalArgumentException if they are not equal
+	 */
 	private static void throwIfWrongNumberOfArguments(int expectedNumberOfArguments, int realNumberOfArguments) {
 		if (expectedNumberOfArguments != realNumberOfArguments) {
 			throw new IllegalArgumentException("Invalid number of arguments passed, expected " +
