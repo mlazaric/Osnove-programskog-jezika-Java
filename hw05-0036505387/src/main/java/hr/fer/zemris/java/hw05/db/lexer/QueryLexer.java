@@ -53,7 +53,7 @@ public class QueryLexer {
 			++currentIndex;
 		}
 
-		if (data[currentIndex] != '"') {
+		if (!isValidIndex()) {
 			throw new IllegalArgumentException("String was not closed.");
 		}
 

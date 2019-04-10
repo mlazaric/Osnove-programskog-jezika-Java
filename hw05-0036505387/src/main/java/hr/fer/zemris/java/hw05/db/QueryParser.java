@@ -1,7 +1,7 @@
 package hr.fer.zemris.java.hw05.db;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,9 +9,22 @@ import hr.fer.zemris.java.hw05.db.lexer.QueryLexer;
 import hr.fer.zemris.java.hw05.db.lexer.Token;
 import hr.fer.zemris.java.hw05.db.lexer.TokenType;
 
+/**
+ * Query parser for the simple {@link StudentDatabase}.
+ *
+ * @author Marko Lazarić
+ *
+ */
 public class QueryParser {
 
+	/**
+	 * The string to comparison operator mapping.
+	 */
 	private static final Map<String, IComparisonOperator> OPERATORS;
+
+	/**
+	 * The string to field value getter mapping.
+	 */
 	private static final Map<String, IFieldValueGetter> FIELDS;
 
 	static {
@@ -34,17 +47,41 @@ public class QueryParser {
 		FIELDS.put("lastName", FieldValueGetters.LAST_NAME);
 	}
 
+	/**
+	 * The lexer used for tokenising the input.
+	 */
 	private final QueryLexer lexer;
+
+	/**
+	 * The list of {@link ConditionalExpression}s representing the query.
+	 */
 	private final List<ConditionalExpression> query;
+
+	/**
+	 * Whether it has a {@link ConditionalExpression} where JMBAG is being compared with the equals operator.
+	 * Used in {@link #isDirectQuery()}.
+	 */
 	private boolean hasDirect;
 
+	/**
+	 * Creates a new {@link QueryParser} with the given arguments.
+	 *
+	 * @param input the string to parse
+	 *
+	 * @throws NullPointerException if {@code input} is {@code null}
+	 */
 	public QueryParser(String input) {
 		lexer = new QueryLexer(input);
-		query = new LinkedList<>();
+		query = new ArrayList<>();
 
 		parseQuery();
 	}
 
+	/**
+	 * Parses the query string and generates a list of {@link ConditionalExpression}s.
+	 *
+	 * @throws IllegalArgumentException if it is not a valid query
+	 */
 	private void parseQuery() {
 		while (true) {
 			ConditionalExpression expression = parseConditionalExpression();
@@ -60,12 +97,19 @@ public class QueryParser {
 				break;
 			}
 
-			if (lexer.getToken().getType() != TokenType.WORD || !lexer.getToken().getValue().equals("and")) {
+			if (lexer.getToken().getType() != TokenType.WORD || !lexer.getToken().getValue().equalsIgnoreCase("and")) {
 				throw new IllegalArgumentException("'" + lexer.getToken().getValue() + "' is not a valid part of a query.");
 			}
 		}
 	}
 
+	/**
+	 * Parses a single {@link ConditionalExpression}.
+	 *
+	 * @return the parsed {@link ConditionalExpression}
+	 *
+	 * @throws IllegalArgumentException if an invalid operator or field name is given
+	 */
 	private ConditionalExpression parseConditionalExpression() {
 		Token identifierToken = lexer.nextToken();
 		Token operatorToken = lexer.nextToken();
@@ -88,6 +132,19 @@ public class QueryParser {
 		return new ConditionalExpression(getter, stringLiteralToken.getValue(), operator);
 	}
 
+	/**
+	 * Check the order of the token types. <br/>
+	 * <br/>
+	 * The first token should be a {@link TokenType#WORD} containing the field name. <br/>
+	 * The second token should be a {@link TokenType#OPERATOR} or {@link TokenType#WORD} (LIKE operator). <br/>
+	 * The third token should be a {@link TokenType#STRING}.
+	 *
+	 * @param identifier the field name
+	 * @param operator the operator
+	 * @param stringLiteral the string literal
+	 *
+	 * @throws IllegalArgumentException if the {@link TokenType}s do not match
+	 */
 	private void checkTokenTypes(Token identifier, Token operator, Token stringLiteral) {
 		if (identifier.getType() != TokenType.WORD) {
 			throw new IllegalArgumentException("First argument of conditional expression should be an identifier.");
@@ -102,10 +159,22 @@ public class QueryParser {
 		}
 	}
 
+	/**
+	 * Returns whether this is a direct query and can be run in O(1).
+	 *
+	 * @return whether this is a direct query
+	 */
 	public boolean isDirectQuery() {
 		return hasDirect && query.size() == 1;
 	}
 
+	/**
+	 * If this is a direct query, returns the queried JMBAG. Otherwise it throws.
+	 *
+	 * @return the queried JMBAG
+	 *
+	 * @throws IllegalStateException if it is not a direct query
+	 */
 	public String getQueriedJMBAG() {
 		if (!isDirectQuery()) {
 			throw new IllegalStateException("Cannot get query JMBAG from indirect query.");
@@ -114,6 +183,11 @@ public class QueryParser {
 		return query.get(0).getStringLiteral();
 	}
 
+	/**
+	 * Returns a list of {@link ConditionalExpression}s representing the query.
+	 *
+	 * @return a list of {@link ConditionalExpression}s representing the query
+	 */
 	public List<ConditionalExpression> getQuery() {
 		return query;
 	}
