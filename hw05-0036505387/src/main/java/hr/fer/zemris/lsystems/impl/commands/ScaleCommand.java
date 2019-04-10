@@ -28,6 +28,11 @@ public class ScaleCommand implements Command {
 		this.factor = factor;
 	}
 
+	/**
+	 * Changes the factor to scale the turtle's movement with.
+	 *
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void execute(Context context, Painter painter) {
 		context.getCurrentState().setScaler(factor);
