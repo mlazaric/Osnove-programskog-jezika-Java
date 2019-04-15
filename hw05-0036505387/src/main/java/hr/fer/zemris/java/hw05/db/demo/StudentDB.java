@@ -43,6 +43,7 @@ public class StudentDB {
 					List<StudentRecord> records = getQueryResults(database, query);
 
 					RecordFormatter.format(records).forEach(System.out::println);
+					System.out.println();
 				}
 				catch (IllegalArgumentException e) {
 					System.out.println(e.getMessage());

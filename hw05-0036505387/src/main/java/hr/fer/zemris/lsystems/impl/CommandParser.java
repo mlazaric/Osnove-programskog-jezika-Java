@@ -1,6 +1,5 @@
 package hr.fer.zemris.lsystems.impl;
 
-import java.awt.Color;
 import java.util.Objects;
 
 import hr.fer.zemris.lsystems.impl.commands.ColorCommand;
@@ -10,6 +9,8 @@ import hr.fer.zemris.lsystems.impl.commands.PushCommand;
 import hr.fer.zemris.lsystems.impl.commands.RotateCommand;
 import hr.fer.zemris.lsystems.impl.commands.ScaleCommand;
 import hr.fer.zemris.lsystems.impl.commands.SkipCommand;
+
+import static hr.fer.zemris.lsystems.impl.ParserUtil.*;
 
 /**
  * Helper class for parsing commands from string.
@@ -70,53 +71,6 @@ public final class CommandParser {
 	
 			default:
 				throw new IllegalArgumentException("'" + command + "' is not a valid command");
-		}
-	}
-
-	/**
-	 * Parses a {@link Color} from the string or throws {@link IllegalArgumentException}.
-	 * 
-	 * @param color the string to parse as a {@link Color}
-	 * @return the parsed {@link Color}
-	 * 
-	 * @throws IllegalArgumentException if the string does not represent a valid color
-	 */
-	private static Color parseColorOrThrow(String color) {
-		try {
-			return Color.decode("#" + color);
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("'" + color + "' is not a valid color.");
-		}
-	}
-
-	/**
-	 * Parses a double from string or throws {@link IllegalArgumentException}.
-	 *
-	 * @param number the string to parse as double
-	 * @return the parsed double
-	 *
-	 * @throws IllegalArgumentException if the string does not represent a valid double
-	 */
-	private static double parseDoubleOrThrow(String number) {
-		try {
-			return Double.parseDouble(number);
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("'" + number + "' is not a valid double.");
-		}
-	}
-
-	/**
-	 * Checks expected and real number of arguments, if they are not equal, it throws an {@link IllegalArgumentException}.
-	 *
-	 * @param expectedNumberOfArguments the expected number of arguments
-	 * @param realNumberOfArguments the real number of arguments
-	 *
-	 * @throws IllegalArgumentException if they are not equal
-	 */
-	private static void throwIfWrongNumberOfArguments(int expectedNumberOfArguments, int realNumberOfArguments) {
-		if (expectedNumberOfArguments != realNumberOfArguments) {
-			throw new IllegalArgumentException("Invalid number of arguments passed, expected " +
-					expectedNumberOfArguments + ", got " + realNumberOfArguments + ".");
 		}
 	}
 

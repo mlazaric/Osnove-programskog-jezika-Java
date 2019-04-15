@@ -91,6 +91,14 @@ class ComparisonOperatorsTest {
 	}
 
 	@Test
+	void testLikeOperatorWithNoStars() {
+		assertFalse(ComparisonOperators.LIKE.satisfied("AA", "AAAA"));
+		assertFalse(ComparisonOperators.LIKE.satisfied("AAA", "AAAA"));
+		assertTrue(ComparisonOperators.LIKE.satisfied("AAAA", "AAAA"));
+		assertTrue(ComparisonOperators.LIKE.satisfied("ABCBA", "ABCBA"));
+	}
+
+	@Test
 	void testLessOperator() {
 		assertMatchesLesserThan(ComparisonOperators.LESS);
 		assertDoesNotMatchEqual(ComparisonOperators.LESS);

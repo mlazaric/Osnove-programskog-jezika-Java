@@ -4,6 +4,9 @@ import java.util.Objects;
 
 import hr.fer.zemris.lsystems.LSystemBuilder;
 
+import static hr.fer.zemris.lsystems.impl.ParserUtil.parseDoubleOrThrow;
+import static hr.fer.zemris.lsystems.impl.ParserUtil.throwIfWrongNumberOfArguments;
+
 /**
  * Helper class for parsing configuration strings.
  *
@@ -107,35 +110,6 @@ public final class ConfigurationParser {
 		}
 	}
 
-	/**
-	 * Parses a double from string or throws {@link IllegalArgumentException}.
-	 *
-	 * @param number the string to parse as double
-	 * @return the parsed double
-	 *
-	 * @throws IllegalArgumentException if the string does not represent a valid double
-	 */
-	private static double parseDoubleOrThrow(String number) {
-		try {
-			return Double.parseDouble(number);
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("'" + number + "' is not a valid double.");
-		}
-	}
 
-	/**
-	 * Checks expected and real number of arguments, if they are not equal, it throws an {@link IllegalArgumentException}.
-	 *
-	 * @param expectedNumberOfArguments the expected number of arguments
-	 * @param realNumberOfArguments the real number of arguments
-	 *
-	 * @throws IllegalArgumentException if they are not equal
-	 */
-	private static void throwIfWrongNumberOfArguments(int expectedNumberOfArguments, int realNumberOfArguments) {
-		if (expectedNumberOfArguments != realNumberOfArguments) {
-			throw new IllegalArgumentException("Invalid number of arguments passed, expected " +
-					expectedNumberOfArguments + ", got " + realNumberOfArguments + ".");
-		}
-	}
 
 }

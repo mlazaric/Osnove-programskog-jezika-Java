@@ -64,8 +64,11 @@ public final class ComparisonOperators {
 		public boolean satisfied(String value1, String value2) {
 			int numberOfStars = value2.length() - value2.replace("*", "").length();
 
-			if (numberOfStars != 1) {
+			if (numberOfStars > 1) {
 				throw new IllegalArgumentException("Expression '" + value2 + "' contains more than one *.");
+			}
+			else if (numberOfStars == 0) {
+				return value1.equals(value2);
 			}
 
 			if (value2.endsWith("*")) {
