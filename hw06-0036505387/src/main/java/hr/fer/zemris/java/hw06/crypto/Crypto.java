@@ -22,8 +22,25 @@ import java.util.Scanner;
 import static hr.fer.zemris.java.hw06.crypto.Util.bytetohex;
 import static hr.fer.zemris.java.hw06.crypto.Util.hextobyte;
 
+/**
+ * A simple program to check the SHA-256 digest of a file, encrypt or decrypt a file.
+ *
+ * @author Marko Lazarić
+ */
 public class Crypto {
 
+    /**
+     *   If the first argument is 'checksha', it requires a second argument which represents a path to the file whose
+     * digest it should check. It calculates the SHA-256 digest of the file and checks it against the digest entered by
+     * the user.
+     *
+     *   If the first argument is 'encrypt' or 'decrypt', it requires two other arguments. The second argument represents
+     * a path to the input file. The third argument represents a path to the output file. It prompts the user for the
+     * password and initialisation vector, then it encrypts or decrypts the input file and stores the result in the
+     * output file.
+     *
+     * @param args the arguments to the program described above
+     */
     public static void main(String[] args){
         if (args.length == 0) {
             System.out.println("Requires at least one argument specifying which operation to perform.");
@@ -58,6 +75,12 @@ public class Crypto {
         }
     }
 
+    /**
+     * Reads a binary file and processes it using the {@link ByteProcessor}.
+     *
+     * @param filename the file to process
+     * @param processor the processor to use
+     */
     private static void processFile(String filename, ByteProcessor processor) {
         byte[] buffer = new byte[1024];
 
@@ -76,7 +99,17 @@ public class Crypto {
         }
     }
 
-    private static Cipher getCipherFromUserInput(String keyText, String ivText, boolean encrypt) {
+    /**
+     * Creates a {@link Cipher} object with the given password and initialisation vector.
+     *
+     * @param keyText the password
+     * @param ivText the initialisation vector
+     * @param encrypt whether it should encrypt (true) or decrypt (false)
+     * @return the newly created {@link Cipher} object
+     *
+     * @throws RuntimeException if {@link Cipher} causes an exception
+     */
+    private static Cipher createCipher(String keyText, String ivText, boolean encrypt) {
         SecretKeySpec keySpec = new SecretKeySpec(hextobyte(keyText), "AES");
         AlgorithmParameterSpec paramSpec = new IvParameterSpec(hextobyte(ivText));
         Cipher cipher = null;
@@ -94,12 +127,20 @@ public class Crypto {
         } catch (InvalidKeyException e) {
             throw new RuntimeException("Invalid key used for Cipher initialisation.");
         } catch (InvalidAlgorithmParameterException e) {
-            throw new RuntimeException("Invalid algorithm parameter used for Cipher initialisation.");
+            throw new RuntimeException("Invalid initialisation vector.");
         }
 
         return cipher;
     }
 
+    /**
+     * Prompts the user for the expected digest and then checks the calculated digest against it and prints the result.
+     *
+     * @param arguments the arguments to the checksha command described in {@link #main}
+     * @param sc a scanner used for user input
+     *
+     * @throws RuntimeException if the number of arguments passed is not 1
+     */
     private static void handleCheckSha(String[] arguments, Scanner sc) {
         if (arguments.length != 1) {
             throw new IllegalArgumentException("checksha expects 1 argument (file name), " + arguments.length + " were given.");
@@ -123,6 +164,14 @@ public class Crypto {
         }
     }
 
+    /**
+     * Calculates the SHA-256 digest of the given file.
+     *
+     * @param filename the path to the file to be digested
+     * @return the SHA-256 digest of the file
+     *
+     * @throws RuntimeException if {@link MessageDigest} causes an exception
+     */
     static String calculateSHA(String filename) { // Package private so it can be tested
         MessageDigest digest;
 
@@ -137,6 +186,16 @@ public class Crypto {
         return bytetohex(digest.digest());
     }
 
+    /**
+     * Prompts the user for a password and initialisation vector. Uses those parameters to encrypt or decrypt the input
+     * file and stores the results in the output file.
+     *
+     * @param arguments the arguments to the encrypt or the decrypt command described in {@link #main}
+     * @param sc a scanner used for user input
+     * @param encrypt true if it should encrypt, false if it should decrypt
+     *
+     * @throws RuntimeException if the number of arguments passed is not 2
+     */
     private static void handleCrypt(String[] arguments, Scanner sc, boolean encrypt) {
         String operationVerb = encrypt ? "encrypt" : "decrypt";
 
@@ -154,8 +213,30 @@ public class Crypto {
         System.out.print("> ");
         String initVector = sc.next();
 
+        cryptFile(encrypt, operationVerb, inputFile, outputFile, password, initVector);
+
+        String operationName = encrypt ? "Encryption" : "Decryption";
+
+        System.out.println(operationName + " completed. Generated file " + outputFile + " based on file " + inputFile + ".");
+
+    }
+
+    /**
+     * Reads from the input file, either decrypts or encrypts the data and stores the result in the output file.
+     *
+     * @param encrypt true if it should encrypt, false if it should decrypt
+     * @param operationVerb the verb of the operation (either "encrypt" or "decrypt"), used for user friendly messages
+     * @param inputFile the file to read from
+     * @param outputFile the file to store the results in
+     * @param password the password used for encrypting/decrypting
+     * @param initVector the initialisation vector used for encrypting/decrypting
+     *
+     * @throws RuntimeException if an {@link IOException} occurs while reading or writing to file
+     * @throws RuntimeException if an {@link Cipher#doFinal()}throws a checked exception
+     */
+    private static void cryptFile(boolean encrypt, String operationVerb, String inputFile, String outputFile, String password, String initVector) {
         try (OutputStream outputStream = Files.newOutputStream(Paths.get(outputFile))) {
-            Cipher cipher = getCipherFromUserInput(password, initVector, encrypt);
+            Cipher cipher = createCipher(password, initVector, encrypt);
 
             processFile(inputFile, (bytes, length) -> {
                 try {
@@ -173,11 +254,25 @@ public class Crypto {
         } catch (IllegalBlockSizeException e) {
             throw new RuntimeException("Cannot " + operationVerb + " due to an illegal block size.");
         }
+    }
 
-        String operationName = encrypt ? "Encryption" : "Decryption";
+    /**
+     * Models a simple processor that processes an array of bytes.
+     *
+     * @author Marko Lazarić
+     */
+    @FunctionalInterface
+    private interface ByteProcessor {
 
-        System.out.println(operationName + " completed. Generated file " + outputFile + " based on file " + inputFile + ".");
+        /**
+         * Processes the first {@code length} bytes in the {@code bytes} array.
+         *
+         * @param bytes the array of bytes to partially or completely process
+         * @param length the number of bytes to process
+         */
+        void processBytes(byte[] bytes, int length);
 
     }
+
 
 }
