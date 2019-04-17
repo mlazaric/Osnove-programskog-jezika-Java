@@ -115,6 +115,11 @@ public class MyShell {
             commands.put("charsets", new CharsetsCommand());
             commands.put("cat", new CatCommand());
             commands.put("help", new HelpCommand());
+            commands.put("ls", new LsCommand());
+            commands.put("tree", new TreeCommand());
+            commands.put("copy", new CopyCommand());
+            commands.put("mkdir", new MkDirCommand());
+            commands.put("hexdump", new HexDumpCommand());
         }
 
         @Override

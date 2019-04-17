@@ -34,11 +34,13 @@ public class HelpCommand implements ShellCommand {
 
             if (command == null) {
                 env.writeln("'" + arguments + "' is not a valid command name.");
-
-                return ShellStatus.CONTINUE;
             }
-
-            command.getCommandDescription().stream().forEach(env::writeln);
+            else if (command.getCommandDescription() == null) {
+                env.writeln("Command '" + arguments + "' has not provided a command description.");
+            }
+            else {
+                command.getCommandDescription().stream().forEach(env::writeln);
+            }
         }
 
         return ShellStatus.CONTINUE;
