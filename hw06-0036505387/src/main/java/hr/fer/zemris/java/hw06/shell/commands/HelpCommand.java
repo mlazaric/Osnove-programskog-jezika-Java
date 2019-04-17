@@ -8,8 +8,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Command to list available commands and their descriptions.
+ *
+ * @author Marko Lazarić
+ */
 public class HelpCommand implements ShellCommand {
 
+    /**
+     * Static constant unmodifiable list containing lines describing this command.
+     *
+     * @see #getCommandDescription()
+     */
     private static final List<String> COMMAND_DESCRIPTION;
 
     static {

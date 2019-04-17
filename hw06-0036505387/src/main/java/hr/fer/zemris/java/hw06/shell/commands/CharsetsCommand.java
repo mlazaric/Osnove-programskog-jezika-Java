@@ -10,8 +10,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Command which lists available charsets.
+ *
+ * @author Marko Lazarić
+ */
 public class CharsetsCommand implements ShellCommand {
 
+    /**
+     * Static constant unmodifiable list containing lines describing this command.
+     *
+     * @see #getCommandDescription()
+     */
     private static final List<String> COMMAND_DESCRIPTION;
 
     static {

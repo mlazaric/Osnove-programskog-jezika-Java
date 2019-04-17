@@ -19,8 +19,18 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Command to list the files and directories in the current directory.
+ *
+ * @author Marko Lazarić
+ */
 public class LsCommand implements ShellCommand {
 
+    /**
+     * Static constant unmodifiable list containing lines describing this command.
+     *
+     * @see #getCommandDescription()
+     */
     private static final List<String> COMMAND_DESCRIPTION;
 
     static {
@@ -58,6 +68,12 @@ public class LsCommand implements ShellCommand {
         return ShellStatus.CONTINUE;
     }
 
+    /**
+     * Prints the contents of the specified dir to the environment's output stream.
+     *
+     * @param env the environment in which this command was executed
+     * @param dir the specified directory whose contents should be printed
+     */
     private void listContents(Environment env, String dir) {
         Path dirPath = Paths.get(dir);
 
@@ -80,6 +96,12 @@ public class LsCommand implements ShellCommand {
         }
     }
 
+    /**
+     * Prints a single line representing either a file or a directory within the specified directory.
+     *
+     * @param env the environment in which this command was executed
+     * @param path the file or directory represented by this line
+     */
     private void printLine(Environment env, Path path) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         BasicFileAttributeView faView = Files.getFileAttributeView(

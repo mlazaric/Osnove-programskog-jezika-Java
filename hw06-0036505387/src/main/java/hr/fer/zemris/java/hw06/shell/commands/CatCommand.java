@@ -13,8 +13,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Command which prints the contents of a file to the environment's output stream.
+ *
+ * @author Marko Lazarić
+ */
 public class CatCommand implements ShellCommand {
 
+    /**
+     * Static constant unmodifiable list containing lines describing this command.
+     *
+     * @see #getCommandDescription()
+     */
     private static final List<String> COMMAND_DESCRIPTION;
 
     static {
@@ -54,6 +64,13 @@ public class CatCommand implements ShellCommand {
         return ShellStatus.CONTINUE;
     }
 
+    /**
+     * Reads the contents of the file using the specified charset.
+     *
+     * @param env the environment in which this command is executed
+     * @param filePath the path to the file being read
+     * @param charset the charset used
+     */
     private void readFile(Environment env, String filePath, Charset charset) {
         try {
             Files.lines(Paths.get(filePath), charset).forEach(env::writeln);
@@ -62,6 +79,13 @@ public class CatCommand implements ShellCommand {
         }
     }
 
+    /**
+     * Reads the contents of the file using the specified charset.
+     *
+     * @param env the environment in which this command is executed
+     * @param filePath the path to the file being read
+     * @param charset the charset used
+     */
     private void readFile(Environment env, String filePath, String charset) {
         try {
             Charset realCharset = Charset.forName(charset);

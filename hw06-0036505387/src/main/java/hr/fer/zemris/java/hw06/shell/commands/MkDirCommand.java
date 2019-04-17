@@ -13,8 +13,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Command to create a directory.
+ *
+ * @author Marko Lazarić
+ */
 public class MkDirCommand implements ShellCommand {
 
+    /**
+     * Static constant unmodifiable list containing lines describing this command.
+     *
+     * @see #getCommandDescription()
+     */
     private static final List<String> COMMAND_DESCRIPTION;
 
     static {
@@ -51,6 +61,12 @@ public class MkDirCommand implements ShellCommand {
         return ShellStatus.CONTINUE;
     }
 
+    /**
+     * Creates a directory specified by the dir argument.
+     *
+     * @param env the environment in which this command is being executed
+     * @param dir the directory to be created
+     */
     private void makeDirectory(Environment env, String dir) {
         Path dirPath = Paths.get(dir);
 

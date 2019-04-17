@@ -15,8 +15,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Command which copies a file.
+ *
+ * @author Marko Lazarić
+ */
 public class CopyCommand implements ShellCommand {
 
+    /**
+     * Static constant unmodifiable list containing lines describing this command.
+     *
+     * @see #getCommandDescription()
+     */
     private static final List<String> COMMAND_DESCRIPTION;
 
     static {
@@ -56,6 +66,13 @@ public class CopyCommand implements ShellCommand {
         return ShellStatus.CONTINUE;
     }
 
+    /**
+     * Copies the source file to the dest file path.
+     *
+     * @param env the environment in which this command is being run
+     * @param source the source file path
+     * @param dest the destination file path
+     */
     private void copyFile(Environment env, String source, String dest) {
         Path sourcePath = Paths.get(source);
         Path destPath = Paths.get(dest);
@@ -73,6 +90,13 @@ public class CopyCommand implements ShellCommand {
         }
     }
 
+    /**
+     * Copies the source file to the dest file path.
+     *
+     * @param env the environment in which this command is being run
+     * @param sourcePath the source file path
+     * @param destPath the destination file path
+     */
     private void copyFile(Environment env, Path sourcePath, Path destPath) {
         if (Files.exists(destPath)) {
             env.write("'" + destPath.toString() + "' already exists. Should I overwrite it? [y/n] ");
