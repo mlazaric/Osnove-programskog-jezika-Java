@@ -8,6 +8,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,8 +73,20 @@ public class CatCommand implements ShellCommand {
      * @param charset the charset used
      */
     private void readFile(Environment env, String filePath, Charset charset) {
+        Path path = Paths.get(filePath);
+
+        if (Files.isDirectory(path)) {
+            env.writeln("'" + filePath + "' is a directory");
+            return;
+        }
+
+        if (!Files.exists(path)) {
+            env.writeln("'" + filePath + "' does not exist.");
+            return;
+        }
+
         try {
-            Files.lines(Paths.get(filePath), charset).forEach(env::writeln);
+            Files.lines(path, charset).forEach(env::writeln);
         } catch (IOException e) {
             env.writeln("Error while reading from file '" + filePath + "'.");
         }

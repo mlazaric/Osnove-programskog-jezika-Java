@@ -7,6 +7,8 @@ package hr.fer.zemris.java.hw06.shell;
  */
 public class ShellIOException extends RuntimeException {
 
+    static final long serialVersionUID = 1L;
+
     /**
      * Creates a {@link ShellIOException} with the given argument as the cause. Used to wrap checked exceptions.
      *
