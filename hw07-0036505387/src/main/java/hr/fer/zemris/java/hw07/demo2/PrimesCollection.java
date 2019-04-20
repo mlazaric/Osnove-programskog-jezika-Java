@@ -1,17 +1,19 @@
 package hr.fer.zemris.java.hw07.demo2;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class PrimesCollection implements Iterable<Integer> {
 
-    private final int numberOfPrimes;
+    public static final int MIN_NUMBER_OF_PRIMES_TO_GENERATE = 1;
+    private final int numberOfPrimesToGenerate;
 
-    public PrimesCollection(int numberOfPrimes) {
-        if (numberOfPrimes <= 0) {
+    public PrimesCollection(int numberOfPrimesToGenerate) {
+        if (numberOfPrimesToGenerate < MIN_NUMBER_OF_PRIMES_TO_GENERATE) {
             throw new IllegalArgumentException("Number of primes must be greater than 0.");
         }
 
-        this.numberOfPrimes = numberOfPrimes;
+        this.numberOfPrimesToGenerate = numberOfPrimesToGenerate;
     }
 
     @Override
@@ -26,11 +28,15 @@ public class PrimesCollection implements Iterable<Integer> {
 
         @Override
         public boolean hasNext() {
-            return primesGenerated < numberOfPrimes;
+            return primesGenerated < numberOfPrimesToGenerate;
         }
 
         @Override
         public Integer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("Prime iterator is exhausted.");
+            }
+
             ++primesGenerated;
 
             do {
