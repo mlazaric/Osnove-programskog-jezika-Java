@@ -40,10 +40,10 @@ public class ValueWrapper {
         checkType(arg1);
         checkType(arg2);
 
-        if (arg1 instanceof String) {
+        if (arg1 instanceof String || arg1 == null) {
             arg1 = parseString((String) arg1);
         }
-        if (arg2 instanceof String) {
+        if (arg2 instanceof String || arg2 == null) {
             arg2 = parseString((String) arg2);
         }
 
