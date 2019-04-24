@@ -131,7 +131,7 @@ public class TreeCommand implements ShellCommand {
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
             env.write("  ".repeat(depth));
-            env.writeln(dir.getFileName().toString());
+            env.writeln(dir.getFileName() == null ? dir.toString() : dir.getFileName().toString());
 
             ++depth;
 

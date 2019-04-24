@@ -33,6 +33,11 @@ public class ExitCommand implements ShellCommand {
 
     @Override
     public ShellStatus executeCommand(Environment env, String arguments) {
+        if (!arguments.isBlank()) {
+            env.writeln("Exit command expects 0 arguments.");
+            return ShellStatus.CONTINUE;
+        }
+
         return ShellStatus.TERMINATE;
     }
 

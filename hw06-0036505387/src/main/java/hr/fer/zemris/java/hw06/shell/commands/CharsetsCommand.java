@@ -36,6 +36,11 @@ public class CharsetsCommand implements ShellCommand {
 
     @Override
     public ShellStatus executeCommand(Environment env, String arguments) {
+        if (!arguments.isBlank()) {
+            env.writeln("Charsets command expects 0 arguments.");
+            return ShellStatus.CONTINUE;
+        }
+
         Set<String> charsets = Charset.availableCharsets().keySet();
 
         for (String charset : charsets) {
