@@ -1,5 +1,10 @@
 package hr.fer.zemris.java.hw07.demo2;
 
+/**
+ * A simple demonstration program for the {@link PrimesCollection}.
+ *
+ * @author Marko Lazarić
+ */
 public class PrimesDemo1 {
 
     public static void main(String[] args) {
