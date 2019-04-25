@@ -1,5 +1,13 @@
 package hr.fer.zemris.java.hw07.observer1;
 
+/**
+ * A demonstration program for the Observer design pattern and its implementation.
+ *
+ * @author Marko Lazarić
+ *
+ * @see IntegerStorage
+ * @see IntegerStorageObserver
+ */
 public class ObserverExample {
 
     public static void main(String[] args) {
