@@ -3,6 +3,11 @@ package hr.fer.zemris.java.custom.scripting.demo;
 import hr.fer.zemris.java.custom.scripting.exec.ObjectMultistack;
 import hr.fer.zemris.java.custom.scripting.exec.ValueWrapper;
 
+/**
+ * A demonstration program for the {@link ObjectMultistack}.
+ *
+ * @author Marko Lazarić
+ */
 public class ObjectMultistackDemo {
 
     public static void main(String[] args) {
