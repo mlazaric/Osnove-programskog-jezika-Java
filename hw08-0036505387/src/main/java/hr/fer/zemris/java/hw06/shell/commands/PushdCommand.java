@@ -5,10 +5,15 @@ import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
-public class CdCommand implements ShellCommand {
+public class PushdCommand implements ShellCommand {
+
+    public static final String DIRECTORY_STACK_KEY = "cdstack";
 
     @Override
     public ShellStatus executeCommand(Environment env, String arguments) {
@@ -25,23 +30,41 @@ public class CdCommand implements ShellCommand {
 
         if (args.size() == 1) {
             try {
-                Path newDir = env.getCurrentDirectory().resolve(args.get(0));
-
-                env.setCurrentDirectory(newDir);
+                pushDirectory(env, args.get(0));
             } catch (IllegalArgumentException e) {
                 env.writeln(e.getMessage());
             }
         }
         else {
-            env.writeln("Cd command expects 1 argument, " + args.size() + " were given.");
+            env.writeln("Pushd command expects 1 argument, " + args.size() + " were given.");
         }
 
         return ShellStatus.CONTINUE;
     }
 
+    private void pushDirectory(Environment env, String dirName) {
+        Path newDir = env.getCurrentDirectory().resolve(dirName);
+
+        if (!Files.isDirectory(newDir)) {
+            env.writeln("'" + newDir.toString() + "' is not a valid directory.");
+            return;
+        }
+
+        Deque<Path> directories = (Deque<Path>) env.getSharedData(DIRECTORY_STACK_KEY);
+
+        if (directories == null) {
+            directories = new ArrayDeque<>();
+
+            env.setSharedData(DIRECTORY_STACK_KEY, directories);
+        }
+
+        directories.push(env.getCurrentDirectory());
+        env.setCurrentDirectory(newDir);
+    }
+
     @Override
     public String getCommandName() {
-        return "cd";
+        return "pushd";
     }
 
     @Override

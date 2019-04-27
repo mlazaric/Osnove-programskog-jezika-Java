@@ -217,6 +217,10 @@ public class MyShell {
             commands.put("hexdump", new HexDumpCommand());
             commands.put("pwd", new PwdCommand());
             commands.put("cd", new CdCommand());
+            commands.put("pushd", new PushdCommand());
+            commands.put("popd", new PopdCommand());
+            commands.put("listd", new ListdCommand());
+            commands.put("dropd", new DropdCommand());
         }
 
         @Override
@@ -294,7 +298,7 @@ public class MyShell {
                 currentDirectory = absPath;
             }
             else {
-                throw new IllegalArgumentException("'"  + absPath.toString() + "' is not a valid directory.");
+                throw new IllegalArgumentException("'"  + absPath.toString() + "' is not a valid directory or does not exist.");
             }
         }
 
