@@ -2,6 +2,9 @@ package hr.fer.zemris.java.hw06.shell;
 
 import hr.fer.zemris.java.hw06.shell.commands.*;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -180,6 +183,10 @@ public class MyShell {
          */
         private char morelineSymbol = '\\';
 
+        private Path currentDirectory;
+
+        private Map<String, Object> sharedData;
+
         /**
          * Creates a new {@link ShellEnvironment} with the given {@link Scanner} instance.
          *
@@ -188,6 +195,8 @@ public class MyShell {
         private ShellEnvironment(Scanner scanner) {
             this.scanner = scanner;
             this.commands = new TreeMap<>();
+            this.sharedData = new HashMap<>();
+            setCurrentDirectory(Paths.get("."));
 
             loadCommands();
         }
@@ -206,6 +215,8 @@ public class MyShell {
             commands.put("copy", new CopyCommand());
             commands.put("mkdir", new MkDirCommand());
             commands.put("hexdump", new HexDumpCommand());
+            commands.put("pwd", new PwdCommand());
+            commands.put("cd", new CdCommand());
         }
 
         @Override
@@ -268,6 +279,33 @@ public class MyShell {
         @Override
         public void setMorelinesSymbol(Character symbol) {
             morelineSymbol = symbol;
+        }
+
+        @Override
+        public Path getCurrentDirectory() {
+            return currentDirectory;
+        }
+
+        @Override
+        public void setCurrentDirectory(Path path) {
+            Path absPath = path.toAbsolutePath().normalize();
+
+            if (Files.isDirectory(absPath)) {
+                currentDirectory = absPath;
+            }
+            else {
+                throw new IllegalArgumentException("'"  + absPath.toString() + "' is not a valid directory.");
+            }
+        }
+
+        @Override
+        public Object getSharedData(String key) {
+            return sharedData.get(key);
+        }
+
+        @Override
+        public void setSharedData(String key, Object value) {
+            sharedData.put(key, value);
         }
     }
 }

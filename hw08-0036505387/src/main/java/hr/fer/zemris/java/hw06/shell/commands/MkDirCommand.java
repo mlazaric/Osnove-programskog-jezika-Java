@@ -68,7 +68,7 @@ public class MkDirCommand implements ShellCommand {
      * @param dir the directory to be created
      */
     private void makeDirectory(Environment env, String dir) {
-        Path dirPath = Paths.get(dir);
+        Path dirPath = env.getCurrentDirectory().resolve(dir);
 
         if (Files.exists(dirPath)) {
             env.writeln("Directory '" + dirPath + "' already exists.");

@@ -73,7 +73,7 @@ public class CatCommand implements ShellCommand {
      * @param charset the charset used
      */
     private void readFile(Environment env, String filePath, Charset charset) {
-        Path path = Paths.get(filePath);
+        Path path = env.getCurrentDirectory().resolve(filePath);
 
         if (Files.isDirectory(path)) {
             env.writeln("'" + filePath + "' is a directory");

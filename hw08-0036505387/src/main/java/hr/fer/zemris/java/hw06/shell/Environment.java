@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.hw06.shell;
 
+import java.nio.file.Path;
 import java.util.SortedMap;
 
 /**
@@ -84,5 +85,13 @@ public interface Environment {
      * @param symbol the new morelines symbol
      */
     void setMorelinesSymbol(Character symbol);
+
+    Path getCurrentDirectory();
+
+    void setCurrentDirectory(Path path);
+
+    Object getSharedData(String key);
+
+    void setSharedData(String key, Object value);
 
 }

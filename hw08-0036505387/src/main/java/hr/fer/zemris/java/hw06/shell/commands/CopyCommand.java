@@ -74,8 +74,8 @@ public class CopyCommand implements ShellCommand {
      * @param dest the destination file path
      */
     private void copyFile(Environment env, String source, String dest) {
-        Path sourcePath = Paths.get(source);
-        Path destPath = Paths.get(dest);
+        Path sourcePath = env.getCurrentDirectory().resolve(source);
+        Path destPath = env.getCurrentDirectory().resolve(dest);
 
         if (Files.isDirectory(sourcePath)) {
             env.writeln("'" + source + "' is not a file.");

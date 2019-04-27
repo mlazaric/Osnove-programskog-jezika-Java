@@ -75,7 +75,7 @@ public class LsCommand implements ShellCommand {
      * @param dir the specified directory whose contents should be printed
      */
     private void listContents(Environment env, String dir) {
-        Path dirPath = Paths.get(dir);
+        Path dirPath = env.getCurrentDirectory().resolve(dir);
 
         if (!Files.exists(dirPath)) {
             env.writeln("Directory '" + dir + "' does not exist.");

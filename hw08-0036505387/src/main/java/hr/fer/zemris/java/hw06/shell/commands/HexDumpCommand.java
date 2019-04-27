@@ -94,7 +94,7 @@ public class HexDumpCommand implements ShellCommand {
      * @param file the path to the file to read
      */
     private void hexDump(Environment env, String file) {
-        Path filePath = Paths.get(file);
+        Path filePath = env.getCurrentDirectory().resolve(file);
 
         if (!Files.exists(filePath)) {
             env.writeln("File '" + file + "' does not exist.");

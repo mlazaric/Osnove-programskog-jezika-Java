@@ -67,7 +67,7 @@ public class TreeCommand implements ShellCommand {
      * @param dir the directory whose contents should be printed
      */
     private void printTree(Environment env, String dir) {
-        Path dirPath = Paths.get(dir);
+        Path dirPath = env.getCurrentDirectory().resolve(dir);
 
         if (!Files.exists(dirPath)) {
             env.writeln("Directory '" + dir + "' does not exist.");
