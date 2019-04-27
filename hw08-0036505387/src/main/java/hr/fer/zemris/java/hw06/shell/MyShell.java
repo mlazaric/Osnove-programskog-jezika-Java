@@ -227,6 +227,7 @@ public class MyShell {
             commands.put("popd", new PopdCommand());
             commands.put("listd", new ListdCommand());
             commands.put("dropd", new DropdCommand());
+            commands.put("massrename", new MassRenameCommand());
         }
 
         @Override
