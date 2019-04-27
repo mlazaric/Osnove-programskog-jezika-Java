@@ -183,8 +183,14 @@ public class MyShell {
          */
         private char morelineSymbol = '\\';
 
+        /**
+         * Current working directory - relative paths are resolved against this.
+         */
         private Path currentDirectory;
 
+        /**
+         * Data shared between commands.
+         */
         private Map<String, Object> sharedData;
 
         /**
@@ -196,7 +202,7 @@ public class MyShell {
             this.scanner = scanner;
             this.commands = new TreeMap<>();
             this.sharedData = new HashMap<>();
-            setCurrentDirectory(Paths.get("."));
+            this.currentDirectory = Paths.get(".").toAbsolutePath().normalize();
 
             loadCommands();
         }
@@ -292,7 +298,7 @@ public class MyShell {
 
         @Override
         public void setCurrentDirectory(Path path) {
-            Path absPath = path.toAbsolutePath().normalize();
+            Path absPath = currentDirectory.resolve(path).toAbsolutePath().normalize();
 
             if (Files.isDirectory(absPath)) {
                 currentDirectory = absPath;

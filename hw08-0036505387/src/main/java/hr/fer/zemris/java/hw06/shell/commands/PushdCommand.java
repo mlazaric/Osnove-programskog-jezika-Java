@@ -7,13 +7,27 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 public class PushdCommand implements ShellCommand {
 
     public static final String DIRECTORY_STACK_KEY = "cdstack";
+
+    /**
+     * Static constant unmodifiable list containing lines describing this command.
+     *
+     * @see #getCommandDescription()
+     */
+    private static final List<String> COMMAND_DESCRIPTION;
+
+    static {
+        List<String> description = Arrays.asList(
+                "Command pushd takes one argument.",
+                "It pushes the current working directory to the directory stack and then changes the working directory to the argument."
+        );
+
+        COMMAND_DESCRIPTION = Collections.unmodifiableList(description);
+    }
 
     @Override
     public ShellStatus executeCommand(Environment env, String arguments) {
@@ -69,7 +83,7 @@ public class PushdCommand implements ShellCommand {
 
     @Override
     public List<String> getCommandDescription() {
-        return null;
+        return COMMAND_DESCRIPTION;
     }
 
 }

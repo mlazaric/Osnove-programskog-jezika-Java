@@ -86,12 +86,36 @@ public interface Environment {
      */
     void setMorelinesSymbol(Character symbol);
 
+    /**
+     * Returns the current working directory.
+     *
+     * @return the current working directory
+     */
     Path getCurrentDirectory();
 
+    /**
+     * Sets the current working directory to the argument if the argument is a valid directory.
+     *
+     * @param path the new current working directory
+     *
+     * @throws IllegalArgumentException if {@code path} is not a directory or does not exist
+     */
     void setCurrentDirectory(Path path);
 
+    /**
+     * Returns the object stored under the specified key.
+     *
+     * @param key the key to return
+     * @return the object stored under the specified key or null if no object is stored under that key
+     */
     Object getSharedData(String key);
 
+    /**
+     * Sets the object stored under the specified key to the new value.
+     *
+     * @param key the key whose value it should set
+     * @param value the new value
+     */
     void setSharedData(String key, Object value);
 
 }

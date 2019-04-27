@@ -4,9 +4,26 @@ import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PwdCommand implements ShellCommand {
+
+    /**
+     * Static constant unmodifiable list containing lines describing this command.
+     *
+     * @see #getCommandDescription()
+     */
+    private static final List<String> COMMAND_DESCRIPTION;
+
+    static {
+        List<String> description = Arrays.asList(
+                "Command pwd takes zero arguments and prints the current working directory."
+        );
+
+        COMMAND_DESCRIPTION = Collections.unmodifiableList(description);
+    }
 
     @Override
     public ShellStatus executeCommand(Environment env, String arguments) {
@@ -27,7 +44,7 @@ public class PwdCommand implements ShellCommand {
 
     @Override
     public List<String> getCommandDescription() {
-        return null;
+        return COMMAND_DESCRIPTION;
     }
 
 }

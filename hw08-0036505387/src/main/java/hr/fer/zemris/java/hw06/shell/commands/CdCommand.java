@@ -6,9 +6,26 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CdCommand implements ShellCommand {
+
+    /**
+     * Static constant unmodifiable list containing lines describing this command.
+     *
+     * @see #getCommandDescription()
+     */
+    private static final List<String> COMMAND_DESCRIPTION;
+
+    static {
+        List<String> description = Arrays.asList(
+                "Command cd takes one arguments and tries to set the working directory to it."
+        );
+
+        COMMAND_DESCRIPTION = Collections.unmodifiableList(description);
+    }
 
     @Override
     public ShellStatus executeCommand(Environment env, String arguments) {
