@@ -10,6 +10,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Command which changes the current working directory to the first argument, if it is a valid directory.
+ *
+ * @author Marko Lazarić
+ */
 public class CdCommand implements ShellCommand {
 
     /**

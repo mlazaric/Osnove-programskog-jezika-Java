@@ -9,6 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+/**
+ * Command which changes the current working directory and pushes the old directory to the directories stack.
+ *
+ * @author Marko Lazarić
+ */
 public class PushdCommand implements ShellCommand {
 
     public static final String DIRECTORY_STACK_KEY = "cdstack";

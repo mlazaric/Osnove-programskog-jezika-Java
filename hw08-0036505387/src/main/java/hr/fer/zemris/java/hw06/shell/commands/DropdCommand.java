@@ -10,6 +10,11 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
+/**
+ * Command which drops the top entry from the directories stack.
+ *
+ * @author Marko Lazarić
+ */
 public class DropdCommand implements ShellCommand {
 
     /**

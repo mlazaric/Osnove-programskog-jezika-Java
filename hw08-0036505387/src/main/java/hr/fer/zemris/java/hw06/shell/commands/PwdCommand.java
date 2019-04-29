@@ -8,6 +8,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Command which prints the current working directory.
+ *
+ * @author Marko Lazarić
+ */
 public class PwdCommand implements ShellCommand {
 
     /**

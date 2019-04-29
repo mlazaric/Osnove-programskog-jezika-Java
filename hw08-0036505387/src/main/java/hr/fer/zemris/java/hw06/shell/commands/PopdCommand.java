@@ -10,6 +10,11 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
+/**
+ * Command which sets the current working directory to the top entry on the directories stack.
+ *
+ * @author Marko Lazarić
+ */
 public class PopdCommand implements ShellCommand {
 
     /**

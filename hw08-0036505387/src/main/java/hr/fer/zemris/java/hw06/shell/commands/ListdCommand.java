@@ -10,6 +10,11 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
+/**
+ * Command which lists the contents of the directories stack.
+ *
+ * @author Marko Lazarić
+ */
 public class ListdCommand implements ShellCommand {
 
     /**
