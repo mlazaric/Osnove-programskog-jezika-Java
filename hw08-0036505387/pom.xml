@@ -38,6 +38,18 @@
       <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>marcupic.opjj.statespace</groupId>
+      <artifactId>coloring-framework</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>marcupic.opjj.statespace</groupId>
+      <artifactId>slagalica-gui</artifactId>
+      <version>1.0</version>
+    </dependency>
   </dependencies>
 
   <build>
