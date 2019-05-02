@@ -68,7 +68,7 @@ public class CdCommand implements ShellCommand {
 
     @Override
     public List<String> getCommandDescription() {
-        return null;
+        return COMMAND_DESCRIPTION;
     }
 
 }

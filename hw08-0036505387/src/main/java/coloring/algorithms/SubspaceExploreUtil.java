@@ -112,7 +112,6 @@ public final class SubspaceExploreUtil {
 
                 visited.addAll(successors);
                 toProcess.addAll(successors);
-                System.out.println(toProcess.size());
             }
         }
     }
