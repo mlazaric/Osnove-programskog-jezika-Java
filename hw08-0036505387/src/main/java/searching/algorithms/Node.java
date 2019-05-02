@@ -8,7 +8,7 @@ public class Node<S> {
     private final double cost;
     private final Node<S> parent;
 
-    public Node(S state, double cost, Node<S> parent) {
+    public Node(Node<S> parent, S state, double cost) {
         this.state = Objects.requireNonNull(state, "State cannot be null.");
         this.cost = cost;
         this.parent = parent;
@@ -24,5 +24,14 @@ public class Node<S> {
 
     public Node<S> getParent() {
         return parent;
+    }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "state=" + state +
+                ", cost=" + cost +
+                ", parent=" + parent +
+                '}';
     }
 }

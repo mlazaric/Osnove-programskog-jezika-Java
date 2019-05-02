@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Slagalica implements Supplier<KonfiguracijaSlagalice>,
                                   Function<KonfiguracijaSlagalice,
@@ -21,7 +23,14 @@ public class Slagalica implements Supplier<KonfiguracijaSlagalice>,
 
     @Override
     public List<Transition<KonfiguracijaSlagalice>> apply(KonfiguracijaSlagalice konfiguracijaSlagalice) {
-        return null;
+        return Stream.of(konfiguracijaSlagalice.moveLeft(),
+                         konfiguracijaSlagalice.moveRight(),
+                         konfiguracijaSlagalice.moveUp(),
+                         konfiguracijaSlagalice.moveDown())
+                      .filter(k -> k != null) // Remove nulls
+                      .filter(k -> !konfiguracijaSlagalice.equals(k)) // Remove duplicates
+                      .map(k -> new Transition<>(k, 1))
+                      .collect(Collectors.toList());
     }
 
     @Override
