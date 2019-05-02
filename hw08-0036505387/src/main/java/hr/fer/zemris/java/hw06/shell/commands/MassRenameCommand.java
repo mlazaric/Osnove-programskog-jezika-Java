@@ -11,16 +11,22 @@ import hr.fer.zemris.java.hw06.shell.commands.massrename.NameBuilderParser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
+/**
+ * Command which allows mass renaming of files based on a substitution pattern.
+ *
+ * @author Marko Lazarić
+ */
 public class MassRenameCommand implements ShellCommand {
 
+    /**
+     * Maps subcommand names to their implementations.
+     */
     private static final Map<String, SubCommand> SUBCOMMANDS;
 
     static {
@@ -30,6 +36,25 @@ public class MassRenameCommand implements ShellCommand {
         SUBCOMMANDS.put("groups", MassRenameCommand::groupsSubCommand);
         SUBCOMMANDS.put("show", MassRenameCommand::showSubCommand);
         SUBCOMMANDS.put("execute", MassRenameCommand::executeSubCommand);
+    }
+
+    /**
+     * Static constant unmodifiable list containing lines describing this command.
+     *
+     * @see #getCommandDescription()
+     */
+    private static final List<String> COMMAND_DESCRIPTION;
+
+    static {
+        List<String> description = Arrays.asList(
+                "Command massrename takes at least 4 arguments.",
+                "The first two arguments are directories, the first one is the source and the second is the destination.",
+                "The third argument is a subcommand: show, filter, groups, execute.",
+                "The fourth argument is the regex used to filter out the files and captures groups.",
+                "The fifth optional argument for some subcommands is the substitution pattern used for renaming the files."
+        );
+
+        COMMAND_DESCRIPTION = Collections.unmodifiableList(description);
     }
 
     @Override
@@ -77,6 +102,15 @@ public class MassRenameCommand implements ShellCommand {
         return ShellStatus.CONTINUE;
     }
 
+    /**
+     * Calls the specific subcommand with the given arguments.
+     *
+     * @param env the environment in which this command is being executed
+     * @param dir1 the source directory
+     * @param dir2 the destination directory
+     * @param args the subcommand arguments
+     * @param results the filtered files
+     */
     private void handleSubCommand(Environment env, Path dir1, Path dir2, List<String> args, List<FilterResult> results) {
         SubCommand subCommand = SUBCOMMANDS.get(args.get(0));
 
@@ -93,6 +127,15 @@ public class MassRenameCommand implements ShellCommand {
         }
     }
 
+    /**
+     * Lists contents of dir and filters them based on the regex.
+     *
+     * @param dir the source directory
+     * @param regex the regex used to filter out files
+     * @return the filtered results
+     *
+     * @throws IOException if an error has occurred while reading the contents of dir
+     */
     private List<FilterResult> filter(Path dir, String regex) throws IOException {
         Pattern pattern = null;
 
@@ -115,8 +158,6 @@ public class MassRenameCommand implements ShellCommand {
                     .filter(Matcher::matches)           // Remove files that do not match tha pattern.
                     .map(FilterResult::new)             // Create FilterResults.
                     .collect(Collectors.toList());
-
-
     }
 
     @Override
@@ -126,16 +167,39 @@ public class MassRenameCommand implements ShellCommand {
 
     @Override
     public List<String> getCommandDescription() {
-        return null;
+        return COMMAND_DESCRIPTION;
     }
 
+    /**
+     * Models a massrename subcommand.
+     *
+     * @author Marko Lazarić
+     */
     @FunctionalInterface
     private interface SubCommand {
 
+        /**
+         * Executes the subcommand.
+         *
+         * @param env the environment in which the subcommand is being executed in
+         * @param dir1 the source directory
+         * @param dir2 the destination directory
+         * @param args the arguments to the subcommand
+         * @param results the filtered results
+         */
         void executeSubCommand(Environment env, Path dir1, Path dir2, List<String> args, List<FilterResult> results);
 
     }
 
+    /**
+     * Prints the filtered results.
+     *
+     * @param env the environment in which the subcommand is being executed in
+     * @param dir1 the source directory
+     * @param dir2 the destination directory
+     * @param args the arguments to the subcommand
+     * @param results the filtered results
+     */
     private static void filterSubCommand(Environment env, Path dir1, Path dir2, List<String> args, List<FilterResult> results) {
         if (args.size() != 2) { // First argument is the command name, the second is the regex
             env.writeln("'filter' expects exactly 1 argument.");
@@ -145,6 +209,15 @@ public class MassRenameCommand implements ShellCommand {
         results.forEach(r -> env.writeln(r.toString()));
     }
 
+    /**
+     * Prints the captured groups of the filtered results.
+     *
+     * @param env the environment in which the subcommand is being executed in
+     * @param dir1 the source directory
+     * @param dir2 the destination directory
+     * @param args the arguments to the subcommand
+     * @param results the filtered results
+     */
     private static void groupsSubCommand(Environment env, Path dir1, Path dir2, List<String> args, List<FilterResult> results) {
         if (args.size() != 2) { // First argument is the command name, the second is the regex
             env.writeln("'groups' expects exactly 1 argument.");
@@ -167,6 +240,15 @@ public class MassRenameCommand implements ShellCommand {
         }
     }
 
+    /**
+     * Prints the filtered results and their new names based on the substitution pattern.
+     *
+     * @param env the environment in which the subcommand is being executed in
+     * @param dir1 the source directory
+     * @param dir2 the destination directory
+     * @param args the arguments to the subcommand
+     * @param results the filtered results
+     */
     private static void showSubCommand(Environment env, Path dir1, Path dir2, List<String> args, List<FilterResult> results) {
         if (args.size() != 3) { // First argument is the command name, the second is the regex and the third is the name builder pattern
             env.writeln("'show' expects exactly 2 arguments.");
@@ -197,6 +279,15 @@ public class MassRenameCommand implements ShellCommand {
         env.writeln(sb.toString());
     }
 
+    /**
+     * Moves the filtered results to their new names in the destination directory based on the substitution pattern.
+     *
+     * @param env the environment in which the subcommand is being executed in
+     * @param dir1 the source directory
+     * @param dir2 the destination directory
+     * @param args the arguments to the subcommand
+     * @param results the filtered results
+     */
     private static void executeSubCommand(Environment env, Path dir1, Path dir2, List<String> args, List<FilterResult> results) {
         if (args.size() != 3) { // First argument is the command name, the second is the regex and the third is the name builder pattern
             env.writeln("'execute' expects exactly 2 arguments.");
