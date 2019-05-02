@@ -9,8 +9,24 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class SearchUtil {
+/**
+ * Helper class for searching through state trees using bfs or bfsv.
+ *
+ * @author Marko Lazarić
+ */
+public final class SearchUtil {
 
+    private SearchUtil() {} // This class should not be instanced.
+
+    /**
+     * Uses breadth-first search to find a state which satisfies the {@code goal} predicate.
+     *
+     * @param s0 the starting state
+     * @param succ the generator for successors
+     * @param goal the tester for validity of states
+     * @param <S> the type of the state
+     * @return the state which goal returns true for, or null if no such state has been found
+     */
     public static <S> Node<S> bfs(
             Supplier<S> s0,
             Function<S, List<Transition<S>>> succ,
@@ -36,6 +52,15 @@ public class SearchUtil {
         return null;
     }
 
+    /**
+     * Uses improved breadth-first search to find a state which satisfies the {@code goal} predicate.
+     *
+     * @param s0 the starting state
+     * @param succ the generator for successors
+     * @param goal the tester for validity of states
+     * @param <S> the type of the state
+     * @return the state which goal returns true for, or null if no such state has been found
+     */
     public static <S> Node<S> bfsv(
             Supplier<S> s0,
             Function<S, List<Transition<S>>> succ,

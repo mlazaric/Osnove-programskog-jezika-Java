@@ -1,7 +1,6 @@
 package hr.fer.zemris.java.hw06.shell.commands.massrename;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class NameBuilderParser {

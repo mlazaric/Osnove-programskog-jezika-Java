@@ -1,13 +1,32 @@
 package coloring.algorithms;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class SubspaceExploreUtil {
+/**
+ * Helper class for exploring subspaces using BFS, DFS or BFSv.
+ *
+ * @author Marko Lazarić
+ */
+public final class SubspaceExploreUtil {
 
+    private SubspaceExploreUtil() {} // This class should not be instanced.
+
+    /**
+     * Uses breadth-first search to explore the subspace of all valid states.
+     *
+     * @param s0 the starting state
+     * @param process the processor for valid states
+     * @param succ the generator for successors
+     * @param acceptable the tester for validity of states
+     * @param <S> the type of the state
+     */
     public static <S> void bfs(
             Supplier<S> s0,
             Consumer<S> process,
@@ -30,6 +49,15 @@ public class SubspaceExploreUtil {
         }
     }
 
+    /**
+     * Uses Depth-first search to explore the subspace of all valid states.
+     *
+     * @param s0 the starting state
+     * @param process the processor for valid states
+     * @param succ the generator for successors
+     * @param acceptable the tester for validity of states
+     * @param <S> the type of the state
+     */
     public static <S> void dfs(
             Supplier<S> s0,
             Consumer<S> process,
@@ -52,6 +80,15 @@ public class SubspaceExploreUtil {
         }
     }
 
+    /**
+     * Uses improved breadth-first search to explore the subspace of all valid states.
+     *
+     * @param s0 the starting state
+     * @param process the processor for valid states
+     * @param succ the generator for successors
+     * @param acceptable the tester for validity of states
+     * @param <S> the type of the state
+     */
     public static <S> void bfsv(
             Supplier<S> s0,
             Consumer<S> process,

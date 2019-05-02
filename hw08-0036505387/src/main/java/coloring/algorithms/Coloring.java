@@ -12,16 +12,45 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Models a simple action of replacing the {@code refColor} with {@code fillColor} connected to {@code reference}.
+ *
+ * @author Marko Lazarić
+ */
 public class Coloring implements Consumer<Pixel>,
                                  Function<Pixel, List<Pixel>>,
                                  Predicate<Pixel>,
                                  Supplier<Pixel> {
 
+    /**
+     * The referenced pixel.
+     */
     private final Pixel reference;
+
+    /**
+     * The referenced picture.
+     */
     private final Picture picture;
+
+    /**
+     * The color to replace with.
+     */
     private final int fillColor;
+
+    /**
+     * The color to be replaced.
+     */
     private final int refColor;
 
+    /**
+     * Creates a new {@link Coloring} object with the specified arguments.
+     *
+     * @param reference the referenced pixel
+     * @param picture the referenced picture
+     * @param fillColor the color to replace with
+     *
+     * @throws NullPointerException if either {@code reference} or {@code picture} is {@code null}
+     */
     public Coloring(Pixel reference, Picture picture, int fillColor) {
         this.reference = Objects.requireNonNull(reference, "Cannot use null as a reference pixel.");
         this.picture = Objects.requireNonNull(picture, "Cannot use null as a picture.");
@@ -30,6 +59,12 @@ public class Coloring implements Consumer<Pixel>,
         this.refColor = picture.getPixelColor(reference.getX(), reference.getY());
     }
 
+    /**
+     * Returns whether the pixel is within the referenced picture.
+     *
+     * @param pixel the pixel to check
+     * @return true if it is within the referenced picture, false otherwise
+     */
     private boolean isValidPixel(Pixel pixel) {
         int x = pixel.getX();
         int y = pixel.getY();
@@ -39,6 +74,11 @@ public class Coloring implements Consumer<Pixel>,
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
+    /**
+     * Sets pixel color to {@link #fillColor}.
+     *
+     * @param pixel the pixel to set
+     */
     @Override
     public void accept(Pixel pixel) {
         if (!isValidPixel(pixel)) return;
@@ -46,6 +86,12 @@ public class Coloring implements Consumer<Pixel>,
         picture.setPixelColor(pixel.getX(), pixel.getY(), fillColor);
     }
 
+    /**
+     * Returns neighbours of the pixel.
+     *
+     * @param pixel the pixel whose neighbours it should return
+     * @return the neighbours of the pixel
+     */
     @Override
     public List<Pixel> apply(Pixel pixel) {
         if (!isValidPixel(pixel)) return Collections.emptyList();
@@ -61,6 +107,12 @@ public class Coloring implements Consumer<Pixel>,
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Tests whether the pixel's color is {@link #refColor}.
+     *
+     * @param pixel the pixel whose color it should test
+     * @return true if it is {@link #refColor}, false otherwise
+     */
     @Override
     public boolean test(Pixel pixel) {
         if (!isValidPixel(pixel)) return false;
@@ -68,6 +120,11 @@ public class Coloring implements Consumer<Pixel>,
         return picture.getPixelColor(pixel.getX(), pixel.getY()) == refColor;
     }
 
+    /**
+     * Returns the referenced pixel.
+     *
+     * @return the referenced pixel
+     */
     @Override
     public Pixel get() {
         return reference;

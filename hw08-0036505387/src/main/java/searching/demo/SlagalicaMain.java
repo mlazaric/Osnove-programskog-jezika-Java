@@ -6,8 +6,21 @@ import searching.slagalica.KonfiguracijaSlagalice;
 import searching.slagalica.Slagalica;
 import searching.slagalica.gui.SlagalicaViewer;
 
+/**
+ * Demonstrates the usage of {@link SearchUtil} to solve a simple puzzle.
+ *
+ * @author Marko Lazarić
+ */
 public class SlagalicaMain {
 
+    /**
+     * Main accepts one argument whose length should be 9. It should contain all digits 0-8 and each digit should appear
+     * only once. If any of these assumptions are not honored, a relevant error message is printed to the user.
+     *
+     * It solves the puzzle using {@link SearchUtil} and displays the result using {@link SlagalicaViewer}.
+     *
+     * @param args the arguments described above
+     */
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Program expects exactly one argument.");

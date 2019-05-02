@@ -1,13 +1,19 @@
 package searching.demo;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import searching.algorithms.Node;
 import searching.algorithms.SearchUtil;
 import searching.slagalica.KonfiguracijaSlagalice;
 import searching.slagalica.Slagalica;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Demonstrates the usage of {@link SearchUtil} to solve a simple puzzle.
+ *
+ * @author Marko Lazarić
+ */
 public class SlagalicaDemo {
 
     public static void main(String[] args) {
