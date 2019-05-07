@@ -18,7 +18,7 @@ public class ComplexRootedPolynomial {
         Complex result = constant;
 
         for (Complex root : roots) {
-            result = result.multiply(z.sub(root));
+            result = result.multiply(z.subtract(root));
         }
 
         return result;
@@ -28,7 +28,7 @@ public class ComplexRootedPolynomial {
         ComplexPolynomial result = new ComplexPolynomial(new Complex[]{ constant });
 
         for (Complex root : roots) {
-            ComplexPolynomial part = new ComplexPolynomial(new Complex[]{ root, Complex.ONE });
+            ComplexPolynomial part = new ComplexPolynomial(new Complex[]{ root.negate(), Complex.ONE });
 
             result = result.multiply(part);
         }
@@ -57,7 +57,7 @@ public class ComplexRootedPolynomial {
         double minDistance = treshold;
 
         for (Complex root : roots) {
-            double distance = z.sub(root).module();
+            double distance = z.subtract(root).module();
 
             if (distance < minDistance) {
                 minDistance = distance;
