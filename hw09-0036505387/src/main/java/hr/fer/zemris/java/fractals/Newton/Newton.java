@@ -155,14 +155,14 @@ public class Newton {
 
                     do {
                         prevZn = zn;
-                        zn = zn.subtract(polynomial.apply(zn).divide(derived.apply(zn)));
+                        zn = zn.sub(polynomial.apply(zn).divide(derived.apply(zn)));
 
                         numberOfIterations++;
 
                         if (cancel.get()) {
                             return null;
                         }
-                    } while (prevZn.subtract(zn).module() > CONVERGENCE_TRESHOLD && numberOfIterations < maxIterations);
+                    } while (prevZn.sub(zn).module() > CONVERGENCE_TRESHOLD && numberOfIterations < maxIterations);
 
                     data[offset] = (short) (polynomial.indexOfClosestRootFor(zn, CONVERGENCE_TRESHOLD) + 1);
                     offset++;

@@ -9,6 +9,10 @@ import hr.fer.zemris.math.ComplexRootedPolynomial;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Simple test program to make sure {@link ComplexRootedPolynomial} etc. work. It uses no parallelisation.
+ * For the actual task look at {@link hr.fer.zemris.java.fractals.Newton.Newton}.
+ */
 public class FractalDemo {
 
     public static void main(String[] args) {
@@ -50,10 +54,10 @@ public class FractalDemo {
 
                     do {
                         znold = zn;
-                        zn = zn.subtract(crp.apply(zn).divide(dcrp.apply(zn)));
+                        zn = zn.sub(crp.apply(zn).divide(dcrp.apply(zn)));
 
                         iters++;
-                    } while(iters < m && zn.subtract(znold).module() > 1e-3);
+                    } while(iters < m && zn.sub(znold).module() > 1e-3);
 
                     data[offset] = (short) (crp.indexOfClosestRootFor(zn, 1e-3) + 1);
 

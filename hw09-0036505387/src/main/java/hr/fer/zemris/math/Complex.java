@@ -291,17 +291,22 @@ public class Complex {
     /**
      * Subtracts two complex numbers and returns the result.
      *
-     * @param c the complex number to subtract from {@code this}
+     * @param c the complex number to sub from {@code this}
      * @return a new complex number representing the result of subtracting {@code c} from {code this}
      *
      * @throws NullPointerException if {@code c} is {@code null}
      */
-    public Complex subtract(Complex c) {
-        Objects.requireNonNull(c, "Cannot subtract null from a complex number.");
+    public Complex sub(Complex c) {
+        Objects.requireNonNull(c, "Cannot sub null from a complex number.");
 
         return add(c.multiply(ONE_NEG));
     }
 
+    /**
+     * Returns a negated complex number.
+     *
+     * @return the negated complex number
+     */
     public Complex negate() {
         return this.multiply(ONE_NEG);
     }
@@ -453,7 +458,7 @@ public class Complex {
      */
     @Override
     public String toString() {
-        return String.format("(%f%+fi)", real, imaginary);
+        return String.format("(%.1f%+.1fi)", real, imaginary);
     }
 
 }

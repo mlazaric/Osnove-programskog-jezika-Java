@@ -35,8 +35,8 @@ public class Sphere extends GraphicalObject {
             return null;
         }
 
-        // If two solutions exist, the closer one will be the one where we subtract the sqrt of discriminant.
-        // If one solution exists, it doesn't matter if we subtract or add the sqrt of discriminant.
+        // If two solutions exist, the closer one will be the one where we sub the sqrt of discriminant.
+        // If one solution exists, it doesn't matter if we sub or add the sqrt of discriminant.
         double distance = -(ray.direction.scalarProduct(ray.start.sub(center))) - sqrt(discriminant);
 
         // Ray is a parametric definition of a line, point = direction * t + start, where t is the distance from the start.

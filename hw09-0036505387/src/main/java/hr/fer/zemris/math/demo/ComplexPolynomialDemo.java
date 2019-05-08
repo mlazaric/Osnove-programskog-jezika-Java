@@ -4,6 +4,9 @@ import hr.fer.zemris.math.Complex;
 import hr.fer.zemris.math.ComplexPolynomial;
 import hr.fer.zemris.math.ComplexRootedPolynomial;
 
+/**
+ * Demonstration program for {@link ComplexPolynomial} and {@link ComplexRootedPolynomial}.
+ */
 public class ComplexPolynomialDemo {
 
     public static void main(String[] args) {

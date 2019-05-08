@@ -2,6 +2,9 @@ package hr.fer.zemris.math.demo;
 
 import hr.fer.zemris.math.Vector3;
 
+/**
+ * Demonstration program for {@link Vector3}.
+ */
 public class Vector3Demo {
     public static void main(String[] args) {
         Vector3 i = new Vector3(1,0,0);
