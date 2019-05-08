@@ -1,15 +1,54 @@
 package hr.fer.zemris.java.raytracer.model;
 
 
-import static java.lang.Math.*;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 
+/**
+ * Models a sphere represented by its center point, radius and the various light related coefficients.
+ *
+ * @author Marko Lazarić
+ */
 public class Sphere extends GraphicalObject {
 
+    /**
+     * The center point of the sphere.
+     */
     private final Point3D center;
-    private final double radius;
-    private final double kdr, kdg, kdb;
-    private final double krr, krg, krb, krn;
 
+    /**
+     * The radius of the sphere.
+     */
+    private final double radius;
+
+    /**
+     * The red, green and blue diffusion light coefficients.
+     */
+    private final double kdr, kdg, kdb;
+
+    /**
+     * The red, green and blue reflection light coefficients.
+     */
+    private final double krr, krg, krb;
+
+    /**
+     * The shininess factor.
+     */
+    private final double krn;
+
+    /**
+     * Creates a new {@link Sphere} with the given arguments.
+     *
+     * @param center the center point of the sphere
+     * @param radius the radius of the sphere
+     * @param kdr the red diffusion light coefficient
+     * @param kdg the green diffusion light coefficient
+     * @param kdb the blue diffusion light coefficient
+     * @param krr the red reflection light coefficient
+     * @param krg the green reflection light coefficient
+     * @param krb the blue reflection light coefficient
+     * @param krn the shininess factor
+     */
     public Sphere(Point3D center, double radius, double kdr, double kdg,
                   double kdb, double krr, double krg, double krb, double krn) {
         this.center = center;
@@ -25,10 +64,17 @@ public class Sphere extends GraphicalObject {
         this.krn = krn;
     }
 
+    /**
+     * Finds the closest intersection to ray start between the ray and the sphere, or null if they do not intersect.
+     *
+     * @param ray the ray to intersect with the sphere
+     * @return the closest intersection or null
+     */
     public RayIntersection findClosestRayIntersection(Ray ray) {
         // https://en.wikipedia.org/wiki/Line–sphere_intersection
         double discriminant = pow(ray.direction.scalarProduct(ray.start.sub(center)), 2)
-                - pow(ray.start.sub(center).norm(), 2) + pow(radius, 2);
+                            - pow(ray.start.sub(center).norm(), 2)
+                            + pow(radius, 2);
 
         // No solutions exist.
         if (discriminant < 0) {

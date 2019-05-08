@@ -7,11 +7,28 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Math.pow;
 
+/**
+ * Models a simple ray caster using Phong's model for lighting.
+ *
+ * @author Marko Lazarić
+ */
 public class RayCaster {
 
-    public static final double DOUBLE_EPSILON = 1E-3;
-    public static final int AMBIENT_LIGHT = 15;
+    /**
+     * The epsilon used for determining the equality of doubles.
+     */
+    private static final double DOUBLE_EPSILON = 1E-3;
 
+    /**
+     * The amount of ambient light.
+     */
+    private static final int AMBIENT_LIGHT = 15;
+
+    /**
+     * Creates a predefined scene and renders it.
+     *
+     * @param args the arguments are ignored
+     */
     public static void main(String[] args) {
         RayTracerViewer.show(getIRayTracerProducer(),
                 new Point3D(10,0,0),
@@ -20,6 +37,11 @@ public class RayCaster {
                 20, 20);
     }
 
+    /**
+     * Creates a new ray tracer producer.
+     *
+     * @return the new ray tracer producer
+     */
     private static IRayTracerProducer getIRayTracerProducer() {
         return new IRayTracerProducer() {
             @Override
@@ -51,6 +73,10 @@ public class RayCaster {
 
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
+                        if (cancel.get()) {
+                            return;
+                        }
+
                         Point3D screenPoint = screenCorner.add(xAxis.scalarMultiply(x * horizontal / (width - 1)))
                                                           .sub(yAxis.scalarMultiply(y * vertical / (height - 1)));
 
@@ -73,6 +99,13 @@ public class RayCaster {
         };
     }
 
+    /**
+     * Traces the ray in the scene to determine the colour of the points.
+     *
+     * @param scene the scene in which to trace the ray
+     * @param ray the ray to trace
+     * @param rgb array of three shorts representing the rgb components of the lighting
+     */
     protected static void tracer(Scene scene, Ray ray, short[] rgb) {
         RayIntersection intersection = findClosestIntersection(scene, ray);
 
@@ -84,6 +117,14 @@ public class RayCaster {
         determineColorFor(scene, ray, intersection, rgb);
     }
 
+    /**
+     * Determines colour of a point in a scene.
+     *
+     * @param scene the scene being rendered
+     * @param eyeRay the ray from the eye to the point
+     * @param intersection the intersection between the eyeRay and the objects in the scene
+     * @param rgb array of three shorts representing the rgb components of the lighting
+     */
     protected static void determineColorFor(Scene scene, Ray eyeRay, RayIntersection intersection, short[] rgb) {
         rgb[0] = rgb[1] = rgb[2] = AMBIENT_LIGHT; // Ambient component
 
@@ -126,6 +167,13 @@ public class RayCaster {
         }
     }
 
+    /**
+     * Finds the closest intersection to the start of the ray in the scene.
+     *
+     * @param scene the scene whose objects to check
+     * @param ray the ray used to find the closest intersection
+     * @return the closest intersection to the start of the ray in the scene, or null
+     */
     protected static RayIntersection findClosestIntersection(Scene scene, Ray ray) {
         RayIntersection closestIntersection = null;
 

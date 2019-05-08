@@ -9,13 +9,29 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static hr.fer.zemris.java.raytracer.RayCaster.RayCaster.tracer;
 
+/**
+ * Models a simple ray caster using Phong's model for lighting and {@link ForkJoinPool} for parallelisation.
+ *
+ * @author Marko Lazarić
+ */
 public class RayCasterParallel2 {
+
+    /**
+     * Creates a predefined scene and renders it.
+     *
+     * @param args the arguments are ignored
+     */
     public static void main(String[] args) {
         RayTracerViewer.show(
                 getIRayTracerProducer(), getIRayTracerAnimator(), 30, 30
         );
     }
 
+    /**
+     * Creates a new ray tracer animator.
+     *
+     * @return the new ray tracer animator.
+     */
     private static IRayTracerAnimator getIRayTracerAnimator() {
         return new IRayTracerAnimator() {
             long time;
@@ -52,6 +68,11 @@ public class RayCasterParallel2 {
         };
     }
 
+    /**
+     * Creates a new ray tracer producer.
+     *
+     * @return the new ray tracer producer
+     */
     private static IRayTracerProducer getIRayTracerProducer() {
         return new IRayTracerProducer() {
             @Override
@@ -79,7 +100,7 @@ public class RayCasterParallel2 {
 
                 ForkJoinPool pool = new ForkJoinPool();
 
-                pool.invoke(new RenderingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel,
+                pool.invoke(new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel,
                         0, height - 1, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner));
                 pool.shutdown();
 
@@ -88,31 +109,133 @@ public class RayCasterParallel2 {
         };
     }
 
-    private static class RenderingJob extends RecursiveAction {
-        private static final int DIRECTLY_COMPUTABLE_AMOUNT = 16 * 16;
+    /**
+     * Models a rendering job using the {@link ForkJoinPool} and {@link RecursiveAction}.
+     *
+     * @author Marko Lazarić
+     */
+    private static class TracingJob extends RecursiveAction {
 
+        /**
+         * The number of rows of pixels it should compute directly.
+         */
+        private static final int DIRECTLY_COMPUTABLE_AMOUNT = 16 * 16 * 16;
+
+        /**
+         * The location of the eyes.
+         */
         private final Point3D eye;
+
+        /**
+         * The location of the view.
+         */
         private final Point3D view;
+
+        /**
+         * The up direction.
+         */
         private final Point3D viewUp;
+
+        /**
+         * The width of the scene to trace.
+         */
         private final double horizontal;
+
+        /**
+         * The height of the scene to trace.
+         */
         private final double vertical;
+
+        /**
+         * The number of pixels in a row.
+         */
         private final int width;
+
+        /**
+         * The number of pixels in a column.
+         */
         private final int height;
+
+        /**
+         * Whether the job should be cancelled.
+         */
         private final AtomicBoolean cancel;
-        private final int yMax;
-        private final int yMin;
+
+        /**
+         * The last y coordinate to trace.
+         */
+        private final int yEnd;
+
+        /**
+         * The first y coordinate to trace.
+         */
+        private final int yStart;
+
+        /**
+         * The red component of lighting.
+         */
         private final short[] red;
+
+        /**
+         * The green component of lighting.
+         */
         private final short[] green;
+
+        /**
+         * The blue component of lighting.
+         */
         private final short[] blue;
+
+        /**
+         * The scene in which to trace.
+         */
         private final Scene scene;
+
+        /**
+         * The z axis vector.
+         */
         private final Point3D zAxis;
+
+        /**
+         * The y axis vector.
+         */
         private final Point3D yAxis;
+
+        /**
+         * The x axis vector.
+         */
         private final Point3D xAxis;
+
+        /**
+         * The screen corner.
+         */
         private final Point3D screenCorner;
 
-        private RenderingJob(Point3D eye, Point3D view, Point3D viewUp, double horizontal, double vertical, int width,
-                             int height, AtomicBoolean cancel, int yMin, int yMax, short[] red, short[] green, short[] blue,
-                             Scene scene, Point3D zAxis, Point3D yAxis, Point3D xAxis, Point3D screenCorner) {
+        /**
+         * Creates a new {@link TracingJob} with the given arguments.
+         *
+         * @param eye the location of the eyes
+         * @param view the location of the view
+         * @param viewUp the up direction
+         * @param horizontal the width of the scene to trace
+         * @param vertical the height of the scene to trace
+         * @param width the number of pixels in a row
+         * @param height the number of pixels in a column
+         * @param cancel whether the job should be cancelled
+         * @param yStart the first y coordinate to trace
+         * @param yEnd the last y coordinate to trace
+         * @param red the red component of lighting
+         * @param green the green component of lighting
+         * @param blue the blue component of lighting
+         * @param scene the scene in which to trace
+         * @param zAxis the z axis vector
+         * @param yAxis the y axis vector
+         * @param xAxis the x axis vector
+         * @param screenCorner the screen corner
+         */
+        private TracingJob(Point3D eye, Point3D view, Point3D viewUp, double horizontal, double vertical, int width,
+                           int height, AtomicBoolean cancel, int yStart, int yEnd, short[] red, short[] green, short[] blue,
+                           Scene scene, Point3D zAxis, Point3D yAxis, Point3D xAxis, Point3D screenCorner) {
             this.eye = eye;
             this.view = view;
             this.viewUp = viewUp;
@@ -121,8 +244,8 @@ public class RayCasterParallel2 {
             this.width = width;
             this.height = height;
             this.cancel = cancel;
-            this.yMax = yMax;
-            this.yMin = yMin;
+            this.yEnd = yEnd;
+            this.yStart = yStart;
             this.red = red;
             this.green = green;
             this.blue = blue;
@@ -139,24 +262,27 @@ public class RayCasterParallel2 {
                 return;
             }
 
-            if ((yMax - yMin) < DIRECTLY_COMPUTABLE_AMOUNT) {
+            if ((yEnd - yStart) < DIRECTLY_COMPUTABLE_AMOUNT) {
                 computeDirectly();
                 return;
             }
 
             invokeAll(
-                new RenderingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel, yMin,
-                        yMin + (yMin + yMax) / 2, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner),
-                new RenderingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel,
-                        yMin + (yMin + yMax) / 2 + 1, yMax, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner)
+                new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel, yStart,
+                        yStart + (yStart + yEnd) / 2, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner),
+                new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel,
+                        yStart + (yStart + yEnd) / 2 + 1, yEnd, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner)
             );
         }
 
+        /**
+         * Directly traces all the pixels from yStart to yEnd (inclusive).
+         */
         private void computeDirectly() {
             short[] rgb = new short[3];
-            int offset = yMin * width;
+            int offset = yStart * width;
 
-            for (int y = yMin; y <= yMax; y++) {
+            for (int y = yStart; y <= yEnd; y++) {
                 for (int x = 0; x < width; x++) {
                     if (cancel.get()) {
                         return;
