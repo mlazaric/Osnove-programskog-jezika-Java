@@ -9,12 +9,24 @@ import hr.fer.zemris.math.ComplexRootedPolynomial;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Draws fractals derived from Newton-Raphson iterative method.
+ *
+ * @author Marko Lazarić
+ */
 public class Newton {
 
+    /**
+     * Prompts the user for 2 or more complex roots and then draws the resulting fractal produced by the Newton-Raphson
+     * iterative method.
+     *
+     * @param args the arguments are ignored
+     */
     public static void main(String[] args) {
         System.out.println("Welcome to Newton-Raphson iteration-based fractal viewer.\n" +
                 "Please enter at least two roots, one root per line. Enter 'done' when done.");
@@ -51,21 +63,49 @@ public class Newton {
 
         sc.close();
 
-        System.out.println("Image of fractal will appear shortly. Thank you.");
+        System.out.println("Image of the fractal will appear shortly. Thank you.");
 
         ComplexRootedPolynomial polynomial = new ComplexRootedPolynomial(Complex.ONE, roots.toArray(Complex[]::new));
         FractalViewer.show(new NewtonFractal(polynomial));
     }
 
+    /**
+     * Produces a fractal created using the Newton-Raphson iterative method on the polynomial.
+     * Uses {@link ExecutorService} for parallelisation.
+     *
+     * @author Marko Lazarić
+     */
     private static class NewtonFractal implements IFractalProducer {
+
+        /**
+         * The polynomial used in Newton-Raphson's method.
+         */
         private final ComplexRootedPolynomial polynomial;
+
+        /**
+         * The thread pool used for parallelisation.
+         */
         private final ExecutorService pool;
+
+        /**
+         * The number of jobs to create in the thread pool.
+         */
         private final int numberOfJobs;
 
+        /**
+         * Maximum number of iterations before assuming divergence.
+         */
         private static final int MAX_ITERATIONS = 16 * 16 * 16;
 
+        /**
+         * Creates a new {@link NewtonFractal} with the given argument.
+         *
+         * @param polynomial the polynomial used in Newton-Raphson's method
+         *
+         * @throws NullPointerException if {@code polynomial} is {@code null}
+         */
         private NewtonFractal(ComplexRootedPolynomial polynomial) {
-            this.polynomial = polynomial;
+            this.polynomial = Objects.requireNonNull(polynomial, "Cannot produce fractal of null.");
             this.numberOfJobs = 8 * Runtime.getRuntime().availableProcessors();
             this.pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new DaemonicThreadFactory());
         }
@@ -97,6 +137,10 @@ public class Newton {
             }
 
             for (Future<Void> result : futureResults) {
+                if (cancel.get()) {
+                    return;
+                }
+
                 try {
                     result.get();
                 } catch (InterruptedException | ExecutionException e) {}
@@ -107,23 +151,96 @@ public class Newton {
         }
     }
 
+    /**
+     * Models a single job in the {@link NewtonFractal} drawing process.
+     */
     private static class CalculateRowsJob implements Callable<Void> {
-        private static final double CONVERGENCE_TRESHOLD = 1E-3;
+        /**
+         * The epsilon used for determining convergence.
+         */
+        private static final double CONVERGENCE_THRESHOLD = 1E-3;
 
+        /**
+         * The first y coordinate to calculate.
+         */
         private final int yStart;
+
+        /**
+         * The last y coordinate to calculate.
+         */
         private final int yEnd;
+
+        /**
+         * The minimum value of the real part.
+         */
         private final double reMin;
+
+        /**
+         * The maximum value of the real part.
+         */
         private final double reMax;
+
+        /**
+         * The minimum value of the imaginary part.
+         */
         private final double imMin;
+
+        /**
+         * The maximum value of the imaginary part.
+         */
         private final double imMax;
+
+        /**
+         * The number of pixels in a row.
+         */
         private final int width;
+
+        /**
+         * The number of pixels in a column.
+         */
         private final int height;
+
+        /**
+         * The number of iterations before assuming divergence.
+         */
         private final int maxIterations;
+
+        /**
+         * The indices of the closest roots.
+         */
         private final short[] data;
+
+        /**
+         * Whether this job should be cancelled.
+         */
         private final AtomicBoolean cancel;
+
+        /**
+         * The polynomial used in Newton-Raphson's method.
+         */
         private final ComplexRootedPolynomial polynomial;
+
+        /**
+         * The derivation of {@link #polynomial}.
+         */
         private final ComplexPolynomial derived;
 
+        /**
+         * Creates a new {@link CalculateRowsJob} with the given arguments.
+         *
+         * @param yStart the first y coordinate to calculate
+         * @param yEnd the last y coordinate to calculate
+         * @param reMin the minimum value of the real part
+         * @param reMax the maximum value of the real part
+         * @param imMin the minimum value of the imaginary part
+         * @param imMax the maximum value of the imaginary part
+         * @param width the number of pixels in a row
+         * @param height the number of pixels in a column
+         * @param maxIterations the number of iterations before assuming divergence
+         * @param data the indices of the closest roots
+         * @param cancel whether this job should be cancelled
+         * @param polynomial the polynomial used in Newton-Raphson's method
+         */
         private CalculateRowsJob(int yStart, int yEnd,
                                  double reMin, double reMax, double imMin, double imMax, int width, int height,
                                  int maxIterations, short[] data, AtomicBoolean cancel, ComplexRootedPolynomial polynomial) {
@@ -142,6 +259,11 @@ public class Newton {
             this.derived = polynomial.toComplexPolynom().derive();
         }
 
+        /**
+         * Calculates indices of the closest root for pixels in rows from yStart, to yEnd, inclusive.
+         *
+         * {@inheritDoc}
+         */
         @Override
         public Void call() {
             int offset = width * yStart;
@@ -162,9 +284,9 @@ public class Newton {
                         if (cancel.get()) {
                             return null;
                         }
-                    } while (prevZn.sub(zn).module() > CONVERGENCE_TRESHOLD && numberOfIterations < maxIterations);
+                    } while (prevZn.sub(zn).module() > CONVERGENCE_THRESHOLD && numberOfIterations < maxIterations);
 
-                    data[offset] = (short) (polynomial.indexOfClosestRootFor(zn, CONVERGENCE_TRESHOLD) + 1);
+                    data[offset] = (short) (polynomial.indexOfClosestRootFor(zn, CONVERGENCE_THRESHOLD) + 1);
                     offset++;
 
                     if (cancel.get()) {
@@ -176,6 +298,13 @@ public class Newton {
             return null;
         }
 
+        /**
+         * Maps x and y coordinate of a pixel to a {@link Complex} number.
+         *
+         * @param x the x coordinate of the pixel
+         * @param y the y coordinate of the pixel
+         * @return the {@link Complex} number the pixel maps to
+         */
         private Complex mapToComplex(int x, int y) {
             double real = x * (reMax - reMin) / (width - 1.0) + reMin;
             double imag = (height - 1.0 - y) * (imMax - imMin) / (height - 1.0) + imMin;
@@ -184,6 +313,11 @@ public class Newton {
         }
     }
 
+    /**
+     * Creates {@link Thread}s with the daemon flag set to true.
+     *
+     * @author Marko Lazarić
+     */
     private static class DaemonicThreadFactory implements ThreadFactory {
         @Override
         public Thread newThread(Runnable r) {
