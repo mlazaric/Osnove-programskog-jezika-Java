@@ -23,7 +23,7 @@ public class RayCasterParallel2 {
      */
     public static void main(String[] args) {
         RayTracerViewer.show(
-                getIRayTracerProducer(), getIRayTracerAnimator(), 30, 30
+                getIRayTracerProducer(RayTracerViewer.createPredefinedScene2()), getIRayTracerAnimator(), 30, 30
         );
     }
 
@@ -73,7 +73,7 @@ public class RayCasterParallel2 {
      *
      * @return the new ray tracer producer
      */
-    private static IRayTracerProducer getIRayTracerProducer() {
+    protected static IRayTracerProducer getIRayTracerProducer(Scene scene) {
         return new IRayTracerProducer() {
             @Override
             public void produce(Point3D eye, Point3D view, Point3D viewUp,
@@ -95,8 +95,6 @@ public class RayCasterParallel2 {
 
                 Point3D screenCorner = view.sub(xAxis.scalarMultiply(horizontal / 2))
                                            .add(yAxis.scalarMultiply(vertical / 2));
-
-                Scene scene = RayTracerViewer.createPredefinedScene2();
 
                 ForkJoinPool pool = new ForkJoinPool();
 
