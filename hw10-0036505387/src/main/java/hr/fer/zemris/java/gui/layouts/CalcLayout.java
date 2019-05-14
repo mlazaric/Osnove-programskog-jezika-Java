@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.gui.layouts;
 
-import javax.swing.text.Position;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
