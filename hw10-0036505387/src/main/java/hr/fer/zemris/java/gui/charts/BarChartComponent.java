@@ -6,24 +6,71 @@ import java.awt.geom.AffineTransform;
 import java.util.Objects;
 
 import static java.lang.Math.ceil;
-import static java.lang.Math.max;
 
+/**
+ * Draws a bar chart modeled by {@link BarChart}.
+ *
+ * @author Marko Lazarić
+ */
 public class BarChartComponent extends JComponent {
 
+    /**
+     * The space between the description of the y values and the y labels.
+     */
     private static final int SPACE_BETWEEN_Y_DESC_AND_Y_LABEL = 20;
+
+    /**
+     * The space between the description of the x values and the x labels.
+     */
     private static final int SPACE_BETWEEN_X_DESC_AND_X_LABEL = 20;
 
+    /**
+     * The right margin.
+     */
     private static final int RIGHT_MARGIN = 20;
+
+    /**
+     * The top margin.
+     */
     private static final int TOP_MARGIN = 20;
+
+    /**
+     * The left margin.
+     */
     private static final int LEFT_MARGIN = 30;
+
+    /**
+     * The bottom margin.
+     */
     private static final int BOTTOM_MARGIN = 10;
 
+    /**
+     * The color of the lines and the text.
+     */
     private static final Color LABEL_COLOR = Color.BLACK;
+
+    /**
+     * The border color of the bars.
+     */
     private static final Color BAR_BORDER_COLOR = Color.decode("#006064");
+
+    /**
+     * The fill color of the bars.
+     */
     private static final Color BAR_FILL_COLOR = Color.decode("#00BCD4");
 
+    /**
+     * The bar chart model.
+     */
     private final BarChart barChart;
 
+    /**
+     * Creates a new {@link BarChartComponent} with the given argument.
+     *
+     * @param barChart the bar chart model
+     *
+     * @throws NullPointerException if {@code barChart} is {@code null}
+     */
     public BarChartComponent(BarChart barChart) {
         this.barChart = Objects.requireNonNull(barChart, "Cannot use null bar chart.");
     }
@@ -31,26 +78,33 @@ public class BarChartComponent extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        
-        int yLabelWidth = max(g.getFontMetrics().stringWidth("" + barChart.getMinY()),
-                              g.getFontMetrics().stringWidth("" + barChart.getMaxY())) + 10;
 
-        int xLabelHeight = g.getFontMetrics().getHeight();
-
+        // Origin coordinates
         int originX = LEFT_MARGIN + g.getFontMetrics().getHeight() + SPACE_BETWEEN_Y_DESC_AND_Y_LABEL;
         int originY = getHeight() - BOTTOM_MARGIN - g.getFontMetrics().getHeight() - SPACE_BETWEEN_X_DESC_AND_X_LABEL;
 
+        // Widths and heights of the labels
         int widthOfXValue = (getWidth() - originX - RIGHT_MARGIN) / barChart.getValues().size();
         int numberOfYLabels = (int) ceil((barChart.getMaxY() - barChart.getMinY()) * 1.0 / barChart.getStepY());
         int heightOfYValue = (originY - TOP_MARGIN) / numberOfYLabels;
 
+        // Draw everything
         drawBars(g, originX, originY, widthOfXValue, heightOfYValue);
-        drawXLabels(g, xLabelHeight, originX, originY, widthOfXValue);
+        drawXLabels(g, originX, originY, widthOfXValue);
         drawYLabels(g, originX, originY, numberOfYLabels, heightOfYValue);
         drawDescriptionX(g, originX, originY);
-        drawDescriptionY(g, g2, originY);
+        drawDescriptionY(g2, originY);
     }
 
+    /**
+     * Draws the bars of the bar chart.
+     *
+     * @param g the graphics object
+     * @param originX the x coordinate of origin
+     * @param originY the y coordinate of origin
+     * @param widthOfXValue the width of the x values
+     * @param heightOfYValue the height of the y step values
+     */
     private void drawBars(Graphics g, int originX, int originY, int widthOfXValue, int heightOfYValue) {
         int index = 0;
 
@@ -58,7 +112,7 @@ public class BarChartComponent extends JComponent {
             int x = originX + index * widthOfXValue;
             int width = widthOfXValue;
 
-            int height = (int) (((double) value.getY() / barChart.getStepY()) * heightOfYValue);
+            int height = (int) (((double) (value.getY() - barChart.getMinY()) / barChart.getStepY()) * heightOfYValue);
             int y = originY - height;
 
             g.setColor(BAR_FILL_COLOR);
@@ -71,7 +125,13 @@ public class BarChartComponent extends JComponent {
         }
     }
 
-    private void drawDescriptionY(Graphics g, Graphics2D g2, int originY) {
+    /**
+     * Draws the description of the y values.
+     *
+     * @param g2 the graphics2d object
+     * @param originY the y coordinate of the origin
+     */
+    private void drawDescriptionY(Graphics2D g2, int originY) {
         AffineTransform defaultAt = g2.getTransform();
         AffineTransform at = new AffineTransform();
         at.rotate(-Math.PI / 2);
@@ -79,13 +139,20 @@ public class BarChartComponent extends JComponent {
         g2.setTransform(at);
 
         String description = barChart.getDescriptionY();
-        int heightOfDescription = g.getFontMetrics().stringWidth(description);
+        int heightOfDescription = g2.getFontMetrics().stringWidth(description);
 
         g2.drawString(description, -(originY / 2 + heightOfDescription / 2), RIGHT_MARGIN);
 
         g2.setTransform(defaultAt);
     }
 
+    /**
+     * Draws the description of the x values.
+     *
+     * @param g the graphics object
+     * @param originX the x coordinate of origin
+     * @param originY the y coordinate of origin
+     */
     private void drawDescriptionX(Graphics g, int originX, int originY) {
         String description = barChart.getDescriptionX();
         int widthOfDescription = g.getFontMetrics().stringWidth(description);
@@ -94,9 +161,18 @@ public class BarChartComponent extends JComponent {
                 originY + SPACE_BETWEEN_X_DESC_AND_X_LABEL + g.getFontMetrics().getHeight());
     }
 
+    /**
+     * Draws the y step labels.
+     *
+     * @param g the graphics object
+     * @param originX the x coordinate of origin
+     * @param originY the y coordinate of origin
+     * @param numberOfYLabels the number of y step labels
+     * @param heightOfYValue the height of the y step values
+     */
     private void drawYLabels(Graphics g, int originX, int originY, int numberOfYLabels, int heightOfYValue) {
         for (int index = 0; index <= numberOfYLabels; ++index) {
-            String yLabel = "" + (index * barChart.getStepY());
+            String yLabel = "" + (index * barChart.getStepY() + barChart.getMinY());
             int widthOfThisLabel = g.getFontMetrics().stringWidth(yLabel);
 
             g.drawLine(originX, originY - index * heightOfYValue, originX - 5, originY - index * heightOfYValue);
@@ -108,8 +184,17 @@ public class BarChartComponent extends JComponent {
                       new int[]{originY - numberOfYLabels * heightOfYValue - 5, originY - numberOfYLabels * heightOfYValue - 5, originY - numberOfYLabels * heightOfYValue - 10},3);
     }
 
-    private void drawXLabels(Graphics g, int xLabelHeight, int originX, int originY, int widthOfXValue) {
+    /**
+     * Draws the x labels.
+     *
+     * @param g the graphics object
+     * @param originX the x coordinate of origin
+     * @param originY the y coordinate of origin
+     * @param widthOfXValue the width of the x values
+     */
+    private void drawXLabels(Graphics g, int originX, int originY, int widthOfXValue) {
         int index = 0;
+        int xLabelHeight = g.getFontMetrics().getHeight();
 
         for (XYValue value : barChart.getValues()) {
             g.drawLine(originX + index * widthOfXValue, originY, originX + index * widthOfXValue, originY + 5);
