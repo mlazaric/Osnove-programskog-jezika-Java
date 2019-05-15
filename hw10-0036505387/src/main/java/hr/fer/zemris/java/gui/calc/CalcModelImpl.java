@@ -10,18 +10,56 @@ import java.util.function.DoubleBinaryOperator;
 
 import static java.lang.Math.abs;
 
+/**
+ * Implementation of {@link CalcModel} for {@link Calculator}.
+ *
+ * @author Marko Lazarić
+ */
 public class CalcModelImpl implements CalcModel {
 
+    /**
+     * Is the value currently editable?
+     */
     private boolean isEditable = true;
+
+    /**
+     * Is the value positive?
+     */
     private boolean isPositive = true;
+
+    /**
+     * The current string input.
+     */
     private String currentInput = "";
+
+    /**
+     * The current value.
+     */
     private double value = 0;
+
+    /**
+     * The active operand to use in the pending operation.
+     */
     private double activeOperand;
+
+    /**
+     * The pending operation to perform.
+     */
     private DoubleBinaryOperator pendingOperation;
+
+    /**
+     * Is the active operand currently set?
+     */
     private boolean isActiveOperandSet = false;
 
+    /**
+     * The listeners that should be notified on value change.
+     */
     private List<CalcValueListener> listeners = new ArrayList<>();
 
+    /**
+     * Notifies all listeners.
+     */
     private void notifyListeners() {
         for (CalcValueListener listener : listeners) {
             listener.valueChanged(this);
@@ -132,6 +170,12 @@ public class CalcModelImpl implements CalcModel {
         notifyListeners();
     }
 
+    /**
+     * Removes leading zeros from the string and returns the result.
+     *
+     * @param s the string to remove leading zeros from
+     * @return input string without leading zeros
+     */
     private String removeLeadingZeros(String s) {
         return s.replaceAll("^0+([0-9])", "$1");
     }

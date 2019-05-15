@@ -6,25 +6,48 @@ import hr.fer.zemris.java.gui.layouts.RCPosition;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Stack;
 import java.util.function.DoubleBinaryOperator;
 
 import static java.lang.Math.*;
 
+/**
+ * Creates a simple calculator GUI using a {@link CalcModel}.
+ *
+ * @author Marko Lazarić
+ */
 public class Calculator extends JFrame {
 
-    private static final Color DISPLAY_BACKGROUND_COLOR = Color.YELLOW;
-    private static final Color DISPLAY_BORDER_COLOR = Color.BLACK;
-    private static final Color BUTTON_BACKGROUND_COLOR = Color.LIGHT_GRAY;
+    /**
+     * The background color of the display.
+     */
+    protected static final Color DISPLAY_BACKGROUND_COLOR = Color.YELLOW;
 
+    /**
+     * The border color of the display.
+     */
+    protected static final Color DISPLAY_BORDER_COLOR = Color.BLACK;
+
+    /**
+     * The background color of the buttons.
+     */
+    protected static final Color BUTTON_BACKGROUND_COLOR = Color.LIGHT_GRAY;
+
+    /**
+     * The model to use for calculation.
+     */
     private final CalcModel model;
 
+    /**
+     * The stack used for stack operation buttons.
+     */
     private final Stack<Double> stack;
 
+    /**
+     * Creates a new {@link Calculator} with the given argument.
+     *
+     * @param model the model used for calculation
+     */
     public Calculator(CalcModel model) {
         this.model = model;
         this.stack = new Stack<>();
@@ -33,6 +56,9 @@ public class Calculator extends JFrame {
         pack();
     }
 
+    /**
+     * Initialises the GUI.
+     */
     private void initGUI() {
         Container container = getContentPane();
 
@@ -48,6 +74,11 @@ public class Calculator extends JFrame {
         addInvertibleOperations(container);
     }
 
+    /**
+     * Adds all the invertible buttons.
+     *
+     * @param container the container to add them to
+     */
     private void addInvertibleOperations(Container container) {
         JCheckBox isInvertedCheck = new JCheckBox("Inv");
 
@@ -111,6 +142,11 @@ public class Calculator extends JFrame {
         }
     }
 
+    /**
+     * Adds the buttons related to stack operations to the container.
+     *
+     * @param container the container to add them to
+     */
     private void addStackButtons(Container container) {
         JButton pushButton = new JButton("push");
         JButton popButton = new JButton("pop");
@@ -135,6 +171,11 @@ public class Calculator extends JFrame {
         container.add(popButton, new RCPosition(4, 7));
     }
 
+    /**
+     * Adds clear and reset buttons to the container.
+     *
+     * @param container the container to add them to
+     */
     private void addClearAndReset(Container container) {
         JButton clearButton = new JButton("clr");
         JButton resetButton = new JButton("res");
@@ -149,6 +190,11 @@ public class Calculator extends JFrame {
         container.add(resetButton, new RCPosition(2, 7));
     }
 
+    /**
+     * Adds the calculate button ('=') to the container.
+     *
+     * @param container the container to add it to
+     */
     private void addCalculateButton(Container container) {
         JButton calculateButton = new JButton("=");
         RCPosition position = new RCPosition(1, 6);
@@ -169,6 +215,11 @@ public class Calculator extends JFrame {
         });
     }
 
+    /**
+     * Adds the binary operators to the container.
+     *
+     * @param container the container to add them to
+     */
     private void addBinaryOperators(Container container) {
         String[] operators = {"/", "*", "-", "+"};
         DoubleBinaryOperator[] functions = {
@@ -195,6 +246,11 @@ public class Calculator extends JFrame {
         }
     }
 
+    /**
+     * Perform a binary operation and set the new operation.
+     *
+     * @param operation the new operation to set
+     */
     private void performOperation(DoubleBinaryOperator operation) {
         if (model.isActiveOperandSet()) {
             model.setActiveOperand(model.getPendingBinaryOperation()
@@ -208,6 +264,11 @@ public class Calculator extends JFrame {
         model.setPendingBinaryOperation(operation);
     }
 
+    /**
+     * Adds the buttons for swapping sign and adding decimal point.
+     *
+     * @param container the container to add them to
+     */
     private void addSignAndPoint(Container container) {
         JButton signButton = new JButton("+/-");
         JButton pointButton = new JButton(".");
@@ -234,6 +295,11 @@ public class Calculator extends JFrame {
         pointButton.setBackground(BUTTON_BACKGROUND_COLOR);
     }
 
+    /**
+     * Adds the display to the container.
+     *
+     * @param container the container to add it to
+     */
     private void addDisplay(Container container) {
         JLabel display = new JLabel(model.toString());
 
@@ -251,6 +317,11 @@ public class Calculator extends JFrame {
         container.add(displayPanel, new RCPosition(1, 1));
     }
 
+    /**
+     * Adds all the digit buttons to the container.
+     *
+     * @param container the container to add it to
+     */
     private void addDigits(Container container) {
         for (int digit = 0; digit < 10; ++digit) {
             // Calculate the position of the digit
@@ -281,58 +352,24 @@ public class Calculator extends JFrame {
         }
     }
 
+    /**
+     * Shows an error dialog with the specified message.
+     *
+     * @param message the error message
+     */
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Opens a calculator GUI.
+     *
+     * @param args the arguments are ignored
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(()->{
             new Calculator(new CalcModelImpl()).setVisible(true);
         });
     }
 
-    private static class InvertibleButton extends JButton implements ItemListener, ActionListener {
-
-        private final String operationName;
-        private final Runnable operation;
-        private final String inverseOperationName;
-        private final Runnable inverseOperation;
-        private boolean isInverted;
-
-        private InvertibleButton(String operationName, Runnable operation, String inverseOperationName, Runnable inverseOperation) {
-            this.operationName = operationName;
-            this.operation = operation;
-            this.inverseOperationName = inverseOperationName;
-            this.inverseOperation = inverseOperation;
-
-            this.addActionListener(this);
-            this.setText();
-            this.setBackground(BUTTON_BACKGROUND_COLOR);
-        }
-
-        private void setText() {
-            if (isInverted) {
-                setText(inverseOperationName);
-            }
-            else {
-                setText(operationName);
-            }
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (isInverted) {
-                inverseOperation.run();
-            }
-            else {
-                operation.run();
-            }
-        }
-
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            isInverted = e.getStateChange() == ItemEvent.SELECTED;
-            setText();
-        }
-    }
 }
