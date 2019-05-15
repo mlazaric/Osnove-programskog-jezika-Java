@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.gui.calc;
 
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
+import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
 import hr.fer.zemris.java.gui.layouts.RCPosition;
 
@@ -16,6 +17,7 @@ import static java.lang.Math.*;
  *
  * @author Marko Lazarić
  */
+@SuppressWarnings("serial")
 public class Calculator extends JFrame {
 
     /**
@@ -287,10 +289,15 @@ public class Calculator extends JFrame {
 
         pointButton.addActionListener(e -> {
             if (!model.isEditable()) {
-                return;
+                model.clear();
             }
 
-            model.insertDecimalPoint();
+            try {
+                model.insertDecimalPoint();
+            }
+            catch (CalculatorInputException exp) {
+                showError(exp.getMessage());
+            }
         });
         pointButton.setBackground(BUTTON_BACKGROUND_COLOR);
     }

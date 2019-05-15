@@ -8,6 +8,7 @@ import java.awt.*;
  *
  * @author Marko Lazarić
  */
+@SuppressWarnings("serial")
 public class PrimDemo extends JFrame {
 
     /**

@@ -9,6 +9,7 @@ import java.awt.*;
 /**
  * Demonstration program for {@link CalcLayout}.
  */
+@SuppressWarnings("serial")
 public class DemoFrame1 extends JFrame {
 
     public DemoFrame1() {

@@ -12,6 +12,7 @@ import static java.lang.Math.ceil;
  *
  * @author Marko Lazarić
  */
+@SuppressWarnings("serial")
 public class BarChartComponent extends JComponent {
 
     /**

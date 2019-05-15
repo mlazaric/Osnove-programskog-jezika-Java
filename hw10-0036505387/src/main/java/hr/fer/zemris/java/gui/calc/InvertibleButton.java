@@ -11,6 +11,7 @@ import java.awt.event.ItemListener;
  *
  * @author Marko Lazarić
  */
+@SuppressWarnings("serial")
 class InvertibleButton extends JButton implements ItemListener, ActionListener {
 
     /**

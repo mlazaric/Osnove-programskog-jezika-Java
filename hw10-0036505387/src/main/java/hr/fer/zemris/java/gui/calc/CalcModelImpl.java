@@ -6,6 +6,7 @@ import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.DoubleBinaryOperator;
 
 import static java.lang.Math.abs;
@@ -68,6 +69,8 @@ public class CalcModelImpl implements CalcModel {
 
     @Override
     public void addCalcValueListener(CalcValueListener l) {
+        Objects.requireNonNull(l, "Cannot add null listener.");
+
         // Copy on write to prevent any concurrent modification exceptions.
         listeners = new ArrayList<>(listeners);
 
@@ -76,6 +79,8 @@ public class CalcModelImpl implements CalcModel {
 
     @Override
     public void removeCalcValueListener(CalcValueListener l) {
+        Objects.requireNonNull(l, "Cannot remove null listener.");
+
         // Copy on write to prevent any concurrent modification exceptions.
         listeners = new ArrayList<>(listeners);
 
@@ -116,6 +121,8 @@ public class CalcModelImpl implements CalcModel {
     public void clearAll() {
         clear();
         clearActiveOperand();
+
+        pendingOperation = null;
     }
 
     @Override
@@ -149,6 +156,10 @@ public class CalcModelImpl implements CalcModel {
     public void insertDigit(int digit) throws CalculatorInputException, IllegalArgumentException {
         if (!isEditable) {
             throw new CalculatorInputException("Model is not editable.");
+        }
+
+        if (digit < 0 || digit > 9) {
+            throw new IllegalArgumentException("'" + digit + "' is not a valid digit");
         }
 
         String newInput = removeLeadingZeros(currentInput + digit);

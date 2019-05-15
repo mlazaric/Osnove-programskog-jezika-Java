@@ -9,6 +9,7 @@ import java.awt.*;
 /**
  * Demonstration program for {@link CalcLayout}.
  */
+@SuppressWarnings("serial")
 public class DemoFrame2 extends JFrame {
     public DemoFrame2() {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
