@@ -7,18 +7,48 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * Models a specific layout used for {@link hr.fer.zemris.java.gui.calc.Calculator}.
+ *
+ * @author Marko Lazarić
+ */
 public class CalcLayout implements LayoutManager2 {
 
-
+    /**
+     * The mapping of positions to their components.
+     */
     private final Map<RCPosition, Component> components;
 
+    /**
+     * The margin between rows and columns.
+     */
     private final int margin;
 
+    /**
+     * The number of rows.
+     */
     private final static int NUMBER_OF_ROWS = 5;
+
+    /**
+     * The number of columns.
+     */
     private final static int NUMBER_OF_COLUMNS = 7;
+
+    /**
+     * Default element height. Used if all elements return null.
+     */
     private static final int DEFAULT_ELEMENT_HEIGHT = 10;
+
+    /**
+     * Default element width. Used if all elements return null.
+     */
     private static final int DEFAULT_ELEMENT_WIDTH = 10;
 
+    /**
+     * Creates a {@link CalcLayout} with the given argument.
+     *
+     * @param margin the margin between rows and columns
+     */
     public CalcLayout(int margin) {
         if (margin < 0) {
             throw new CalcLayoutException("Cannot use negative margin.");
@@ -28,10 +58,20 @@ public class CalcLayout implements LayoutManager2 {
         this.components = new HashMap<>();
     }
 
+    /**
+     * Creates a {@link CalcLayout} with no margin.
+     */
     public CalcLayout() {
         this(0);
     }
 
+    /**
+     * Checks whether the position is valid.
+     *
+     * @param position the position to check
+     *
+     * @throws CalcLayoutException if the position is not valid
+     */
     private void checkRCPosition(RCPosition position) {
         if (position.getRow() == 1 && position.getColumn() > 1 && position.getColumn() < 6) {
             throw new CalcLayoutException("Invalid position " + position + ", 1,1 spans five spaces.");
@@ -122,6 +162,13 @@ public class CalcLayout implements LayoutManager2 {
         return layoutSize(parent, Component::getMinimumSize);
     }
 
+    /**
+     * Helper method to calculate the maximum/preferred/minimum layout size.
+     *
+     * @param parent the parent container
+     * @param extractionFunction the function that extracts Dimension from Component
+     * @return the layout size calculated using the extraction function
+     */
     private Dimension layoutSize(Container parent, Function<Component, Dimension> extractionFunction) {
         int height = components.values()
                                .stream()
@@ -177,12 +224,40 @@ public class CalcLayout implements LayoutManager2 {
         }
     }
 
+    /**
+     * Helper class for positioning elements.
+     * Mostly needed to uniformly distribute the left over pixels.
+     *
+     * @author Marko Lazarić
+     */
     private static class ElementPositioner {
+
+        /**
+         * The heights of the rows.
+         */
         private final int[] heights;
+
+        /**
+         * The widths of the columns.
+         */
         private final int[] widths;
+
+        /**
+         * The parent container.
+         */
         private final Container parent;
+
+        /**
+         * The margin between rows and columns.
+         */
         private final int margin;
 
+        /**
+         * Creates a new {@link ElementPositioner} with the given arguments.
+         *
+         * @param parent the parent container
+         * @param margin the margin between rows and columns
+         */
         private ElementPositioner(Container parent, int margin) {
             this.parent = parent;
             this.margin = margin;
@@ -190,6 +265,14 @@ public class CalcLayout implements LayoutManager2 {
             this.heights = calculateRowHeights();
         }
 
+        /**
+         * Creates an array with {@code numberOfElements} of {@code size} and distributes the {@code leftOver} uniformly.
+         *
+         * @param size the size of every element
+         * @param leftOver the left over from integer divison
+         * @param numberOfElements the number of elements
+         * @return an array of sizes for each element with {@code leftOver} distributed uniformly
+         */
         private int[] calculateSize(int size, int leftOver, int numberOfElements) {
             int[] elementSizes = new int[numberOfElements];
 
@@ -214,6 +297,11 @@ public class CalcLayout implements LayoutManager2 {
             return elementSizes;
         }
 
+        /**
+         * Calculates the column widths.
+         *
+         * @return the column widths
+         */
         private int[] calculateColumnWidths() {
             Insets insets = parent.getInsets();
 
@@ -232,6 +320,11 @@ public class CalcLayout implements LayoutManager2 {
             return calculateSize(elementWidth, leftOverWidth, NUMBER_OF_COLUMNS);
         }
 
+        /**
+         * Calculates the row heights.
+         *
+         * @return the row heights
+         */
         private int[] calculateRowHeights() {
             Insets insets = parent.getInsets();
 
@@ -250,6 +343,12 @@ public class CalcLayout implements LayoutManager2 {
             return calculateSize(elementHeight, leftOverHeight, NUMBER_OF_ROWS);
         }
 
+        /**
+         * Calculates the absolute position of the element at the specified relative position.
+         *
+         * @param position the relative position of the element
+         * @return the absolute position of the element at the specified relative position
+         */
         private Point calculatePositionOfElement(RCPosition position) {
             Insets insets = parent.getInsets();
 
@@ -271,6 +370,12 @@ public class CalcLayout implements LayoutManager2 {
             return new Point(width, height);
         }
 
+        /**
+         * Calculates the bounds of the element at the specified relative position.
+         *
+         * @param position the relative position of the element
+         * @return the bounds of the element at the specified relative position
+         */
         private Rectangle getBounds(RCPosition position) {
             if (position.getRow() == 1 && position.getColumn() == 1) {
                 Point elementPosition = calculatePositionOfElement(position);

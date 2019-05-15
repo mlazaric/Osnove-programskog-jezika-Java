@@ -6,7 +6,11 @@ import hr.fer.zemris.java.gui.layouts.RCPosition;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Demonstration program for {@link CalcLayout}.
+ */
 public class DemoFrame1 extends JFrame {
+
     public DemoFrame1() {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         initGUI();

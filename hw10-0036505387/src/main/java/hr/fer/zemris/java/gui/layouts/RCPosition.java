@@ -2,20 +2,48 @@ package hr.fer.zemris.java.gui.layouts;
 
 import java.util.Objects;
 
+/**
+ * Models a relative position of a component within {@link CalcLayout}.
+ *
+ * @author Marko Lazarić
+ */
 public class RCPosition {
 
+    /**
+     * The row component of the position.
+     */
     private final int row;
+
+    /**
+     * The column component of the position.
+     */
     private final int column;
 
+    /**
+     * Creates a new {@link RCPosition} with the given arguments.
+     *
+     * @param row the row component of the position
+     * @param column the column component of the position
+     */
     public RCPosition(int row, int column) {
         this.row = row;
         this.column = column;
     }
 
+    /**
+     * Returns the column component of the position.
+     *
+     * @return the column component of the position
+     */
     public int getColumn() {
         return column;
     }
 
+    /**
+     * Returns the row component of the position.
+     *
+     * @return the row component of the position
+     */
     public int getRow() {
         return row;
     }
