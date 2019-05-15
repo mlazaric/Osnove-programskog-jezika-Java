@@ -9,12 +9,35 @@ import java.util.List;
 import static java.lang.Math.ceil;
 import static java.lang.Math.sqrt;
 
+/**
+ * A simple ListModel which generates prime numbers.
+ *
+ * @author Marko Lazarić
+ *
+ * @see #next()
+ */
 public class PrimListModel implements ListModel<Integer> {
 
+    /**
+     * The listeners that should be notified after a new prime has been generated.
+     */
     private final List<ListDataListener> listeners;
-    private final List<Integer> primeNumbers;
-    private int currentNumber;
 
+    /**
+     * The currently generated prime numbers.
+     */
+    private final List<Integer> primeNumbers;
+
+    /**
+     * The current number.
+     *
+     * @see #addNextPrime()
+     */
+    private int currentNumber = 0;
+
+    /**
+     * Creates a new {@link PrimListModel} with 1 in it.
+     */
     public PrimListModel() {
         this.primeNumbers = new ArrayList<>();
         this.listeners = new ArrayList<>();
@@ -22,6 +45,9 @@ public class PrimListModel implements ListModel<Integer> {
         addNextPrime();
     }
 
+    /**
+     * Generates the next prime and adds it to the collection.
+     */
     private void addNextPrime() {
         ++currentNumber;
 
@@ -32,6 +58,13 @@ public class PrimListModel implements ListModel<Integer> {
         primeNumbers.add(currentNumber);
     }
 
+    /**
+     * Checks whether the argument is a prime number.
+     *
+     * @param currentNumber the number to check
+     * @return true if it is a prime number,
+     *         false otherwise
+     */
     private boolean isPrime(int currentNumber) {
         int upperLimit = (int) ceil(sqrt(currentNumber));
 
@@ -48,16 +81,22 @@ public class PrimListModel implements ListModel<Integer> {
         return true;
     }
 
-    private void notifyObservers() {
+    /**
+     * Notifies all registered listeners of a newly generated prime.
+     */
+    private void notifyListeners() {
         for (ListDataListener listener : listeners) {
             listener.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED,
                     primeNumbers.size() - 1, primeNumbers.size() - 1));
         }
     }
 
+    /**
+     * Generates a new prime and notifies all the registered listeners.
+     */
     public void next() {
         addNextPrime();
-        notifyObservers();
+        notifyListeners();
     }
 
     @Override

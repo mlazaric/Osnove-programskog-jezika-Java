@@ -3,17 +3,31 @@ package hr.fer.zemris.java.gui.prim;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Demonstration program for the {@link PrimListModel}.
+ *
+ * @author Marko Lazarić
+ */
 public class PrimDemo extends JFrame {
 
+    /**
+     * Creates a new {@link PrimDemo}.
+     */
     public PrimDemo() {
         super();
+
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
         setTitle("Prime numbers");
         setLocation(20, 20);
+
         initGUI();
         pack();
     }
 
+    /**
+     * Initialises the GUI.
+     */
     private void initGUI() {
         PrimListModel model = new PrimListModel();
         JList<Integer> list1 = new JList<>(model);
@@ -36,6 +50,11 @@ public class PrimDemo extends JFrame {
         cp.add(listPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * Shows the {@link PrimDemo} window.
+     *
+     * @param args the arguments are ignored
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new PrimDemo().setVisible(true);
