@@ -1,0 +1,129 @@
+# Moje korekcije:
+
+## 3. zadatak
+
+ * Dodao sam RayCasterParallel.
+
+ * Dodao sam parametar u funkciju getIRayTracerProducer kako bih smanjio duplikaciju koda.
+
+   Prije: private static IRayTracerProducer getIRayTracerProducer()
+   Sada:  protected static IRayTracerProducer getIRayTracerProducer(Scene scene)
+
+ * Netko je odlično primijetio da sam stavio preveliki DIRECTLY_COMPUTABLE_AMOUNT. Smanjio sam ga na 16 * 8.
+
+ * Popravio sam paralelizaciju.
+
+   Prije:
+             invokeAll(
+                 new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel, yStart,
+                         yStart + (yStart + yEnd) / 2, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner),
+                 new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel,
+                         yStart + (yStart + yEnd) / 2 + 1, yEnd, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner)
+             );
+
+   Sada:
+             invokeAll(
+                 new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel, yStart,
+                         (yStart + yEnd) / 2, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner),
+                 new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel,
+                         (yStart + yEnd) / 2 + 1, yEnd, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner)
+             );
+
+
+ * Dodao sam serialVersionUID u TracingJob.
+
+
+
+
+
+# Kopije recenzija:
+
+## 1. recenzija
+
+Ovu zadacau ocjenjujem ocjenom 1 jer u trecem zadataku nije zadovoljen uvijet paralelizacije.
+
+Zadatak3.
+-fali RayCassterParallel imas samo animaciju
+-Sad malo detaljnije zasto sam dao ocjenu 1
+	Prva stvar DIRECTLY_COMPUTABLE_AMOUNT = 16 * 16 * 16; je puno prevelik broj buduci da pocetni prozor koji otvaramo je visine 500 pa do paralelizacije nikad ne dode (ja nemam dovoljno veliki monitor da je postignem ne znam ako ti mozda imas), ovo samo po sebi nije za 1 jer se broj lako smanji. Drugi problem je kada se broj smanji paralelizacija ne radi.
+	 invokeAll(
+                new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel, yStart,
+                        yStart + (yStart + yEnd) / 2, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner),
+                new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel,
+                      yStart + (yStart + yEnd) / 2 + 1, yEnd, red, green, blue, scene,zAxis,yAxis, xAxis,screenCorner));
+
+Ovaj dio koda je krivac sto ti program ne radi. Naime gledaj kako djelis dretve, odnosnon redove.
+Npr da je pocetna dretva od 0 do 500 ona ulazi u ovaj dio koda i radi se nova dretva koja ide od 0 do 250 (slucajno tocno). I druga dretva ide od (250+500)/2+250 +1= 626 do 500 sto nikako nije dobro. Razloga zasto je prva dretva dobila dobro od kud do kud ide je samo zato sto je red od kojeg se krece jednak nuli.
+Vjerujem da je ovo greska u brzini pisanja ali zbog nje program ne radi.
+Trebalo je staviti (yEnd-yStart)/2+yMin.
+Takodjer imas warrning koji bi trebao rjesit dodavanjem
+private static final long serialVersionUID = 1L; u TracingJob
+
+Zadatak2.
+-kada primas kompleksne brojeve sa replace all mices razmake pa onda primas i broj oblika 1 23   .   567 normalno kao broj 123.567 sto ne bi trebao
+-Sva radi, zadatak je u potpunosti rjesen bez gresaka
+
+Zadatak1.
+-nema gresaka, sve radi kako je ocekivano
+
+Nazalost morao sam dati ocjenu 1. Osim te greske zadaca je odlicna i da je nema dao bi ocjenu 5, jer imas stvanro uredan kod i lijepo napisan javadoc. Sretno s nastavkom vjestine :D
+
+
+
+
+## 2. recenzija
+
+Ovu zadaću ocjenjujem ocjenom 4 jer je uglavnom sve dobro rješeno ali u ispisivanju vektora i kompleksnih brojeva se koristi zarez, a ne točka
+i u 3. zadatku fali razred RayCasterParallel pa skidam jednu ocjenu.
+
+1 zadatak.
+
+Vector3
+-nema potrebe za stvaranjem novih double varijabli u crossu, ali istina zbog toga je kod čitljiviji.
+U Demo programu za Vector3 u ispisu se koisti decimalna točka a u tvom programu je korišten zarez, String formater koristi zarez u ispisu.
+Mogao si npr. koristiti DecimalFormat pa pomoću setDecimalSeparator('.') naredbe postaviti zarez u točku.
+Complex
+-isto kao i kod Vector3 ispisuješ zareze a ne točke kod decimalnog broja.
+-imaš dosta nepotrebnih javnih metoda. Ako si neke koristio (a jesi) kao pomoćne mogao si ih staviti kao private ili ako si neke jednostavne koristio samo
+jednom možda nije bilo niti potrebe za njima ali to nije neka pogreška više moj komentar.
+Ostalo je sve korektno. Metode i javadoc su uredno napisani.
+
+ComplexPolynomial i ComplexRootedPolynomial su dobro napisani, metode su čitljive i točne :)
+
+2. Zadatak
+
+Mislim da ti je bilo dovoljno provjeravati cancel:
+			if (cancel.get()) {
+                return null;
+				}
+		-prije svake petlje po x (između vanjske i unutarnje petlje u call-u.
+
+Inače sve dobro izgleda i program radi dobro i čak dosta brzo.  Javadoc uredan.
+
+3. Zadatak
+
+-ista stvar vrijedi za provjeru cancel-a kao i u 3. zadatku
+- fali ti razred RayCasterParallel koji implementira paralelizaciju poslova ali bez animacije. Vidjela sam da je netko na ferku pitao za ovakvu pogrešku i
+profesor je na svu sreću rekao da je to prolazno. Inače ostalo je stvarno sve ok. Možda bi javadoc u nekim dijelovima mogao biti malo bolje napisan, tj. neke
+metode su mogle biti malo bolje opisane ali ok.
+
+
+
+
+## 3. recenzija
+
+Zadaca je ocijenjena ocjenom 5 jer je sve vrlo dobro napravljeno, javadoc je dobar, argumenti su provjeravani itd.
+
+** 1. zadatak **
+
+Prije svega, pohvale za provjeru ispravnosti argumenata, jedan od rijetkih koji to radi, svaka cast :)
+
+1) Sve je uredno implementirano i demo programi uredno rade.
+
+** 2. zadatak **
+
+1) Odlicno radi i vrlo brzo jedino sto bih ja napravio je stavio posao i thread factory u zasebnu klasu.
+
+** 3. zadatak **
+
+1) Sve je dobro samo opet, da sam na tvom mjestu razdijelio bi podklase u zasebne datoteke.

@@ -102,6 +102,10 @@ public class RayCasterParallel2 {
                         0, height - 1, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner));
                 pool.shutdown();
 
+                if (cancel.get()) {
+                    return;
+                }
+
                 observer.acceptResult(red, green, blue, requestNo);
             }
         };
@@ -114,10 +118,12 @@ public class RayCasterParallel2 {
      */
     private static class TracingJob extends RecursiveAction {
 
+        private static final long serialVersionUID = 1L;
+
         /**
          * The number of rows of pixels it should compute directly.
          */
-        private static final int DIRECTLY_COMPUTABLE_AMOUNT = 16 * 16 * 16;
+        private static final int DIRECTLY_COMPUTABLE_AMOUNT = 16 * 8;
 
         /**
          * The location of the eyes.
@@ -267,9 +273,9 @@ public class RayCasterParallel2 {
 
             invokeAll(
                 new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel, yStart,
-                        yStart + (yStart + yEnd) / 2, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner),
+                        (yStart + yEnd) / 2, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner),
                 new TracingJob(eye, view, viewUp, horizontal, vertical, width, height, cancel,
-                        yStart + (yStart + yEnd) / 2 + 1, yEnd, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner)
+                        (yStart + yEnd) / 2 + 1, yEnd, red, green, blue, scene, zAxis, yAxis, xAxis, screenCorner)
             );
         }
 
