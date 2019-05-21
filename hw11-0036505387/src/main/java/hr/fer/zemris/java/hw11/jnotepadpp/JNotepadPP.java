@@ -7,9 +7,13 @@ import hr.fer.zemris.java.hw11.jnotepadpp.document.SingleDocumentModel;
 import hr.fer.zemris.java.hw11.jnotepadpp.localization.*;
 
 import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.EditorKit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class JNotepadPP extends JFrame {
 
@@ -23,6 +27,9 @@ public class JNotepadPP extends JFrame {
     private Action closeDocument;
     private Action languageEn;
     private Action languageHr;
+    private Action cutText;
+    private Action copyText;
+    private Action pasteText;
 
     public JNotepadPP() {
         provider = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);
@@ -42,67 +49,58 @@ public class JNotepadPP extends JFrame {
     }
 
     private void initActions() {
-        createBlankDocument = createAction("create_blank_document", provider, tabs::createNewDocument);
-        openExistingDocument = createAction("open_existing_document", provider, this::openExistingDocument);
-        saveDocument = createAction("save_document", provider, this::saveDocument);
-        saveAsDocument = createAction("save_as_document", provider, this::saveAsDocument);
-        closeDocument = createAction("close_document", provider, this::closeDocument);
+        createBlankDocument = createAction("create_blank_document", tabs::createNewDocument);
+        openExistingDocument = createAction("open_existing_document", this::openExistingDocument);
+        saveDocument = createAction("save_document", this::saveDocument);
+        saveAsDocument = createAction("save_as_document", this::saveAsDocument);
+        closeDocument = createAction("close_document", this::closeDocument);
 
-        languageEn = createAction("language_en", provider, () -> LocalizationProvider.getInstance().setLanguage("en"));
-        languageHr = createAction("language_hr", provider, () -> LocalizationProvider.getInstance().setLanguage("hr"));
+        cutText = createAction("cut_text", new DefaultEditorKit.CutAction());
+        copyText = createAction("copy_text", new DefaultEditorKit.CopyAction());
+        pasteText = createAction("paste_text", new DefaultEditorKit.PasteAction());
+
+        languageEn = createAction("language_en", () -> LocalizationProvider.getInstance().setLanguage("en"));
+        languageHr = createAction("language_hr", () -> LocalizationProvider.getInstance().setLanguage("hr"));
 
         setKeys(createBlankDocument, KeyStroke.getKeyStroke("control N"), KeyEvent.VK_N);
         setKeys(openExistingDocument, KeyStroke.getKeyStroke("control O"), KeyEvent.VK_O);
         setKeys(saveDocument, KeyStroke.getKeyStroke("control S"), KeyEvent.VK_S);
         setKeys(saveAsDocument, KeyStroke.getKeyStroke("control shift S"), KeyEvent.VK_A);
-        setKeys(closeDocument, KeyStroke.getKeyStroke("control X"), KeyEvent.VK_X);
+        setKeys(closeDocument, KeyStroke.getKeyStroke("control W"), KeyEvent.VK_C);
+
+        setKeys(cutText, KeyStroke.getKeyStroke("control X"), KeyEvent.VK_U);
+        setKeys(copyText, KeyStroke.getKeyStroke("control C"), KeyEvent.VK_C);
+        setKeys(pasteText, KeyStroke.getKeyStroke("control V"), KeyEvent.VK_P);
 
         // Should only be enabled if the current document is modified and has path set
         saveDocument.setEnabled(false);
-        tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
-            private void updateSaveDocument(SingleDocumentModel currentModel) {
-                saveDocument.setEnabled(currentModel != null &&
-                                        currentModel.isModified() &&
-                                        currentModel.getFilePath() != null);
-            }
-
-            @Override
-            public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
-                updateSaveDocument(currentModel);
-            }
-
-            @Override
-            public void documentAdded(SingleDocumentModel model) {
-                model.addSingleDocumentListener(new SingleDocumentListener() {
-
-                    @Override
-                    public void documentModifyStatusUpdated(SingleDocumentModel model) {
-                        updateSaveDocument(model);
-                    }
-
-                    @Override
-                    public void documentFilePathUpdated(SingleDocumentModel model) {
-                        updateSaveDocument(model);
-                    }
-
-                });
-            }
-
-            @Override
-            public void documentRemoved(SingleDocumentModel model) {}
-        });
+        conditionallyEnable(saveDocument, model -> model != null &&
+                                                   model.isModified() &&
+                                                   model.getFilePath() != null);
 
         // Should only be enabled if the current document is modified
         saveAsDocument.setEnabled(false);
-        tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
-            private void updateSaveAsDocument(SingleDocumentModel currentModel) {
-                saveAsDocument.setEnabled(currentModel != null &&
-                                          currentModel.isModified());
-            }
+        conditionallyEnable(saveAsDocument, model -> model != null && model.isModified());
 
+        // Should only be enabled if there is a documents open
+        closeDocument.setEnabled(false);
+        conditionallyEnable(closeDocument, () -> tabs.getCurrentDocument() != null);
+
+        // Should only be enabled if there is a document open
+        cutText.setEnabled(false);
+        copyText.setEnabled(false);
+        pasteText.setEnabled(false);
+        conditionallyEnable(cutText, () -> tabs.getCurrentDocument() != null);
+        conditionallyEnable(copyText, () -> tabs.getCurrentDocument() != null);
+        conditionallyEnable(pasteText, () -> tabs.getCurrentDocument() != null);
+
+    }
+
+    private void conditionallyEnable(Action action, Predicate<SingleDocumentModel> shouldEnable) {
+        tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
             @Override
             public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
-                updateSaveAsDocument(currentModel);
+                action.setEnabled(shouldEnable.test(currentModel));
             }
 
             @Override
@@ -111,12 +109,12 @@ public class JNotepadPP extends JFrame {
 
                     @Override
                     public void documentModifyStatusUpdated(SingleDocumentModel model) {
-                        updateSaveAsDocument(model);
+                        action.setEnabled(shouldEnable.test(model));
                     }
 
                     @Override
                     public void documentFilePathUpdated(SingleDocumentModel model) {
-                        updateSaveAsDocument(model);
+                        action.setEnabled(shouldEnable.test(model));
                     }
 
                 });
@@ -125,23 +123,21 @@ public class JNotepadPP extends JFrame {
             @Override
             public void documentRemoved(SingleDocumentModel model) {}
         });
+    }
 
-        // Should only be enabled if there are any documents open
-        closeDocument.setEnabled(false);
+    private void conditionallyEnable(Action action, Supplier<Boolean> shouldEnable) {
         tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
             @Override
             public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {}
 
             @Override
             public void documentAdded(SingleDocumentModel model) {
-                closeDocument.setEnabled(true);
+                action.setEnabled(shouldEnable.get());
             }
 
             @Override
             public void documentRemoved(SingleDocumentModel model) {
-                if (tabs.getNumberOfDocuments() == 0) {
-                    closeDocument.setEnabled(false);
-                }
+                action.setEnabled(shouldEnable.get());
             }
         });
     }
@@ -151,7 +147,7 @@ public class JNotepadPP extends JFrame {
         action.putValue(Action.MNEMONIC_KEY, keyEvent);
     }
 
-    private Action createAction(String key, ILocalizationProvider provider, Runnable runnable) {
+    private Action createAction(String key, Runnable runnable) {
         return new LocalizableAction(key, provider) {
 
             @Override
@@ -160,6 +156,10 @@ public class JNotepadPP extends JFrame {
             }
 
         };
+    }
+
+    private Action createAction(String key, Action action) {
+        return createAction(key, () -> action.actionPerformed(null));
     }
 
     private void createMenus() {
@@ -174,6 +174,14 @@ public class JNotepadPP extends JFrame {
         file.add(saveDocument);
         file.add(saveAsDocument);
         file.add(closeDocument);
+
+        JMenu edit = new LocalizableJMenu("edit", provider);
+
+        menuBar.add(edit);
+
+        edit.add(cutText);
+        edit.add(copyText);
+        edit.add(pasteText);
 
         JMenu languages = new LocalizableJMenu("localization", provider);
 

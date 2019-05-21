@@ -1,11 +1,13 @@
 package hr.fer.zemris.java.hw11.jnotepadpp.document;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.List;
 
 public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel, MultipleDocumentListener {
 
@@ -206,7 +208,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
     @Override
     public void documentAdded(SingleDocumentModel model) {
-        addTab("", new JScrollPane(model.getTextComponent()));
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(new JScrollPane(model.getTextComponent()), BorderLayout.CENTER);
+
+        addTab("", panel);
         updateTab(model);
 
         model.addSingleDocumentListener(new SingleDocumentListener() {
