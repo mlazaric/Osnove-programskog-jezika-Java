@@ -2,6 +2,7 @@ package hr.fer.zemris.java.hw11.jnotepadpp.document;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -13,6 +14,9 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
     private List<MultipleDocumentListener> listeners;
     private boolean shouldCopyOnWrite;
+
+    private final ImageIcon savedIcon = loadIcon("icons/saved.png");
+    private final ImageIcon modifiedIcon = loadIcon("icons/modified.png");
 
     public DefaultMultipleDocumentModel() {
         documents = new ArrayList<>();
@@ -203,22 +207,22 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
     @Override
     public void documentAdded(SingleDocumentModel model) {
         addTab("", new JScrollPane(model.getTextComponent()));
-        setTabTitle(model);
+        updateTab(model);
 
         model.addSingleDocumentListener(new SingleDocumentListener() {
             @Override
             public void documentModifyStatusUpdated(SingleDocumentModel model) {
-                setTabTitle(model);
+                updateTab(model);
             }
 
             @Override
             public void documentFilePathUpdated(SingleDocumentModel model) {
-                setTabTitle(model);
+                updateTab(model);
             }
         });
     }
 
-    private void setTabTitle(SingleDocumentModel model) {
+    private void updateTab(SingleDocumentModel model) {
         String title = "(unnamed)";
         String toolTip = "";
         Path path = model.getFilePath();
@@ -228,12 +232,37 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
             toolTip = path.toAbsolutePath().toString();
         }
 
-        setTitleAt(documents.indexOf(model), title);
-        setToolTipTextAt(documents.indexOf(model), toolTip);
+        int index = documents.indexOf(model);
+
+        if (index != -1) {
+            setTitleAt(index, title);
+            setToolTipTextAt(index, toolTip);
+            setIconAt(index, model.isModified() ? modifiedIcon : savedIcon);
+        }
     }
 
     @Override
     public void documentRemoved(SingleDocumentModel model) {
         remove(documents.indexOf(model));
+    }
+
+    private ImageIcon loadIcon(String path) {
+        InputStream is = this.getClass().getResourceAsStream(path);
+
+        if (is == null) {
+            throw new IllegalArgumentException("Could not load icon: " + path);
+        }
+
+        byte[] bytes = null;
+
+        try {
+            bytes = is.readAllBytes();
+
+            is.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ImageIcon(bytes);
     }
 }
