@@ -4,21 +4,25 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class DefaultSingleDocumentModel extends AbstractSingleDocumentModel {
+public class DefaultSingleDocumentModel implements SingleDocumentModel {
 
     private Path path;
     private JTextArea textArea;
     private boolean modified;
+    private List<SingleDocumentListener> listeners;
+    private boolean shouldCopyOnWrite;
 
     public DefaultSingleDocumentModel(Path path, String contents) {
-        super();
-
         this.path = path;
         Objects.requireNonNull(contents, "Contents cannot be null.");
         this.textArea = new JTextArea(contents);
         this.modified = false;
+
+        listeners = new ArrayList<>();
 
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -71,4 +75,39 @@ public class DefaultSingleDocumentModel extends AbstractSingleDocumentModel {
         }
     }
 
+    @Override
+    public void addSingleDocumentListener(SingleDocumentListener l) {
+        copyOnWriteIfNecessary();
+
+        listeners.add(l);
+    }
+
+    @Override
+    public void removeSingleDocumentListener(SingleDocumentListener l) {
+        copyOnWriteIfNecessary();
+
+        listeners.remove(l);
+    }
+
+    private void copyOnWriteIfNecessary() {
+        if (shouldCopyOnWrite) {
+            listeners = new ArrayList<>(listeners);
+        }
+    }
+
+    protected void fireDocumentModifyStatusUpdated() {
+        shouldCopyOnWrite = true;
+
+        listeners.forEach(l -> l.documentFilePathUpdated(this));
+
+        shouldCopyOnWrite = false;
+    }
+
+    protected void fireDocumentFilePathUpdated() {
+        shouldCopyOnWrite = true;
+
+        listeners.forEach(l -> l.documentFilePathUpdated(this));
+
+        shouldCopyOnWrite = false;
+    }
 }
