@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 
 public class LocalizationProvider extends AbstractLocalizationProvider {
 
-    private static final LocalizationProvider instance = new LocalizationProvider();
+    private static LocalizationProvider instance;
 
     private String language;
     private ResourceBundle bundle;
@@ -22,7 +22,18 @@ public class LocalizationProvider extends AbstractLocalizationProvider {
     }
 
     public static LocalizationProvider getInstance() {
+        if (instance == null) {
+            instance = new LocalizationProvider();
+        }
+
         return instance;
+    }
+
+    public void setLanguage(String language)  {
+        this.language = language;
+
+        loadBundle();
+        fire();
     }
 
     @Override

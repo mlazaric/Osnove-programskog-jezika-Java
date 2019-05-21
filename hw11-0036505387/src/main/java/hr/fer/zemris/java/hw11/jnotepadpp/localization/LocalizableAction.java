@@ -5,6 +5,8 @@ import java.util.Objects;
 
 public abstract class LocalizableAction extends AbstractAction {
 
+    private static final String DESCRIPTION_SUFFIX = ".description";
+
     private final String key;
     private final ILocalizationProvider provider;
 
@@ -19,6 +21,11 @@ public abstract class LocalizableAction extends AbstractAction {
 
     private void setName() {
         putValue(NAME, provider.getString(key));
+
+        try {
+            putValue(SHORT_DESCRIPTION, provider.getString(key + DESCRIPTION_SUFFIX));
+        }
+        catch (Exception ignored) {} // The description is optional
     }
 
 }

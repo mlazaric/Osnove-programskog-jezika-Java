@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel {
+public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel, MultipleDocumentListener {
 
     private List<SingleDocumentModel> documents;
     private SingleDocumentModel currentDocument;
@@ -17,6 +17,22 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
     public DefaultMultipleDocumentModel() {
         documents = new ArrayList<>();
         listeners = new ArrayList<>();
+
+        listeners.add(this);
+
+        addChangeListener(l -> {
+            SingleDocumentModel prevDocument = currentDocument;
+            int index = getSelectedIndex();
+
+            if (index == -1) {
+                currentDocument = null;
+            }
+            else {
+                currentDocument = documents.get(index);
+            }
+
+            fireCurrentDocumentChanged(prevDocument, currentDocument);
+        });
     }
 
     @Override
@@ -25,6 +41,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
         currentDocument = new DefaultSingleDocumentModel(null, "");
 
+        documents.add(currentDocument);
         fireDocumentAdded(currentDocument);
         fireCurrentDocumentChanged(prevDocument, currentDocument);
 
@@ -102,17 +119,30 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
     @Override
     public void closeDocument(SingleDocumentModel model) {
-        documents.remove(model);
         fireDocumentRemoved(model);
+        documents.remove(model);
+
+        if (documents.isEmpty()) {
+            currentDocument = null;
+        }
+        else {
+            currentDocument = documents.get(0);
+        }
+
+        fireCurrentDocumentChanged(model, currentDocument);
     }
 
     @Override
     public void addMultipleDocumentListener(MultipleDocumentListener l) {
+        copyOnWriteIfNecessary();
+
         listeners.add(l);
     }
 
     @Override
     public void removeMultipleDocumentListener(MultipleDocumentListener l) {
+        copyOnWriteIfNecessary();
+
         listeners.remove(l);
     }
 
@@ -138,20 +168,72 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
     }
 
     private void fireCurrentDocumentChanged(SingleDocumentModel prevDocument, SingleDocumentModel currentDocument) {
-        copyOnWriteIfNecessary();
+        shouldCopyOnWrite = true;
 
         listeners.forEach(l -> l.currentDocumentChanged(prevDocument, currentDocument));
+
+        shouldCopyOnWrite = false;
     }
 
     private void fireDocumentAdded(SingleDocumentModel model) {
-        copyOnWriteIfNecessary();
+        shouldCopyOnWrite = true;
 
         listeners.forEach(l -> l.documentAdded(model));
+
+        shouldCopyOnWrite = false;
     }
 
     private void fireDocumentRemoved(SingleDocumentModel model) {
-        copyOnWriteIfNecessary();
+        shouldCopyOnWrite = true;
 
         listeners.forEach(l -> l.documentRemoved(model));
+
+        shouldCopyOnWrite = false;
+    }
+
+    @Override
+    public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
+        if (currentModel == null) {
+            return;
+        }
+
+        setSelectedIndex(documents.indexOf(currentModel));
+    }
+
+    @Override
+    public void documentAdded(SingleDocumentModel model) {
+        addTab("", new JScrollPane(model.getTextComponent()));
+        setTabTitle(model);
+
+        model.addSingleDocumentListener(new SingleDocumentListener() {
+            @Override
+            public void documentModifyStatusUpdated(SingleDocumentModel model) {
+                setTabTitle(model);
+            }
+
+            @Override
+            public void documentFilePathUpdated(SingleDocumentModel model) {
+                setTabTitle(model);
+            }
+        });
+    }
+
+    private void setTabTitle(SingleDocumentModel model) {
+        String title = "(unnamed)";
+        String toolTip = "";
+        Path path = model.getFilePath();
+
+        if (path != null) {
+            title = path.getFileName().toString();
+            toolTip = path.toAbsolutePath().toString();
+        }
+
+        setTitleAt(documents.indexOf(model), title);
+        setToolTipTextAt(documents.indexOf(model), toolTip);
+    }
+
+    @Override
+    public void documentRemoved(SingleDocumentModel model) {
+        remove(documents.indexOf(model));
     }
 }
