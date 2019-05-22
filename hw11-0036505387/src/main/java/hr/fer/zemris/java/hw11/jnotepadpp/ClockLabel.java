@@ -1,6 +1,8 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Objects;
@@ -31,21 +33,33 @@ public class ClockLabel extends JLabel {
     /**
      * Creates a {@link ClockLabel} with the specified parameter.
      *
+     * @param frame the parent jframe, used for stopping the timer
      * @param format the format used for displaying the date and time
      */
-    public ClockLabel(SimpleDateFormat format) {
+    public ClockLabel(JFrame frame, SimpleDateFormat format) {
         this.format = Objects.requireNonNull(format, "Format cannot be null.");
 
         Timer timer = new Timer(DELAY, e -> updateClock());
         timer.setRepeats(true);
         timer.start();
+
+        frame.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                timer.stop();
+            }
+
+        });
     }
 
     /**
      * Creates a {@link ClockLabel} with the {@link #DEFAULT_FORMAT}.
+     *
+     * @param frame the parent jframe, used for stopping the timer
      */
-    public ClockLabel() {
-        this(DEFAULT_FORMAT);
+    public ClockLabel(JFrame frame) {
+        this(frame, DEFAULT_FORMAT);
     }
 
     /**

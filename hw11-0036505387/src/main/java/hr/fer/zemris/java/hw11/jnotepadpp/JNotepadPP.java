@@ -10,13 +10,17 @@ import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableJMenu;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizationProvider;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.nio.file.Files;
 import java.text.Collator;
 import java.util.Arrays;
 import java.util.Locale;
@@ -167,27 +171,55 @@ public class JNotepadPP extends JFrame {
 
         initGUI();
 
-        tabs.addChangeListener(new ChangeListener() {
+        tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
+            private final SingleDocumentListener listener = new SingleDocumentListener() {
+                @Override
+                public void documentModifyStatusUpdated(SingleDocumentModel model) {}
+
+                @Override
+                public void documentFilePathUpdated(SingleDocumentModel model) {
+                    updateTitle(model);
+                }
+            };
 
             @Override
-            public void stateChanged(ChangeEvent e) {
-                String title = TITLE;
-
-                if (tabs.getCurrentDocument() != null) {
-                    SingleDocumentModel current = tabs.getCurrentDocument();
-
-                    if (current.getFilePath() == null) {
-                        title = "(unnamed) - " + title;
-                    }
-                    else {
-                        title = current.getFilePath().toAbsolutePath().toString() + " - " + title;
-                    }
+            public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
+                if (previousModel != null) {
+                    previousModel.removeSingleDocumentListener(listener);
+                }
+                if (currentModel != null) {
+                    currentModel.addSingleDocumentListener(listener);
                 }
 
-                setTitle(title);
+
+                updateTitle(currentModel);
             }
 
+            @Override
+            public void documentAdded(SingleDocumentModel model) {}
+
+            @Override
+            public void documentRemoved(SingleDocumentModel model) {}
         });
+    }
+
+    /**
+     * Updates the title of the application.
+     */
+    private void updateTitle(SingleDocumentModel currentModel) {
+        String title = TITLE;
+
+        if (currentModel != null) {
+
+            if (currentModel.getFilePath() == null) {
+                title = "(unnamed) - " + title;
+            }
+            else {
+                title = currentModel.getFilePath().toAbsolutePath().toString() + " - " + title;
+            }
+        }
+
+        setTitle(title);
     }
 
     /**
@@ -596,7 +628,7 @@ public class JNotepadPP extends JFrame {
      * @return the clock label
      */
     private JLabel createClock() {
-        JLabel clock = new ClockLabel();
+        JLabel clock = new ClockLabel(this);
 
         clock.setHorizontalAlignment(JLabel.RIGHT);
 
@@ -727,7 +759,7 @@ public class JNotepadPP extends JFrame {
      * @param message the message to show
      */
     private void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, provider.getString("error"), JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -735,7 +767,7 @@ public class JNotepadPP extends JFrame {
      */
     private void closeAllTabs() {
         for (SingleDocumentModel document : tabs) {
-            discardOrSaveAs(document);
+            discardOrSaveAs(document, false);
         }
     }
 
@@ -743,8 +775,9 @@ public class JNotepadPP extends JFrame {
      * Prompts the user to save or discard the document.
      *
      * @param document the document to save or discard
+     * @param shouldClose whether it should close the tab if the user discards it
      */
-    private void discardOrSaveAs(SingleDocumentModel document) {
+    private void discardOrSaveAs(SingleDocumentModel document, boolean shouldClose) {
         if (document.isModified()) {
             String title = "<unnamed>";
 
@@ -752,13 +785,22 @@ public class JNotepadPP extends JFrame {
                 title = document.getFilePath().getFileName().toString();
             }
 
-            int result = JOptionPane.showConfirmDialog(this, "Discard changes made to " + title + "?");
+            String message = String.format(provider.getString("discard_changes"), title);
+            int result = JOptionPane.showConfirmDialog(this, message);
 
             if (result == JOptionPane.CANCEL_OPTION) {
                 throw new RuntimeException("Cancelled");
             }
             else if (result == JOptionPane.NO_OPTION) {
-                saveAsDocument(document);
+                if (!saveAsDocument(document)) {
+                    throw new RuntimeException("Cancelled");
+                }
+                else if (shouldClose) {
+                    tabs.closeDocument(document);
+                }
+            }
+            else if (result == JOptionPane.YES_OPTION && shouldClose) {
+                tabs.closeDocument(document);
             }
         }
     }
@@ -770,6 +812,10 @@ public class JNotepadPP extends JFrame {
         JFileChooser jfc = new JFileChooser();
 
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            if (!Files.isReadable(jfc.getSelectedFile().toPath())) {
+                showError(provider.getString("not_readable"));
+            }
+
             try {
                 tabs.loadDocument(jfc.getSelectedFile().toPath());
             }
@@ -797,18 +843,33 @@ public class JNotepadPP extends JFrame {
      * Prompts user for a path and saves the file to that location.
      *
      * @param model the document to save
+     *
+     * @return true if it has been saved, false otherwise
      */
-    private void saveAsDocument(SingleDocumentModel model) {
+    private boolean saveAsDocument(SingleDocumentModel model) {
         JFileChooser jfc = new JFileChooser();
 
         if (jfc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            if (Files.exists(jfc.getSelectedFile().toPath())) {
+                int result = JOptionPane.showConfirmDialog(this, provider.getString("overwrite_file"),
+                        provider.getString("question"), JOptionPane.YES_NO_OPTION);
+
+                if (result == JOptionPane.NO_OPTION) {
+                    return false;
+                }
+            }
+
             try {
                 tabs.saveDocument(model, jfc.getSelectedFile().toPath());
             }
             catch (RuntimeException e) {
                 showError(e.getMessage());
             }
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -823,10 +884,12 @@ public class JNotepadPP extends JFrame {
         }
 
         if (document.isModified()) {
-            discardOrSaveAs(document);
+            try {
+                discardOrSaveAs(document, true);
+            }
+            catch (RuntimeException cancelled) {}
         }
-
-        if (!document.isModified()) {
+        else {
             tabs.closeDocument(document);
         }
     }
@@ -849,7 +912,7 @@ public class JNotepadPP extends JFrame {
 
         String stats = String.format(provider.getString("stats_window"), characters, nonBlankCharacters, lines);
 
-        JOptionPane.showMessageDialog(this, stats, "Statistics", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, stats, provider.getString("statistics"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**

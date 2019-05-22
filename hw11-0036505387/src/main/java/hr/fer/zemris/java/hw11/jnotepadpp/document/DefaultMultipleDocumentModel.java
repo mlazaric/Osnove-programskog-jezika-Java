@@ -276,7 +276,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
      */
     private void updateTab(SingleDocumentModel model) {
         String title = "(unnamed)";
-        String toolTip = "";
+        String toolTip = "(unnamed)";
         Path path = model.getFilePath();
 
         if (path != null) {
