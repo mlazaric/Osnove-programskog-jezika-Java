@@ -58,7 +58,7 @@ public class LocalizationProviderBridge extends AbstractLocalizationProvider {
             return;
         }
 
-        if (currentLanguage != null && currentLanguage != provider.getCurrentLanguage()) {
+        if (currentLanguage != null && !Objects.equals(currentLanguage, provider.getCurrentLanguage())) {
             fire();
         }
 

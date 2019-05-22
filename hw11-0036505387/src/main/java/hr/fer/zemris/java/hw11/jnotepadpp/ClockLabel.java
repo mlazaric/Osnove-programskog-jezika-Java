@@ -35,8 +35,6 @@ public class ClockLabel extends JLabel {
     public ClockLabel(SimpleDateFormat format) {
         this.format = Objects.requireNonNull(format, "Format cannot be null.");
 
-        JLabel clock = new JLabel("", JLabel.RIGHT);
-
         Timer timer = new Timer(DELAY, e -> updateClock());
         timer.setRepeats(true);
         timer.start();

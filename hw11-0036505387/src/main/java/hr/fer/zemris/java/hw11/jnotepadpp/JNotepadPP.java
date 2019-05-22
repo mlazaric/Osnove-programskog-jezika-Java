@@ -28,33 +28,126 @@ import java.util.stream.Stream;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+/**
+ * A simple localizable notepad program with support for multiple tabs.
+ *
+ * @author Marko Lazarić
+ */
 public class JNotepadPP extends JFrame {
 
+    /**
+     * The title fo the program.
+     */
     private static final String TITLE = "JNotepad++";
 
+    /**
+     * The currently opened documents.
+     */
     private DefaultMultipleDocumentModel tabs;
+
+    /**
+     * The localization provider tied to this {@link JFrame}.
+     */
     private FormLocalizationProvider provider;
 
+    /**
+     * Creates a new blank document.
+     */
     private Action createBlankDocument;
+
+    /**
+     * Opens existing document.
+     */
     private Action openExistingDocument;
+
+    /**
+     * Saves document to the current file path.
+     */
     private Action saveDocument;
+
+    /**
+     * Saves document to a new filep ath.
+     */
     private Action saveAsDocument;
+
+    /**
+     * Closes current document.
+     */
     private Action closeDocument;
-    private Action languageEn;
-    private Action languageHr;
-    private Action cutText;
-    private Action copyText;
-    private Action pasteText;
-    private Action showStats;
+
+    /**
+     * Exits program.
+     */
     private Action exitProgram;
+
+    /**
+     * Switches the current language to English.
+     */
+    private Action languageEn;
+
+    /**
+     * Switches the current language to Croatian.
+     */
+    private Action languageHr;
+
+    /**
+     * Switches the current language to German.
+     */
     private Action languageDe;
+
+    /**
+     * Cuts the currently selected text.
+     */
+    private Action cutText;
+
+    /**
+     * Copies the currently selected text.
+     */
+    private Action copyText;
+
+    /**
+     * Pastes the contents of the clipboard.
+     */
+    private Action pasteText;
+
+    /**
+     * Shows some information about the current document.
+     */
+    private Action showStats;
+
+    /**
+     * Changes case of all selected characters to upper case.
+     */
     private Action toUpperCase;
+
+    /**
+     * Changes case of all selected characters to lower case.
+     */
     private Action toLowerCase;
+
+    /**
+     * Inverts case of all selected characters.
+     */
     private Action invertCase;
+
+    /**
+     * Sorts the selected lines in ascending order.
+     */
     private Action sortAsc;
+
+    /**
+     * Sorts the selected lines in descending order.
+     */
     private Action sortDesc;
+
+    /**
+     * Removes duplicate lines from selected lines.
+     */
     private Action unique;
 
+    /**
+     * Creates new {@link JNotepadPP}.
+     */
     public JNotepadPP() {
         provider = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);
 
@@ -96,6 +189,9 @@ public class JNotepadPP extends JFrame {
         });
     }
 
+    /**
+     * Initialises the GUI.
+     */
     private void initGUI() {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -112,6 +208,9 @@ public class JNotepadPP extends JFrame {
         add(createToolbar(), BorderLayout.PAGE_START);
     }
 
+    /**
+     * Initialises the actions, their shortcuts and whether they are enabled.
+     */
     private void initActions() {
         createBlankDocument = createAction("create_blank_document", tabs::createNewDocument);
         openExistingDocument = createAction("open_existing_document", this::openExistingDocument);
@@ -216,6 +315,13 @@ public class JNotepadPP extends JFrame {
         conditionallyEnableBasedOnSelection(unique, ENABLED_IF_SOMETHING_IS_SELECTED);
     }
 
+    /**
+     * Conditionally enables action based on the selection.
+     * The status of the action is checked after every {@link CaretEvent} or when the current document changes.
+     *
+     * @param action the action to conditionally enable
+     * @param shouldEnable the predicate used to determine whether it should be enabled or disabled
+     */
     private void conditionallyEnableBasedOnSelection(Action action, Predicate<SingleDocumentModel> shouldEnable) {
         tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
             private final CaretListener listener = e -> action.setEnabled(shouldEnable.test(tabs.getCurrentDocument()));
@@ -241,6 +347,14 @@ public class JNotepadPP extends JFrame {
         });
     }
 
+    /**
+     * Conditionally enables action based on the current document.
+     * The status of the action is checked when the current document changes, its modify status is changed or its
+     * file path is changed.
+     *
+     * @param action the action to conditionally enable
+     * @param shouldEnable the predicate used to determine whether it should be enabled or disabled
+     */
     private void conditionallyEnableBasedOnCurrentDocument(Action action, Predicate<SingleDocumentModel> shouldEnable) {
         tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
             private final SingleDocumentListener listener = new SingleDocumentListener() {
@@ -278,6 +392,13 @@ public class JNotepadPP extends JFrame {
         });
     }
 
+    /**
+     * Conditionally enables action based on the number of documents that are currently open.
+     * The status of the action is checked when a document is added or removed.
+     *
+     * @param action the action to conditionally enable
+     * @param shouldEnable the supplier used to determine whether it should be enabled or disabled
+     */
     private void conditionallyEnableBasedOnNumberOfDocuments(Action action, Supplier<Boolean> shouldEnable) {
         tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
             @Override
@@ -295,6 +416,13 @@ public class JNotepadPP extends JFrame {
         });
     }
 
+    /**
+     * Sets the key shortcut and the mnemonic for the specified action.
+     *
+     * @param action the action to set the shortcut and the mnemonic for
+     * @param keyStroke the keyboard shortcut
+     * @param keyEvent the mnemonic
+     */
     private void setKeys(Action action, KeyStroke keyStroke, int keyEvent) {
         if (keyStroke != null) {
             action.putValue(Action.ACCELERATOR_KEY, keyStroke);
@@ -303,6 +431,13 @@ public class JNotepadPP extends JFrame {
         action.putValue(Action.MNEMONIC_KEY, keyEvent);
     }
 
+    /**
+     * Creates a {@link LocalizableAction} with the specified key and using the specified {@link Runnable}.
+     *
+     * @param key the key used for localization
+     * @param runnable the task to run when the action is performed
+     * @return the newly created {@link LocalizableAction}
+     */
     private Action createAction(String key, Runnable runnable) {
         return new LocalizableAction(key, provider) {
 
@@ -314,10 +449,22 @@ public class JNotepadPP extends JFrame {
         };
     }
 
+    /**
+     * Creates a {@link LocalizableAction} with the specified key by masking a current action.
+     *
+     * @param key the key used for localization
+     * @param action the action to mask
+     * @return the newly created {@link LocalizableAction}
+     */
     private Action createAction(String key, Action action) {
         return createAction(key, () -> action.actionPerformed(null));
     }
 
+    /**
+     * Creates the status bar.
+     *
+     * @return the status bar
+     */
     private JPanel createStatusBar() {
         JPanel statusBar = new JPanel(new BorderLayout());
 
@@ -332,6 +479,11 @@ public class JNotepadPP extends JFrame {
         return statusBar;
     }
 
+    /**
+     * Creates the statistics part of the status bar.
+     *
+     * @return the statistics panel
+     */
     private JPanel createStats() {
         JLabel caretLabel = new JLabel("", JLabel.LEFT);
         JLabel documentLabel = new JLabel("");
@@ -387,6 +539,11 @@ public class JNotepadPP extends JFrame {
         return panel;
     }
 
+    /**
+     * Updates the part of the status bar which depends only on the currently open document.
+     *
+     * @param documentLabel the label that depends only on the currently open document
+     */
     private void updateDocumentLabel(JLabel documentLabel) {
         SingleDocumentModel currentDocument = tabs.getCurrentDocument();
 
@@ -404,6 +561,11 @@ public class JNotepadPP extends JFrame {
         documentLabel.setText(labelText);
     }
 
+    /**
+     * Updates the part of the status bar which depends on the caret position.
+     *
+     * @param caretLabel the label that depends on the caret position
+     */
     private void updateCaretLabel(JLabel caretLabel) {
         SingleDocumentModel currentDocument = tabs.getCurrentDocument();
 
@@ -425,6 +587,11 @@ public class JNotepadPP extends JFrame {
         caretLabel.setText(labelText);
     }
 
+    /**
+     * Creates a right aligned clock label.
+     *
+     * @return the clock label
+     */
     private JLabel createClock() {
         JLabel clock = new ClockLabel();
 
@@ -433,6 +600,9 @@ public class JNotepadPP extends JFrame {
         return clock;
     }
 
+    /**
+     * Creates menus from the actions.
+     */
     private void createMenus() {
         JMenuBar menuBar = new JMenuBar();
 
@@ -494,6 +664,11 @@ public class JNotepadPP extends JFrame {
         setJMenuBar(menuBar);
     }
 
+    /**
+     * Creates the toolbar using the actions and returns it.
+     *
+     * @return the toolbar
+     */
     private JToolBar createToolbar() {
         JToolBar toolBar = new JToolBar();
 
@@ -532,22 +707,40 @@ public class JNotepadPP extends JFrame {
         return toolBar;
     }
 
+    /**
+     * Opens {@link JNotepadPP}.
+     *
+     * @param args the arguments are ignored
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new JNotepadPP().setVisible(true);
         });
     }
 
+    /**
+     * Shows error message in a {@link JOptionPane}.
+     *
+     * @param message the message to show
+     */
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Checks modified status of each tab and prompts the user to save or discard it.
+     */
     private void closeAllTabs() {
         for (SingleDocumentModel document : tabs) {
             discardOrSaveAs(document);
         }
     }
 
+    /**
+     * Prompts the user to save or discard the document.
+     *
+     * @param document the document to save or discard
+     */
     private void discardOrSaveAs(SingleDocumentModel document) {
         if (document.isModified()) {
             String title = "<unnamed>";
@@ -567,6 +760,9 @@ public class JNotepadPP extends JFrame {
         }
     }
 
+    /**
+     * Opens an existing file from the disk.
+     */
     private void openExistingDocument() {
         JFileChooser jfc = new JFileChooser();
 
@@ -580,6 +776,11 @@ public class JNotepadPP extends JFrame {
         }
     }
 
+    /**
+     * Saves the document to disk using its file path.
+     *
+     * @param model the document to save
+     */
     private void saveDocument(SingleDocumentModel model) {
         try {
             tabs.saveDocument(model, null);
@@ -589,6 +790,11 @@ public class JNotepadPP extends JFrame {
         }
     }
 
+    /**
+     * Prompts user for a path and saves the file to that location.
+     *
+     * @param model the document to save
+     */
     private void saveAsDocument(SingleDocumentModel model) {
         JFileChooser jfc = new JFileChooser();
 
@@ -602,6 +808,10 @@ public class JNotepadPP extends JFrame {
         }
     }
 
+    /**
+     * Closes the currently open document.
+     * Prompts the user to save or discard if it has been modified.
+     */
     private void closeDocument() {
         SingleDocumentModel document = tabs.getCurrentDocument();
 
@@ -618,6 +828,9 @@ public class JNotepadPP extends JFrame {
         }
     }
 
+    /**
+     * Shows the statistics about this document.
+     */
     private void showStats() {
         SingleDocumentModel current = tabs.getCurrentDocument();
 
@@ -636,6 +849,9 @@ public class JNotepadPP extends JFrame {
         JOptionPane.showMessageDialog(this, stats, "Statistics", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Exits the program after discarding or saving all tabs.
+     */
     private void exitProgram() {
         try {
             closeAllTabs();
@@ -645,18 +861,33 @@ public class JNotepadPP extends JFrame {
         catch (Exception exc) {}
     }
 
+    /**
+     * Changes all selected characters to upper case.
+     */
     private void toUpperCase() {
         transformSelection(true, false);
     }
 
+    /**
+     * Changes all selected characters to lower case.
+     */
     private void toLowerCase() {
         transformSelection(false, true);
     }
 
+    /**
+     * Inverts the case of all selected characters.
+     */
     private void invertCase() {
         transformSelection(true, true);
     }
 
+    /**
+     * Transforms the case of the selected characters.
+     *
+     * @param invertLowerCase should it invert the case of lower cased characters
+     * @param invertUpperCase should it invert the case of upper cased characters
+     */
     private void transformSelection(boolean invertLowerCase, boolean invertUpperCase) {
         if (tabs.getCurrentDocument() == null) {
             return;
@@ -686,6 +917,9 @@ public class JNotepadPP extends JFrame {
         textComponent.replaceSelection(sb.toString());
     }
 
+    /**
+     * Sorts the selected lines in descending order.
+     */
     private void sortDescending() {
         transformSelectedLines(lines -> {
             Locale locale = new Locale(provider.getCurrentLanguage());
@@ -697,6 +931,9 @@ public class JNotepadPP extends JFrame {
         });
     }
 
+    /**
+     * Sorts the selected lines in ascending order.
+     */
     private void sortAscending() {
         transformSelectedLines(lines -> {
             Locale locale = new Locale(provider.getCurrentLanguage());
@@ -708,6 +945,9 @@ public class JNotepadPP extends JFrame {
         });
     }
 
+    /**
+     * Removes duplicate lines from selected lines.
+     */
     private void unique() {
         transformSelectedLines(lines -> {
             return Stream.of(lines)
@@ -716,6 +956,11 @@ public class JNotepadPP extends JFrame {
         });
     }
 
+    /**
+     * Transforms selected lines and replaces them with the transformed lines.
+     *
+     * @param transformation the function used to transform lines to different lines
+     */
     private void transformSelectedLines(Function<String[], String[]> transformation) {
         if (tabs.getCurrentDocument() == null) {
             return;
