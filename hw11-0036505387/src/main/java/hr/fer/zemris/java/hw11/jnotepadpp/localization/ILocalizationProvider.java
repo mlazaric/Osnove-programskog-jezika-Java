@@ -8,4 +8,6 @@ public interface ILocalizationProvider {
 
     void removeLocalizationListener(ILocalizationListener listener);
 
+    String getCurrentLanguage();
+
 }

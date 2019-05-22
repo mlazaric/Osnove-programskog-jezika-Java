@@ -6,20 +6,24 @@ import hr.fer.zemris.java.hw11.jnotepadpp.document.SingleDocumentListener;
 import hr.fer.zemris.java.hw11.jnotepadpp.document.SingleDocumentModel;
 import hr.fer.zemris.java.hw11.jnotepadpp.localization.*;
 
+import javax.print.Doc;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.Collator;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.*;
 import java.util.Timer;
-import java.util.TimerTask;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class JNotepadPP extends JFrame {
 
@@ -40,6 +44,13 @@ public class JNotepadPP extends JFrame {
     private Action pasteText;
     private Action showStats;
     private Action exitProgram;
+    private Action languageDe;
+    private Action toUpperCase;
+    private Action toLowerCase;
+    private Action invertCase;
+    private Action sortAsc;
+    private Action sortDesc;
+    private Action unique;
 
     public JNotepadPP() {
         provider = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);
@@ -118,8 +129,18 @@ public class JNotepadPP extends JFrame {
 
         showStats = createAction("stats_action", this::showStats);
 
+        toUpperCase = createAction("to_upper_case", this::toUpperCase);
+        toLowerCase = createAction("to_lower_case", this::toLowerCase);
+        invertCase = createAction("invert_case", this::invertCase);
+
+        sortAsc = createAction("sort_asc", this::sortAscending);
+        sortDesc = createAction("sort_desc", this::sortDescending);
+
+        unique = createAction("unique", this::unique);
+
         languageEn = createAction("language_en", () -> LocalizationProvider.getInstance().setLanguage("en"));
         languageHr = createAction("language_hr", () -> LocalizationProvider.getInstance().setLanguage("hr"));
+        languageDe = createAction("language_de", () -> LocalizationProvider.getInstance().setLanguage("de"));
 
         setKeys(createBlankDocument, KeyStroke.getKeyStroke("control N"), KeyEvent.VK_N);
         setKeys(openExistingDocument, KeyStroke.getKeyStroke("control O"), KeyEvent.VK_O);
@@ -134,37 +155,96 @@ public class JNotepadPP extends JFrame {
 
         setKeys(showStats, KeyStroke.getKeyStroke("control shift T"), KeyEvent.VK_T);
 
+        setKeys(toUpperCase, KeyStroke.getKeyStroke("control shift alt U"), KeyEvent.VK_U);
+        setKeys(toLowerCase, KeyStroke.getKeyStroke("control shift alt L"), KeyEvent.VK_L);
+        setKeys(invertCase, KeyStroke.getKeyStroke("control shift alt I"), KeyEvent.VK_I);
+
+        setKeys(sortAsc, KeyStroke.getKeyStroke("control shift alt A"), KeyEvent.VK_A);
+        setKeys(sortAsc, KeyStroke.getKeyStroke("control shift alt D"), KeyEvent.VK_D);
+
+        setKeys(unique, KeyStroke.getKeyStroke("control shift alt Q"), KeyEvent.VK_Q);
+
         setKeys(languageEn, KeyStroke.getKeyStroke("control alt E"), KeyEvent.VK_E);
         setKeys(languageHr, KeyStroke.getKeyStroke("control alt R"), KeyEvent.VK_R);
+        setKeys(languageDe, KeyStroke.getKeyStroke("control alt D"), KeyEvent.VK_D);
 
         // Should only be enabled if the current document is modified and has path set
         saveDocument.setEnabled(false);
-        conditionallyEnableBasedOnCurrent(saveDocument, model -> model != null &&
+        conditionallyEnableBasedOnCurrentDocument(saveDocument, model -> model != null &&
                                                    model.isModified() &&
                                                    model.getFilePath() != null);
 
         // Should only be enabled if the current document is modified
         saveAsDocument.setEnabled(false);
-        conditionallyEnableBasedOnCurrent(saveAsDocument, model -> model != null && model.isModified());
+        conditionallyEnableBasedOnCurrentDocument(saveAsDocument, model -> model != null && model.isModified());
 
         // Should only be enabled if there is a documents open
+        Supplier<Boolean> ENABLED_IF_A_DOCUMENT_IS_OPEN = () -> tabs.getCurrentDocument() != null;
+
         closeDocument.setEnabled(false);
-        conditionallyEnable(closeDocument, () -> tabs.getCurrentDocument() != null);
+        conditionallyEnableBasedOnNumberOfDocuments(closeDocument, ENABLED_IF_A_DOCUMENT_IS_OPEN);
 
         // Should only be enabled if there is a document open
         showStats.setEnabled(false);
-        conditionallyEnable(showStats, () -> tabs.getCurrentDocument() != null);
+        conditionallyEnableBasedOnNumberOfDocuments(showStats, ENABLED_IF_A_DOCUMENT_IS_OPEN);
 
-        // Should only be enabled if there is a document open
+        // Should only be enabled if there is a document open, notice you can copy and cut an empty selection
         cutText.setEnabled(false);
         copyText.setEnabled(false);
         pasteText.setEnabled(false);
-        conditionallyEnable(cutText, () -> tabs.getCurrentDocument() != null);
-        conditionallyEnable(copyText, () -> tabs.getCurrentDocument() != null);
-        conditionallyEnable(pasteText, () -> tabs.getCurrentDocument() != null);
+        conditionallyEnableBasedOnNumberOfDocuments(cutText, ENABLED_IF_A_DOCUMENT_IS_OPEN);
+        conditionallyEnableBasedOnNumberOfDocuments(copyText, ENABLED_IF_A_DOCUMENT_IS_OPEN);
+        conditionallyEnableBasedOnNumberOfDocuments(pasteText, ENABLED_IF_A_DOCUMENT_IS_OPEN);
+
+        // Should only be enabled if there is something selected
+        Predicate<SingleDocumentModel> ENABLED_IF_SOMETHING_IS_SELECTED = current ->
+                current != null &&
+                current.getTextComponent().getSelectedText() != null;
+
+        toUpperCase.setEnabled(false);
+        toLowerCase.setEnabled(false);
+        invertCase.setEnabled(false);
+
+        conditionallyEnableBasedOnSelection(toUpperCase, ENABLED_IF_SOMETHING_IS_SELECTED);
+        conditionallyEnableBasedOnSelection(toLowerCase, ENABLED_IF_SOMETHING_IS_SELECTED);
+        conditionallyEnableBasedOnSelection(invertCase, ENABLED_IF_SOMETHING_IS_SELECTED);
+
+        // Should only be enabled if there is something selected
+        sortAsc.setEnabled(false);
+        sortDesc.setEnabled(false);
+        unique.setEnabled(false);
+
+        conditionallyEnableBasedOnSelection(sortAsc, ENABLED_IF_SOMETHING_IS_SELECTED);
+        conditionallyEnableBasedOnSelection(sortDesc, ENABLED_IF_SOMETHING_IS_SELECTED);
+        conditionallyEnableBasedOnSelection(unique, ENABLED_IF_SOMETHING_IS_SELECTED);
     }
 
-    private void conditionallyEnableBasedOnCurrent(Action action, Predicate<SingleDocumentModel> shouldEnable) {
+    private void conditionallyEnableBasedOnSelection(Action action, Predicate<SingleDocumentModel> shouldEnable) {
+        tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
+            private final CaretListener listener = e -> action.setEnabled(shouldEnable.test(tabs.getCurrentDocument()));
+
+            @Override
+            public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
+                if (previousModel != null) {
+                    previousModel.getTextComponent().removeCaretListener(listener);
+                }
+
+                if (currentModel != null) {
+                    currentModel.getTextComponent().addCaretListener(listener);
+                }
+
+                action.setEnabled(shouldEnable.test(currentModel));
+            }
+
+            @Override
+            public void documentAdded(SingleDocumentModel model) {}
+
+            @Override
+            public void documentRemoved(SingleDocumentModel model) {}
+        });
+    }
+
+    private void conditionallyEnableBasedOnCurrentDocument(Action action, Predicate<SingleDocumentModel> shouldEnable) {
         tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
             private final SingleDocumentListener listener = new SingleDocumentListener() {
 
@@ -201,7 +281,7 @@ public class JNotepadPP extends JFrame {
         });
     }
 
-    private void conditionallyEnable(Action action, Supplier<Boolean> shouldEnable) {
+    private void conditionallyEnableBasedOnNumberOfDocuments(Action action, Supplier<Boolean> shouldEnable) {
         tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
             @Override
             public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {}
@@ -318,7 +398,7 @@ public class JNotepadPP extends JFrame {
             return;
         }
 
-        JTextArea text = currentDocument.getTextComponent();
+        JTextComponent text = currentDocument.getTextComponent();
 
         int length = text.getText().length();
 
@@ -335,16 +415,13 @@ public class JNotepadPP extends JFrame {
             return;
         }
 
-        JTextArea text = currentDocument.getTextComponent();
+        JTextComponent text = currentDocument.getTextComponent();
+        Document doc = text.getDocument();
+        Element root = doc.getDefaultRootElement();
 
-        int line = -1;
-        int column = -1;
+        int line = root.getElementIndex(text.getCaretPosition()) + 1;
+        int column = text.getCaretPosition() - root.getElement(line - 1).getStartOffset() + 1;
         int selection = text.getSelectedText() == null ? 0 : text.getSelectedText().length();
-
-        try {
-            line = text.getLineOfOffset(text.getCaretPosition()) + 1;
-            column = text.getCaretPosition() - text.getLineStartOffset(line - 1) + 1;
-        } catch (BadLocationException ignored) {}
 
         String labelText = String.format(provider.getString("caret_label"), line, column, selection);
 
@@ -354,7 +431,7 @@ public class JNotepadPP extends JFrame {
     private JLabel createClock() {
         JLabel clock = new JLabel("", JLabel.RIGHT);
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+        new Timer(true).scheduleAtFixedRate(new TimerTask() {
 
             private final SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
@@ -399,12 +476,34 @@ public class JNotepadPP extends JFrame {
 
         statistics.add(showStats);
 
-        JMenu languages = new LocalizableJMenu("localization", provider);
+        JMenu tools = new LocalizableJMenu("tools", provider);
+
+        menuBar.add(tools);
+
+        JMenu changeCase = new LocalizableJMenu("change_case", provider);
+
+        tools.add(changeCase);
+
+        changeCase.add(toUpperCase);
+        changeCase.add(toLowerCase);
+        changeCase.add(invertCase);
+
+        JMenu sort = new LocalizableJMenu("sort", provider);
+
+        tools.add(sort);
+
+        sort.add(sortAsc);
+        sort.add(sortDesc);
+
+        tools.add(unique);
+
+        JMenu languages = new LocalizableJMenu("languages", provider);
 
         menuBar.add(languages);
 
         languages.add(languageEn);
         languages.add(languageHr);
+        languages.add(languageDe);
 
         setJMenuBar(menuBar);
     }
@@ -428,8 +527,21 @@ public class JNotepadPP extends JFrame {
         toolBar.add(showStats);
         toolBar.addSeparator();
 
+        toolBar.add(toUpperCase);
+        toolBar.add(toLowerCase);
+        toolBar.add(invertCase);
+        toolBar.addSeparator();
+
+        toolBar.add(sortAsc);
+        toolBar.add(sortDesc);
+        toolBar.addSeparator();
+
+        toolBar.add(unique);
+        toolBar.addSeparator();
+
         toolBar.add(languageEn);
         toolBar.add(languageHr);
+        toolBar.add(languageDe);
 
         return toolBar;
     }
@@ -521,11 +633,11 @@ public class JNotepadPP extends JFrame {
             return;
         }
 
-        JTextArea text = current.getTextComponent();
+        JTextComponent text = current.getTextComponent();
 
         int characters = text.getText().length();
         int nonBlankCharacters = text.getText().replaceAll("\\s", "").length();
-        int lines = text.getLineCount();
+        int lines = text.getDocument().getDefaultRootElement().getElementCount();
 
         String stats = String.format(provider.getString("stats_window"), characters, nonBlankCharacters, lines);
 
@@ -539,6 +651,112 @@ public class JNotepadPP extends JFrame {
             dispose();
         }
         catch (Exception exc) {}
+    }
+
+    private void toUpperCase() {
+        transformSelection(true, false);
+    }
+
+    private void toLowerCase() {
+        transformSelection(false, true);
+    }
+
+    private void invertCase() {
+        transformSelection(true, true);
+    }
+
+    private void transformSelection(boolean invertLowerCase, boolean invertUpperCase) {
+        if (tabs.getCurrentDocument() == null) {
+            return;
+        }
+
+        JTextComponent textComponent = tabs.getCurrentDocument().getTextComponent();
+
+        if (textComponent.getSelectedText() == null) {
+            return;
+        }
+
+        char[] selection = textComponent.getSelectedText().toCharArray();
+        StringBuilder sb = new StringBuilder();
+
+        for (char c : selection) {
+            if (Character.isUpperCase(c) && invertUpperCase) {
+                sb.append(Character.toLowerCase(c));
+            }
+            else if (Character.isLowerCase(c) && invertLowerCase) {
+                sb.append(Character.toUpperCase(c));
+            }
+            else {
+                sb.append(c);
+            }
+        }
+
+        textComponent.replaceSelection(sb.toString());
+    }
+
+    private void sortDescending() {
+        transformSelectedLines(lines -> {
+            Locale locale = new Locale(provider.getCurrentLanguage());
+            Collator collator = Collator.getInstance(locale);
+
+            Arrays.sort(lines, collator.reversed());
+
+            return lines;
+        });
+    }
+
+    private void sortAscending() {
+        transformSelectedLines(lines -> {
+            Locale locale = new Locale(provider.getCurrentLanguage());
+            Collator collator = Collator.getInstance(locale);
+
+            Arrays.sort(lines, collator);
+
+            return lines;
+        });
+    }
+
+    private void unique() {
+        transformSelectedLines(lines -> {
+            return Stream.of(lines)
+                         .distinct()
+                         .collect(Collectors.toList())
+                         .toArray(new String[0]);
+        });
+    }
+
+    private void transformSelectedLines(Function<String[], String[]> transformation) {
+        if (tabs.getCurrentDocument() == null) {
+            return;
+        }
+
+        JTextComponent textComponent = tabs.getCurrentDocument().getTextComponent();
+
+        Document doc = textComponent.getDocument();
+        Caret caret = textComponent.getCaret();
+        Element root = doc.getDefaultRootElement();
+
+        int mark = caret.getMark();
+        int dot = caret.getDot();
+
+        int selectionStart = min(mark, dot);
+        int selectionEnd = max(mark, dot);
+
+        int firstLine = root.getElementIndex(selectionStart);
+        int lastLine = root.getElementIndex(selectionEnd);
+
+        int startOfFirstLine = root.getElement(firstLine).getStartOffset();
+        int endOfLastLine = min(root.getElement(lastLine).getEndOffset(), doc.getLength());
+
+        try {
+            String text = doc.getText(startOfFirstLine, endOfLastLine - startOfFirstLine);
+            String[] lines = text.split("\n");
+
+            String transformed = String.join("\n", transformation.apply(lines)) + "\n";
+
+            doc.remove(startOfFirstLine, endOfLastLine - startOfFirstLine);
+            doc.insertString(startOfFirstLine, transformed, null);
+        } catch (BadLocationException ignored) {}
     }
 
 }
