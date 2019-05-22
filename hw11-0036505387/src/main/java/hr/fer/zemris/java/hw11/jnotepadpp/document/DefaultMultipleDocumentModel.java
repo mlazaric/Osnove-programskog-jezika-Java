@@ -9,17 +9,46 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
 
+/**
+ * Implements {@link MultipleDocumentModel} using a {@link JTabbedPane} and {@link DefaultSingleDocumentModel}.
+ *
+ * @author Marko Lazarić
+ */
 public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel, MultipleDocumentListener {
 
+    /**
+     * The list of {@link SingleDocumentModel}s that are currently open.
+     */
     private List<SingleDocumentModel> documents;
+
+    /**
+     * The currently selected {@link SingleDocumentModel}. Can be null if no document is selected.
+     */
     private SingleDocumentModel currentDocument;
 
+    /**
+     * The listeners that should be notified of any changes.
+     */
     private List<MultipleDocumentListener> listeners;
+
+    /**
+     * Whether {@link #listeners} should be copied before writing to prevent {@link java.util.ConcurrentModificationException}.
+     */
     private boolean shouldCopyOnWrite;
 
+    /**
+     * The icon used to indicate isModified = false.
+     */
     private final ImageIcon savedIcon = loadIcon("icons/saved.png");
+
+    /**
+     * The icon used to indicate isModified = true.
+     */
     private final ImageIcon modifiedIcon = loadIcon("icons/modified.png");
 
+    /**
+     * Creates a new {@link DefaultMultipleDocumentModel}.
+     */
     public DefaultMultipleDocumentModel() {
         documents = new ArrayList<>();
         listeners = new ArrayList<>();
@@ -167,12 +196,18 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
         return documents.iterator();
     }
 
+    /**
+     * Copies {@link #listeners} if it currently being iterated over, to prevent {@link java.util.ConcurrentModificationException}.
+     */
     private void copyOnWriteIfNecessary() {
         if (shouldCopyOnWrite) {
             listeners = new ArrayList<>(listeners);
         }
     }
 
+    /**
+     * Notifies all subscribed listeners of a change to the current document.
+     */
     private void fireCurrentDocumentChanged(SingleDocumentModel prevDocument, SingleDocumentModel currentDocument) {
         shouldCopyOnWrite = true;
 
@@ -181,6 +216,9 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
         shouldCopyOnWrite = false;
     }
 
+    /**
+     * Notifies all subscribed listeners of an added document.
+     */
     private void fireDocumentAdded(SingleDocumentModel model) {
         shouldCopyOnWrite = true;
 
@@ -189,6 +227,9 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
         shouldCopyOnWrite = false;
     }
 
+    /**
+     * Notifies all subscribed listeners of a removed document.
+     */
     private void fireDocumentRemoved(SingleDocumentModel model) {
         shouldCopyOnWrite = true;
 
@@ -227,6 +268,11 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
         });
     }
 
+    /**
+     * Updates the title, tooltip and icon of the tab.
+     *
+     * @param model the model whose tab is updated
+     */
     private void updateTab(SingleDocumentModel model) {
         String title = "(unnamed)";
         String toolTip = "";
@@ -251,6 +297,14 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
         remove(documents.indexOf(model));
     }
 
+    /**
+     * Loads icon from disk.
+     *
+     * @param path the path to the icon
+     * @return the loaded {@link ImageIcon}
+     *
+     * @throws RuntimeException if an exception occurs while loading the icon
+     */
     private ImageIcon loadIcon(String path) {
         InputStream is = this.getClass().getResourceAsStream(path);
 

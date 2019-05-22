@@ -8,14 +8,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Implements {@link SingleDocumentModel} using a {@link JTextArea}.
+ *
+ * @author Marko Lazarić
+ */
 public class DefaultSingleDocumentModel implements SingleDocumentModel {
 
+    /**
+     * The path to the document on the disk, can be null.
+     */
     private Path path;
+
+    /**
+     * The text component used to show and edit the contents of the {@link SingleDocumentModel}.
+     */
     private JTextArea textArea;
+
+    /**
+     * Whether it has been modified since the last loading or saving.
+     */
     private boolean modified;
+
+    /**
+     * The listeners that should be notified of any changes.
+     */
     private List<SingleDocumentListener> listeners;
+
+    /**
+     * Whether {@link #listeners} should be copied before writing to prevent {@link java.util.ConcurrentModificationException}.
+     */
     private boolean shouldCopyOnWrite;
 
+    /**
+     * Creates a new {@link DefaultMultipleDocumentModel} with the given arguments.
+     *
+     * @param path the optional path to the document on the disk, can be null
+     * @param contents the contents of the document, cannot be null
+     *
+     * @throws NullPointerException if the second argument is null
+     */
     public DefaultSingleDocumentModel(Path path, String contents) {
         this.path = path;
         Objects.requireNonNull(contents, "Contents cannot be null.");
@@ -89,21 +121,30 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
         listeners.remove(l);
     }
 
+    /**
+     * Copies {@link #listeners} if it currently being iterated over, to prevent {@link java.util.ConcurrentModificationException}.
+     */
     private void copyOnWriteIfNecessary() {
         if (shouldCopyOnWrite) {
             listeners = new ArrayList<>(listeners);
         }
     }
 
-    protected void fireDocumentModifyStatusUpdated() {
+    /**
+     * Notifies all subscribed listeners of a modified status update.
+     */
+    private void fireDocumentModifyStatusUpdated() {
         shouldCopyOnWrite = true;
 
-        listeners.forEach(l -> l.documentFilePathUpdated(this));
+        listeners.forEach(l -> l.documentModifyStatusUpdated(this));
 
         shouldCopyOnWrite = false;
     }
 
-    protected void fireDocumentFilePathUpdated() {
+    /**
+     * Notifies all subscribed listeners of a file path update.
+     */
+    private void fireDocumentFilePathUpdated() {
         shouldCopyOnWrite = true;
 
         listeners.forEach(l -> l.documentFilePathUpdated(this));
