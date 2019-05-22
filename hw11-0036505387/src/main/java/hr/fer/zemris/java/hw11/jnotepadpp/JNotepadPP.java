@@ -18,9 +18,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.Collator;
-import java.text.SimpleDateFormat;
-import java.util.Timer;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -434,20 +433,9 @@ public class JNotepadPP extends JFrame {
     }
 
     private JLabel createClock() {
-        JLabel clock = new JLabel("", JLabel.RIGHT);
+        JLabel clock = new ClockLabel();
 
-        new Timer(true).scheduleAtFixedRate(new TimerTask() {
-
-            private final SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-            @Override
-            public void run() {
-                String text = format.format(Calendar.getInstance().getTime());
-
-                clock.setText(text);
-            }
-
-        }, 1000, 1000);
+        clock.setHorizontalAlignment(JLabel.RIGHT);
 
         return clock;
     }
