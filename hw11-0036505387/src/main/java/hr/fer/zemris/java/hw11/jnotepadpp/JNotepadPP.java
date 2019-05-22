@@ -33,6 +33,7 @@ import static java.lang.Math.min;
  *
  * @author Marko Lazarić
  */
+@SuppressWarnings("serial")
 public class JNotepadPP extends JFrame {
 
     /**
@@ -438,7 +439,9 @@ public class JNotepadPP extends JFrame {
      * @param runnable the task to run when the action is performed
      * @return the newly created {@link LocalizableAction}
      */
+    @SuppressWarnings("serial")
     private Action createAction(String key, Runnable runnable) {
+
         return new LocalizableAction(key, provider) {
 
             @Override

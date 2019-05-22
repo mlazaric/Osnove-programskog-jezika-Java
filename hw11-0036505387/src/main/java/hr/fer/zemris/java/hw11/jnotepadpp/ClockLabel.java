@@ -10,6 +10,7 @@ import java.util.Objects;
  *
  * @author Marko Lazarić
  */
+@SuppressWarnings("serial")
 public class ClockLabel extends JLabel {
 
     /**

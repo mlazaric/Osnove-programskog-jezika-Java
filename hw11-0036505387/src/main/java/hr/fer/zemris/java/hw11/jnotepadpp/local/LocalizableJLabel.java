@@ -8,6 +8,7 @@ import java.util.Objects;
  *
  * @author Marko Lazarić
  */
+@SuppressWarnings("serial")
 public class LocalizableJLabel extends JLabel {
 
     /**

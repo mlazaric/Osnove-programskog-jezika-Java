@@ -14,6 +14,7 @@ import java.util.*;
  *
  * @author Marko Lazarić
  */
+@SuppressWarnings("serial")
 public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel, MultipleDocumentListener {
 
     /**
