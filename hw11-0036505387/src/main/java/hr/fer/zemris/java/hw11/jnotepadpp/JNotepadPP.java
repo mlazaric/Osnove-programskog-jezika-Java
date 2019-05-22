@@ -7,15 +7,17 @@ import hr.fer.zemris.java.hw11.jnotepadpp.document.SingleDocumentModel;
 import hr.fer.zemris.java.hw11.jnotepadpp.localization.*;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.*;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.security.KeyStore;
+import java.awt.event.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -42,7 +44,7 @@ public class JNotepadPP extends JFrame {
     public JNotepadPP() {
         provider = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);
 
-        setSize(500, 500);
+        setSize(750, 750);
         setTitle(TITLE);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
@@ -87,9 +89,15 @@ public class JNotepadPP extends JFrame {
     }
 
     private void initGUI() {
-        tabs = new DefaultMultipleDocumentModel();
+        JPanel panel = new JPanel(new BorderLayout());
 
-        add(tabs, BorderLayout.CENTER);
+        tabs = new DefaultMultipleDocumentModel();
+        var statusBar = createStatusBar();
+
+        panel.add(tabs, BorderLayout.CENTER);
+        panel.add(statusBar, BorderLayout.PAGE_END);
+
+        add(panel, BorderLayout.CENTER);
 
         initActions();
         createMenus();
@@ -131,13 +139,13 @@ public class JNotepadPP extends JFrame {
 
         // Should only be enabled if the current document is modified and has path set
         saveDocument.setEnabled(false);
-        conditionallyEnable(saveDocument, model -> model != null &&
+        conditionallyEnableBasedOnCurrent(saveDocument, model -> model != null &&
                                                    model.isModified() &&
                                                    model.getFilePath() != null);
 
         // Should only be enabled if the current document is modified
         saveAsDocument.setEnabled(false);
-        conditionallyEnable(saveAsDocument, model -> model != null && model.isModified());
+        conditionallyEnableBasedOnCurrent(saveAsDocument, model -> model != null && model.isModified());
 
         // Should only be enabled if there is a documents open
         closeDocument.setEnabled(false);
@@ -156,29 +164,37 @@ public class JNotepadPP extends JFrame {
         conditionallyEnable(pasteText, () -> tabs.getCurrentDocument() != null);
     }
 
-    private void conditionallyEnable(Action action, Predicate<SingleDocumentModel> shouldEnable) {
+    private void conditionallyEnableBasedOnCurrent(Action action, Predicate<SingleDocumentModel> shouldEnable) {
         tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
+            private final SingleDocumentListener listener = new SingleDocumentListener() {
+
+                @Override
+                public void documentModifyStatusUpdated(SingleDocumentModel model) {
+                    action.setEnabled(shouldEnable.test(model));
+                }
+
+                @Override
+                public void documentFilePathUpdated(SingleDocumentModel model) {
+                    action.setEnabled(shouldEnable.test(model));
+                }
+
+            };
+
             @Override
             public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
+                if (previousModel != null) {
+                    previousModel.removeSingleDocumentListener(listener);
+                }
+
+                if (currentModel != null) {
+                    currentModel.addSingleDocumentListener(listener);
+                }
+
                 action.setEnabled(shouldEnable.test(currentModel));
             }
 
             @Override
-            public void documentAdded(SingleDocumentModel model) {
-                model.addSingleDocumentListener(new SingleDocumentListener() {
-
-                    @Override
-                    public void documentModifyStatusUpdated(SingleDocumentModel model) {
-                        action.setEnabled(shouldEnable.test(model));
-                    }
-
-                    @Override
-                    public void documentFilePathUpdated(SingleDocumentModel model) {
-                        action.setEnabled(shouldEnable.test(model));
-                    }
-
-                });
-            }
+            public void documentAdded(SingleDocumentModel model) {}
 
             @Override
             public void documentRemoved(SingleDocumentModel model) {}
@@ -223,6 +239,135 @@ public class JNotepadPP extends JFrame {
 
     private Action createAction(String key, Action action) {
         return createAction(key, () -> action.actionPerformed(null));
+    }
+
+    private JPanel createStatusBar() {
+        JPanel statusBar = new JPanel(new BorderLayout());
+
+        // Add some margins so it does not look as cramped
+        //   https://stackoverflow.com/a/5328475/11172828
+        statusBar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(4, 0, 0, 0, Color.LIGHT_GRAY),
+                                                               BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+        statusBar.add(createStats(), BorderLayout.LINE_START);
+        statusBar.add(createClock(), BorderLayout.CENTER);
+
+        return statusBar;
+    }
+
+    private JPanel createStats() {
+        JLabel caretLabel = new JLabel("", JLabel.LEFT);
+        JLabel documentLabel = new JLabel("");
+
+        CaretListener caretListener = e -> updateCaretLabel(caretLabel);
+        DocumentListener documentListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateDocumentLabel(documentLabel);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateDocumentLabel(documentLabel);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateDocumentLabel(documentLabel);
+            }
+        };
+
+        tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
+            @Override
+            public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
+                if (previousModel != null) {
+                    previousModel.getTextComponent().removeCaretListener(caretListener);
+                    previousModel.getTextComponent().getDocument().removeDocumentListener(documentListener);
+                }
+
+                if (currentModel != null) {
+                    currentModel.getTextComponent().addCaretListener(caretListener);
+                    currentModel.getTextComponent().getDocument().addDocumentListener(documentListener);
+                }
+
+                updateCaretLabel(caretLabel);
+            }
+
+            @Override
+            public void documentAdded(SingleDocumentModel model) {}
+
+            @Override
+            public void documentRemoved(SingleDocumentModel model) {}
+        });
+
+        JPanel panel = new JPanel(new GridLayout(1, 2));
+
+        panel.add(documentLabel);
+        documentLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.LIGHT_GRAY));
+        panel.add(caretLabel);
+        caretLabel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
+
+        return panel;
+    }
+
+    private void updateDocumentLabel(JLabel documentLabel) {
+        SingleDocumentModel currentDocument = tabs.getCurrentDocument();
+
+        if (currentDocument == null) {
+            documentLabel.setText("");
+            return;
+        }
+
+        JTextArea text = currentDocument.getTextComponent();
+
+        int length = text.getText().length();
+
+        String labelText = String.format(provider.getString("document_label"), length);
+
+        documentLabel.setText(labelText);
+    }
+
+    private void updateCaretLabel(JLabel caretLabel) {
+        SingleDocumentModel currentDocument = tabs.getCurrentDocument();
+
+        if (currentDocument == null) {
+            caretLabel.setText("");
+            return;
+        }
+
+        JTextArea text = currentDocument.getTextComponent();
+
+        int line = -1;
+        int column = -1;
+        int selection = text.getSelectedText() == null ? 0 : text.getSelectedText().length();
+
+        try {
+            line = text.getLineOfOffset(text.getCaretPosition()) + 1;
+            column = text.getCaretPosition() - text.getLineStartOffset(line - 1) + 1;
+        } catch (BadLocationException ignored) {}
+
+        String labelText = String.format(provider.getString("caret_label"), line, column, selection);
+
+        caretLabel.setText(labelText);
+    }
+
+    private JLabel createClock() {
+        JLabel clock = new JLabel("", JLabel.RIGHT);
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+
+            private final SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+            @Override
+            public void run() {
+                String text = format.format(Calendar.getInstance().getTime());
+
+                clock.setText(text);
+            }
+
+        }, 1000, 1000);
+
+        return clock;
     }
 
     private void createMenus() {
