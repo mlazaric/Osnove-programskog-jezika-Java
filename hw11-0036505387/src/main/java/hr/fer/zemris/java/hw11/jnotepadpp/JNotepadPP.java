@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.Math.max;
@@ -95,12 +94,6 @@ public class JNotepadPP extends JFrame {
             }
 
         });
-    }
-
-    private void closeAllTabs() {
-        for (SingleDocumentModel document : tabs) {
-            discardOrSaveAs(document);
-        }
     }
 
     private void initGUI() {
@@ -549,6 +542,12 @@ public class JNotepadPP extends JFrame {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    private void closeAllTabs() {
+        for (SingleDocumentModel document : tabs) {
+            discardOrSaveAs(document);
+        }
+    }
+
     private void discardOrSaveAs(SingleDocumentModel document) {
         if (document.isModified()) {
             String title = "<unnamed>";
@@ -713,8 +712,7 @@ public class JNotepadPP extends JFrame {
         transformSelectedLines(lines -> {
             return Stream.of(lines)
                          .distinct()
-                         .collect(Collectors.toList())
-                         .toArray(new String[0]);
+                         .toArray(String[]::new);
         });
     }
 
