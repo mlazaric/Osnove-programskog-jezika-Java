@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel, MultipleDocumentListener {
 
