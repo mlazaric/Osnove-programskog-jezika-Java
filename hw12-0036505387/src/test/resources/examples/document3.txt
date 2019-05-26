@@ -1,3 +1,0 @@
-{$= "text/plain" @setMimeType $}
-Ovaj dokument pozvan je sljedeći broj puta:
-{$= "brojPoziva" "1" @pparamGet @dup 1 + "brojPoziva" @pparamSet $}

@@ -1,1 +1,0 @@
-A tag follows {$= "Joe \"Long\" Smith"$}
