@@ -158,6 +158,8 @@ public class RequestContext {
         for (RCCookie cookie : outputCookies) {
             sb.append(cookie).append("\r\n");
         }
+        
+        sb.append("Connection: close\r\n");
 
         sb.append("\r\n");
 
