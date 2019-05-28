@@ -24,14 +24,22 @@ public class RequestContext {
     private final List<RCCookie> outputCookies;
     private boolean headerGenerated = false;
 
+    private IDispatcher dispatcher;
+
     public RequestContext(OutputStream outputStream, Map<String, String> parameters, Map<String, String> persistentParameters, List<RCCookie> outputCookies) {
+        this(outputStream, parameters, persistentParameters, outputCookies, null, null);
+    }
+
+    public RequestContext(OutputStream outputStream, Map<String, String> parameters, Map<String, String> persistentParameters, List<RCCookie> outputCookies,
+                          Map<String, String> temporaryParameters, IDispatcher dispatcher) {
         this.outputStream = Objects.requireNonNull(outputStream, "Output stream cannot be null.");
 
         // If any of them are null, treat them as empty
         this.parameters = parameters == null ? new HashMap<>() : parameters;
-        this.temporaryParameters = new HashMap<>();
+        this.temporaryParameters = temporaryParameters == null ? new HashMap<>() : temporaryParameters;
         this.persistentParameters = persistentParameters == null ? new HashMap<>() : persistentParameters;
         this.outputCookies = outputCookies == null ? new ArrayList<>() : outputCookies;
+        this.dispatcher = dispatcher;
     }
 
     public String getParameter(String name) {
@@ -172,6 +180,10 @@ public class RequestContext {
         }
 
         return mimeType;
+    }
+
+    public IDispatcher getDispatcher() {
+        return dispatcher;
     }
 
     public static class RCCookie {

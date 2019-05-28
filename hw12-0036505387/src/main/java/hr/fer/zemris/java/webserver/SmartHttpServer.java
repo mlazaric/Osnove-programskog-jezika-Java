@@ -118,7 +118,7 @@ public class SmartHttpServer {
         }
 
     }
-    private class ClientWorker implements Runnable {
+    private class ClientWorker implements Runnable, IDispatcher {
         private Socket csocket;
         private PushbackInputStream istream;
         private OutputStream ostream;
@@ -140,12 +140,12 @@ public class SmartHttpServer {
         public void run() {
             try {
                 unsafelyRun();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
-        private void unsafelyRun() throws IOException {
+        private void unsafelyRun() throws Exception {
             istream = new PushbackInputStream(csocket.getInputStream());
             ostream = csocket.getOutputStream();
 
@@ -194,45 +194,7 @@ public class SmartHttpServer {
 
             parseParameters(paramString);
 
-            Path requestedFilePath = documentRoot.resolve(Paths.get(path.substring(1)));
-
-            if (!requestedFilePath.startsWith(documentRoot)) {
-                returnError(403, "Forbidden");
-                return;
-            }
-
-            String mime = null;
-
-            if (!Files.isReadable(requestedFilePath)) {
-                returnError(404, "File not found");
-                return;
-            }
-            else {
-                int index = path.lastIndexOf('.');
-
-                if (index != -1) {
-                    String extension = path.substring(index + 1);
-
-                    mime = mimeTypes.get(extension);
-                }
-            }
-
-            if (mime == null) {
-                mime = "application/octet-stream";
-            }
-
-            RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
-
-            rc.setMimeType(mime);
-            rc.setContentLength(Files.size(requestedFilePath));
-            rc.write(Files.readAllBytes(requestedFilePath));
-            ostream.flush();
-            csocket.close();
-
-            // If you want, you can modify RequestContext to allow you to add additional headers
-            // so that you can add “Content-Length: 12345” if you know that file has 12345 bytes
-            // open file, read its content and write it to rc (that will generate header and send
-            // file bytes to client)
+            internalDispatchRequest(path, true);
         }
 
         private void returnError(int statusCode, String statusText) throws IOException {
@@ -298,6 +260,48 @@ public class SmartHttpServer {
             }
 
             return new String(bos.toByteArray(), StandardCharsets.US_ASCII);
+        }
+
+        public void internalDispatchRequest(String urlPath, boolean directCall) throws Exception {
+            Path requestedFilePath = documentRoot.resolve(Paths.get(urlPath.substring(1)));
+
+            if (!requestedFilePath.startsWith(documentRoot)) {
+                returnError(403, "Forbidden");
+                return;
+            }
+
+            String mime = null;
+
+            if (!Files.isReadable(requestedFilePath)) {
+                returnError(404, "File not found");
+                return;
+            }
+            else {
+                int index = urlPath.lastIndexOf('.');
+
+                if (index != -1) {
+                    String extension = urlPath.substring(index + 1);
+
+                    mime = mimeTypes.get(extension);
+                }
+            }
+
+            if (mime == null) {
+                mime = "application/octet-stream";
+            }
+
+            RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
+
+            rc.setMimeType(mime);
+            rc.setContentLength(Files.size(requestedFilePath));
+            rc.write(Files.readAllBytes(requestedFilePath));
+            ostream.flush();
+            csocket.close();
+        }
+
+        @Override
+        public void dispatchRequest(String urlPath) throws Exception {
+            internalDispatchRequest(urlPath, false);
         }
     }
 
