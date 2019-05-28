@@ -1,5 +1,8 @@
 package hr.fer.zemris.java.webserver;
 
+import hr.fer.zemris.java.custom.scripting.exec.SmartScriptEngine;
+import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -282,6 +285,11 @@ public class SmartHttpServer {
                 if (index != -1) {
                     String extension = urlPath.substring(index + 1);
 
+                    if ("smscr".equalsIgnoreCase(extension)) {
+                        handleSmartScript(requestedFilePath);
+                        return;
+                    }
+
                     mime = mimeTypes.get(extension);
                 }
             }
@@ -295,6 +303,18 @@ public class SmartHttpServer {
             rc.setMimeType(mime);
             rc.setContentLength(Files.size(requestedFilePath));
             rc.write(Files.readAllBytes(requestedFilePath));
+            ostream.flush();
+            csocket.close();
+        }
+
+        private void handleSmartScript(Path file) throws IOException {
+            String contents = Files.readString(file);
+            SmartScriptParser parser = new SmartScriptParser(contents);
+            RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
+            SmartScriptEngine engine = new SmartScriptEngine(parser.getDocumentNode(), rc);
+
+            engine.execute();
+
             ostream.flush();
             csocket.close();
         }

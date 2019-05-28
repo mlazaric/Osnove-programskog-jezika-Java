@@ -1,4 +1,3 @@
-{$= "text/plain" @setMimeType $}
-Računam sumu brojeva:
+{$= "text/plain" @setMimeType $}Računam sumu brojeva:
 {$= "a=" "a" 0 @paramGet ", b=" "b" 0 @paramGet ", rezultat=" "a" 0
 @paramGet "b" 0 @paramGet + $}
