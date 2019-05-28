@@ -298,7 +298,7 @@ public class SmartHttpServer {
         public void internalDispatchRequest(String urlPath, boolean directCall) throws Exception {
             if (workersMap.containsKey(urlPath)) {
                 if (context == null) {
-                    context = new RequestContext(ostream, params, permPrams, outputCookies);
+                    context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
                 }
 
                 workersMap.get(urlPath).processRequest(context);
@@ -311,6 +311,10 @@ public class SmartHttpServer {
                 // /ext/
                 // 01234
                 executeWorker(urlPath.substring(5));
+                return;
+            }
+            else if (urlPath.startsWith("/private") && directCall) {
+                returnError(404, "File not found.");
                 return;
             }
 
