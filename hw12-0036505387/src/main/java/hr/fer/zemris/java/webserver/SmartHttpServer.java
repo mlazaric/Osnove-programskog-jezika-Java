@@ -23,10 +23,12 @@ public class SmartHttpServer {
     private int port;
     private int workerThreads;
     private int sessionTimeout;
-    private Map<String, String> mimeTypes = new HashMap<String, String>();
+    private Map<String, String> mimeTypes = new HashMap<>();
     private ServerThread serverThread;
     private ExecutorService threadPool;
     private Path documentRoot;
+
+    private Map<String, IWebWorker> workersMap = new HashMap<>();
 
     public SmartHttpServer(String configFileName) {
         loadServerConfiguration(configFileName);
@@ -45,6 +47,30 @@ public class SmartHttpServer {
         sessionTimeout = getIntegerProperty(server, "session.timeout");
 
         loadMimeConfiguration(server.getProperty("server.mimeConfig"));
+        loadWorkerConfiguration(server.getProperty("server.workers"));
+    }
+
+    private void loadWorkerConfiguration(String filepath)  {
+        Properties workers = loadProperty(filepath);
+
+        for (var entry : workers.entrySet()) {
+            String path = (String) entry.getKey();
+            String fqcn = (String) entry.getValue();
+
+            if (workersMap.containsKey(path)) {
+                throw new RuntimeException("Multiple worker definitions for path: " + path);
+            }
+
+            try {
+                Class<?> referenceToClass = this.getClass().getClassLoader().loadClass(fqcn);
+                Object newObject = referenceToClass.newInstance();
+                IWebWorker iww = (IWebWorker) newObject;
+
+                workersMap.put(path, iww);
+            } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void loadMimeConfiguration(String filepath) {
@@ -134,6 +160,8 @@ public class SmartHttpServer {
         private List<RequestContext.RCCookie> outputCookies = new ArrayList<>();
         private String SID;
 
+        private RequestContext context;
+
         public ClientWorker(Socket csocket) {
             super();
             this.csocket = csocket;
@@ -201,12 +229,14 @@ public class SmartHttpServer {
         }
 
         private void returnError(int statusCode, String statusText) throws IOException {
-            RequestContext rc = new RequestContext(ostream, null, null, null);
+            if (context == null) {
+                context = new RequestContext(ostream, null, null, null);
+            }
 
-            rc.setStatusCode(statusCode);
-            rc.setStatusText(statusText);
+            context.setStatusCode(statusCode);
+            context.setStatusText(statusText);
 
-            rc.write("");
+            context.write("");
             ostream.flush();
             csocket.close();
         }
@@ -266,6 +296,24 @@ public class SmartHttpServer {
         }
 
         public void internalDispatchRequest(String urlPath, boolean directCall) throws Exception {
+            if (workersMap.containsKey(urlPath)) {
+                if (context == null) {
+                    context = new RequestContext(ostream, params, permPrams, outputCookies);
+                }
+
+                workersMap.get(urlPath).processRequest(context);
+
+                ostream.flush();
+                csocket.close();
+                return;
+            }
+            else if (urlPath.startsWith("/ext/")) {
+                // /ext/
+                // 01234
+                executeWorker(urlPath.substring(5));
+                return;
+            }
+
             Path requestedFilePath = documentRoot.resolve(Paths.get(urlPath.substring(1)));
 
             if (!requestedFilePath.startsWith(documentRoot)) {
@@ -298,20 +346,49 @@ public class SmartHttpServer {
                 mime = "application/octet-stream";
             }
 
-            RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
+            if (context == null) {
+                context = new RequestContext(ostream, params, permPrams, outputCookies);
+            }
 
-            rc.setMimeType(mime);
-            rc.setContentLength(Files.size(requestedFilePath));
-            rc.write(Files.readAllBytes(requestedFilePath));
+            context.setMimeType(mime);
+            context.setContentLength(Files.size(requestedFilePath));
+            context.write(Files.readAllBytes(requestedFilePath));
             ostream.flush();
             csocket.close();
+        }
+
+        private void executeWorker(String className) throws IOException {
+            try {
+                String fqcn = "hr.fer.zemris.java.webserver.workers." + className;
+                Class<?> referenceToClass = this.getClass().getClassLoader().loadClass(fqcn);
+                Object newObject = referenceToClass.newInstance();
+                IWebWorker iww = (IWebWorker) newObject;
+
+                if (context == null) {
+                    context = new RequestContext(ostream, params, permPrams, outputCookies);
+                }
+
+                iww.processRequest(context);
+
+                ostream.flush();
+                csocket.close();
+            } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+                returnError(404, "Worker not found");
+            } catch (Exception e) {
+                returnError(404, "Worker not found");
+                e.printStackTrace();
+            }
         }
 
         private void handleSmartScript(Path file) throws IOException {
             String contents = Files.readString(file);
             SmartScriptParser parser = new SmartScriptParser(contents);
-            RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
-            SmartScriptEngine engine = new SmartScriptEngine(parser.getDocumentNode(), rc);
+
+            if (context == null) {
+                context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
+            }
+
+            SmartScriptEngine engine = new SmartScriptEngine(parser.getDocumentNode(), context);
 
             engine.execute();
 
