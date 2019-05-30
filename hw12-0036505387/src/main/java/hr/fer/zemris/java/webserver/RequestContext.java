@@ -26,12 +26,14 @@ public class RequestContext {
 
     private IDispatcher dispatcher;
 
+    private final String sid;
+
     public RequestContext(OutputStream outputStream, Map<String, String> parameters, Map<String, String> persistentParameters, List<RCCookie> outputCookies) {
-        this(outputStream, parameters, persistentParameters, outputCookies, null, null);
+        this(outputStream, parameters, persistentParameters, outputCookies, null, null, null);
     }
 
     public RequestContext(OutputStream outputStream, Map<String, String> parameters, Map<String, String> persistentParameters, List<RCCookie> outputCookies,
-                          Map<String, String> temporaryParameters, IDispatcher dispatcher) {
+                          Map<String, String> temporaryParameters, IDispatcher dispatcher, String sid) {
         this.outputStream = Objects.requireNonNull(outputStream, "Output stream cannot be null.");
 
         // If any of them are null, treat them as empty
@@ -40,6 +42,7 @@ public class RequestContext {
         this.persistentParameters = persistentParameters == null ? new HashMap<>() : persistentParameters;
         this.outputCookies = outputCookies == null ? new ArrayList<>() : outputCookies;
         this.dispatcher = dispatcher;
+        this.sid = sid;
     }
 
     public String getParameter(String name) {
@@ -87,7 +90,7 @@ public class RequestContext {
     }
 
     public String getSessionID() {
-        return "";
+        return sid;
     }
 
     private void throwIfHeaderAlreadyGenerated() {
@@ -192,13 +195,19 @@ public class RequestContext {
         private final String domain;
         private final String path;
         private final Integer maxAge;
+        private final boolean httpOnly;
 
         public RCCookie(String name, String value, Integer maxAge, String domain, String path) {
+            this(name, value, maxAge, domain, path, false);
+        }
+
+        public RCCookie(String name, String value, Integer maxAge, String domain, String path, boolean httpOnly) {
             this.name = name;
             this.value = value;
             this.domain = domain;
             this.path = path;
             this.maxAge = maxAge;
+            this.httpOnly = httpOnly;
         }
 
         public String getName() {
@@ -221,6 +230,10 @@ public class RequestContext {
             return maxAge;
         }
 
+        public boolean isHttpOnly() {
+            return httpOnly;
+        }
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
@@ -231,6 +244,10 @@ public class RequestContext {
             appendIfNotNull(sb, "Domain", domain);
             appendIfNotNull(sb, "Path", path);
             appendIfNotNull(sb, "Max-Age", maxAge == null ? null : maxAge.toString());
+
+            if (httpOnly) {
+                sb.append("HttpOnly; ");
+            }
 
             // Remove "; "
             sb.delete(sb.length() - 2, sb.length());

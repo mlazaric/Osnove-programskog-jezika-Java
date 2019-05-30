@@ -13,8 +13,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+
+import static java.lang.Math.abs;
 
 public class SmartHttpServer {
 
@@ -30,10 +34,14 @@ public class SmartHttpServer {
 
     private Map<String, IWebWorker> workersMap = new HashMap<>();
 
+    private Map<String, SessionMapEntry> sessions = new ConcurrentHashMap<>();
+    private Random sessionRandom = new Random();
+
     public SmartHttpServer(String configFileName) {
         loadServerConfiguration(configFileName);
 
         serverThread = new ServerThread();
+        new CleanerThread().start();
     }
 
     private void loadServerConfiguration(String configFileName) {
@@ -172,7 +180,11 @@ public class SmartHttpServer {
             try {
                 unsafelyRun();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                try {
+                    returnError(500, "Internal server error.");
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 
@@ -223,14 +235,91 @@ public class SmartHttpServer {
                 paramString = partsOfPath[1];
             }
 
+            checkSession(request);
+
             parseParameters(paramString);
 
             internalDispatchRequest(path, true);
         }
 
+        private void checkSession(List<String> request) {
+            List<String> cookies = request.stream()
+                                          .filter(l -> l.startsWith("Cookie: "))
+                                          .collect(Collectors.toList());
+
+            String sidCandidate = null;
+
+            for (String cookieLine : cookies) {
+                String values = cookieLine.replaceAll("Cookie:\\s?", "");
+                String[] nameAndValues = values.split(";");
+
+                for (String nameAndValue : nameAndValues) {
+                    String[] parts = nameAndValue.split("=");
+
+                    String name = parts[0];
+                    String value = parts[1].substring(1, parts[1].length() - 1);
+
+                    if (name.equalsIgnoreCase("sid")) {
+                        sidCandidate = value;
+                    }
+                    else {
+                        outputCookies.add(new RequestContext.RCCookie(name, value, null,
+                                host == null ? domainName : host, null));
+                    }
+                }
+            }
+
+            synchronized (SmartHttpServer.this) {
+                if (sidCandidate != null) {
+                    SessionMapEntry entry = sessions.get(sidCandidate);
+
+                    if (entry == null || !entry.host.equals(host)) {
+                        sidCandidate = null;
+                    }
+                    else if (entry.validUntil < System.currentTimeMillis()) {
+                        sessions.remove(entry);
+                    }
+                    else {
+                        entry.validUntil = System.currentTimeMillis() + sessionTimeout * 1000; // Seconds -> milliseconds
+                    }
+                }
+
+                if (sidCandidate == null) {
+                    sidCandidate = generateSessionID();
+
+                    SessionMapEntry entry = new SessionMapEntry(sidCandidate,
+                            host == null ? domainName : host, System.currentTimeMillis() + sessionTimeout * 1000);
+                                                                   // Seconds -> milliseconds
+
+                    sessions.put(sidCandidate, entry);
+                }
+
+                outputCookies.add(new RequestContext.RCCookie("sid", sidCandidate, null,
+                        host == null ? domainName : host, "/", true));
+
+                SessionMapEntry entry = sessions.get(sidCandidate);
+
+                SID = sidCandidate;
+                permPrams = entry.map;
+            }
+        }
+
+        private String generateSessionID() {
+            char[] sid = new char[20];
+
+            synchronized (SmartHttpServer.this) {
+                for (int index = 0; index < sid.length; index++) {
+                    sid[index] = (char) ('A' + (abs(sessionRandom.nextInt()) % 26));
+                }
+            }
+
+            return new String(sid);
+        }
+
         private void returnError(int statusCode, String statusText) throws IOException {
             if (context == null) {
-                context = new RequestContext(ostream, null, null, null);
+                context = new RequestContext(ostream, null, null, null,
+                                              null, this,  SID);
             }
 
             context.setStatusCode(statusCode);
@@ -298,7 +387,7 @@ public class SmartHttpServer {
         public void internalDispatchRequest(String urlPath, boolean directCall) throws Exception {
             if (workersMap.containsKey(urlPath)) {
                 if (context == null) {
-                    context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
+                    context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this, SID);
                 }
 
                 workersMap.get(urlPath).processRequest(context);
@@ -351,7 +440,7 @@ public class SmartHttpServer {
             }
 
             if (context == null) {
-                context = new RequestContext(ostream, params, permPrams, outputCookies);
+                context = new RequestContext(ostream, params, permPrams, outputCookies, null, this, SID);
             }
 
             context.setMimeType(mime);
@@ -369,7 +458,7 @@ public class SmartHttpServer {
                 IWebWorker iww = (IWebWorker) newObject;
 
                 if (context == null) {
-                    context = new RequestContext(ostream, params, permPrams, outputCookies);
+                    context = new RequestContext(ostream, params, permPrams, outputCookies, null, this, SID);
                 }
 
                 iww.processRequest(context);
@@ -389,7 +478,7 @@ public class SmartHttpServer {
             SmartScriptParser parser = new SmartScriptParser(contents);
 
             if (context == null) {
-                context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
+                context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this, SID);
             }
 
             SmartScriptEngine engine = new SmartScriptEngine(parser.getDocumentNode(), context);
@@ -404,6 +493,46 @@ public class SmartHttpServer {
         public void dispatchRequest(String urlPath) throws Exception {
             internalDispatchRequest(urlPath, false);
         }
+    }
+
+    private static class SessionMapEntry {
+        private String sid;
+        private String host;
+        private long validUntil;
+        private Map<String, String> map;
+
+        public SessionMapEntry(String sid, String host, long validUntil) {
+            this.sid = sid;
+            this.host = host;
+            this.validUntil = validUntil;
+            this.map = new ConcurrentHashMap<>();
+        }
+    }
+
+    private class CleanerThread extends Thread {
+
+        public CleanerThread() {
+            setDaemon(true);
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    synchronized (SmartHttpServer.this) {
+                        // Remove expired sessions
+                        sessions.entrySet()
+                                .stream()
+                                .filter(e -> e.getValue().validUntil < System.currentTimeMillis())
+                                .map(Map.Entry<String, SessionMapEntry>::getKey)
+                                .forEach(sessions::remove);
+                    }
+
+                    Thread.sleep(5 * 60 * 1000); // Sleep 5 minutes
+                } catch (InterruptedException ignored) {}
+            }
+        }
+
     }
 
     public static void main(String[] args) {
