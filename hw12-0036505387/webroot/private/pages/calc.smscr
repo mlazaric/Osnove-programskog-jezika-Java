@@ -8,6 +8,6 @@
 <tr><td>a+b</td><td>{$= "zbroj" 3 @tparamGet $}</td></tr>
 </table>
 
-<img src="images/{$= "imgName" "odd.png" @tparamGet $}">
+<img src="/images/{$= "imgName" "odd.png" @tparamGet $}">
 </body>
 </html>

@@ -271,7 +271,8 @@ public class SmartScriptLexer {
 				++currentIndex;
 			}
 			else {
-				throw new SmartScriptLexerException("Invalid start of tag.");
+				return new SmartScriptToken(SmartScriptTokenType.TEXT, "{");
+				// throw new SmartScriptLexerException("Invalid start of tag.");
 			}
 		}
 
