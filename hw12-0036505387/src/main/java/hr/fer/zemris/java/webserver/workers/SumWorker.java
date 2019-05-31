@@ -3,10 +3,11 @@ package hr.fer.zemris.java.webserver.workers;
 import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+/**
+ * Sums two numbers parsed as GET parameters, uses default values if either or both are not set.
+ *
+ * @author Marko Lazarić
+ */
 public class SumWorker implements IWebWorker {
 
     @Override
@@ -33,6 +34,13 @@ public class SumWorker implements IWebWorker {
 
     }
 
+    /**
+     * Tries to parse the {@link String} as a number, if it is not parsable, it returns the default value.
+     *
+     * @param toParse the {@link String} to parse
+     * @param defaultValue the default value
+     * @return the parsed number or default value
+     */
     private int parseOrDefault(String toParse, int defaultValue) {
         try {
             return Integer.parseInt(toParse);

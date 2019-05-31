@@ -3,12 +3,11 @@ package hr.fer.zemris.java.webserver.workers;
 import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
+/**
+ * Renders a HTML document with links to some of the scripts and workers.
+ *
+ * @author Marko Lazarić
+ */
 public class HomeWorker implements IWebWorker {
 
     @Override

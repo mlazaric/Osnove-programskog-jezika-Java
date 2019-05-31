@@ -10,6 +10,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Demonstration program for {@link RequestContext}.
+ */
 public class DemoRequestContext {
     public static void main(String[] args) throws IOException {
         demo1("primjer1.txt", "ISO-8859-2");

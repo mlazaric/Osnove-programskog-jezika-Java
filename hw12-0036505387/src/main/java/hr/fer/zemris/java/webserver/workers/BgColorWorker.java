@@ -5,6 +5,12 @@ import hr.fer.zemris.java.webserver.RequestContext;
 
 import java.awt.*;
 
+/**
+ * Sets the "bgcolor" persistent parameter to the value of the "bgcolor" parameter if it is set and it represents a
+ * valid color and outputs an HTML document.
+ *
+ * @author Marko Lazarić
+ */
 public class BgColorWorker implements IWebWorker {
 
     @Override

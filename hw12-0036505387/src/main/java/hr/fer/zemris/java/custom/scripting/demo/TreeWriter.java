@@ -10,8 +10,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Demonstration program for using {@link INodeVisitor}.
+ *
+ * @author Marko Lazarić
+ */
 public class TreeWriter {
 
+    /**
+     * Parses a smart script file and then it turns the parsed tree into text and prints it to System.out.
+     *
+     * @param args expects one argument, the path to the file to parse and print
+     */
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Program expects one argument: path to the file to parse.");
@@ -42,6 +52,11 @@ public class TreeWriter {
         p.getDocumentNode().accept(visitor);
     }
 
+    /**
+     * Writes smart script document to System.out.
+     *
+     * @author Marko Lazarić
+     */
     private static class WriterVisitor implements INodeVisitor {
 
         private final StringBuilder output = new StringBuilder();
@@ -89,6 +104,11 @@ public class TreeWriter {
             System.out.println(output.toString());
         }
 
+        /**
+         * Visits all children of a node.
+         *
+         * @param node the node whose children should be visited
+         */
         private void visitChildren(Node node) {
             int numberOfChildren = node.numberOfChildren();
 

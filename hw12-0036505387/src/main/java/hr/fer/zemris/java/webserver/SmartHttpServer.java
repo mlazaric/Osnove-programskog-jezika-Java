@@ -20,23 +20,78 @@ import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 
+/**
+ * Models a simple HTTP server capable of running web workers, executing Smart Scripts and fetching resources.
+ *
+ * @author Marko Lazarić
+ */
 public class SmartHttpServer {
 
+    /**
+     * The address on which the server listens.
+     */
     private String address;
+
+    /**
+     * The domain name of the server.
+     */
     private String domainName;
+
+    /**
+     * The port of the server.
+     */
     private int port;
+
+    /**
+     * The number of workers in the thread pool.
+     */
     private int workerThreads;
+
+    /**
+     * The session timeout.
+     */
     private int sessionTimeout;
+
+    /**
+     * The mapping of file extensions to mime types.
+     */
     private Map<String, String> mimeTypes = new HashMap<>();
+
+    /**
+     * The server thread currently running.
+     */
     private ServerThread serverThread;
+
+    /**
+     * The thread pool for answering requests to the server.
+     */
     private ExecutorService threadPool;
+
+    /**
+     * The document root used for resolving relative paths.
+     */
     private Path documentRoot;
 
+    /**
+     * The mapping of paths to workers.
+     */
     private Map<String, IWebWorker> workersMap = new HashMap<>();
 
+    /**
+     * The mapping of session IDs to sessions.
+     */
     private Map<String, SessionMapEntry> sessions = new ConcurrentHashMap<>();
+
+    /**
+     * The random generator for generating session IDs.
+     */
     private Random sessionRandom = new Random();
 
+    /**
+     * Creates a new {@link SmartHttpServer} with the given argument.
+     *
+     * @param configFileName the path to the server configuration
+     */
     public SmartHttpServer(String configFileName) {
         loadServerConfiguration(configFileName);
 
@@ -44,20 +99,32 @@ public class SmartHttpServer {
         new CleanerThread().start();
     }
 
+    /**
+     * Loads server configuration from the config file.
+     *
+     * @param configFileName the path to the server configuration
+     */
     private void loadServerConfiguration(String configFileName) {
         Properties server = loadProperty(configFileName);
 
         address = server.getProperty("server.address");
         domainName = server.getProperty("server.domainName");
-        port = getIntegerProperty(server, "server.port");
-        workerThreads = getIntegerProperty(server, "server.workerThreads");
-        documentRoot = getPathProperty(server, "server.documentRoot");
-        sessionTimeout = getIntegerProperty(server, "session.timeout");
+        port = Integer.parseInt(server.getProperty("server.port"));
+        workerThreads = Integer.parseInt(server.getProperty("server.workerThreads"));
+        documentRoot = Paths.get(server.getProperty("server.documentRoot"));
+        sessionTimeout = Integer.parseInt(server.getProperty("session.timeout"));
 
         loadMimeConfiguration(server.getProperty("server.mimeConfig"));
         loadWorkerConfiguration(server.getProperty("server.workers"));
     }
 
+    /**
+     * Loads worker configuration from the config file.
+     *
+     * @param filepath the path to the worker configuration
+     *
+     * @throws RuntimeException if it encounters an error while creating instances of the workers
+     */
     private void loadWorkerConfiguration(String filepath)  {
         Properties workers = loadProperty(filepath);
 
@@ -81,20 +148,25 @@ public class SmartHttpServer {
         }
     }
 
+    /**
+     * Loads mime type configuration from the config file.
+     *
+     * @param filepath the path to the mime type configuration
+     */
     private void loadMimeConfiguration(String filepath) {
         Properties mimes = loadProperty(filepath);
 
         mimes.forEach((k, v) -> mimeTypes.put(k.toString(), v.toString()));
     }
 
-    private int getIntegerProperty(Properties properties, String property) {
-        return Integer.parseInt(properties.getProperty(property));
-    }
-
-    private Path getPathProperty(Properties properties, String property) {
-        return Paths.get(properties.getProperty(property));
-    }
-
+    /**
+     * Loads a configuration file.
+     *
+     * @param path the path to the configuration file
+     * @return the loaded configuration file as a {@link Properties} object
+     *
+     * @throws RuntimeException if the file is not parsable or is not readable
+     */
     private Properties loadProperty(String path) {
         Path filepath = Paths.get(path);
         Properties properties = new Properties();
@@ -109,6 +181,9 @@ public class SmartHttpServer {
         return properties;
     }
 
+    /**
+     * Starts the server.
+     */
     protected synchronized void start() {
         if (!serverThread.isAlive()) {
             serverThread.start();
@@ -117,15 +192,26 @@ public class SmartHttpServer {
         threadPool = Executors.newFixedThreadPool(workerThreads);
     }
 
+    /**
+     * Stops the server.
+     */
     protected synchronized void stop() {
         serverThread.turnOff();
 
         threadPool.shutdown();
     }
 
+    /**
+     * Models a server thread which responds to requests.
+     *
+     * @author Marko Lazarić
+     */
     protected class ServerThread extends Thread {
 
-        private boolean running = false;
+        /**
+         * Whether the thread is currently running.
+         */
+        private volatile boolean running = false;
 
         @Override
         public void run() {
@@ -150,29 +236,92 @@ public class SmartHttpServer {
             }
         }
 
+        /**
+         * Turns the thread off.
+         */
         public void turnOff() {
             running = false;
         }
 
     }
+
+    /**
+     * Models a single client worker which responds to a single request.
+     *
+     * @author Marko Lazarić
+     */
     private class ClientWorker implements Runnable, IDispatcher {
+
+        /**
+         * The socket of the request.
+         */
         private Socket csocket;
+
+        /**
+         * The input stream of the request.
+         */
         private PushbackInputStream istream;
+
+        /**
+         * The output stream for the response.
+         */
         private OutputStream ostream;
+
+        /**
+         * The version of HTTP.
+         */
         private String version;
+
+        /**
+         * The method of the request.
+         */
         private String method;
+
+        /**
+         * The host the request was made to.
+         */
         private String host;
+
+        /**
+         * The GET parameters.
+         */
         private Map<String, String> params = new HashMap<>();
+
+        /**
+         * The temporary parameters.
+         */
         private Map<String, String> tempParams = new HashMap<>();
+
+        /**
+         * The persistent parameters.
+         */
         private Map<String, String> permPrams = new HashMap<>();
+
+        /**
+         * The output cookies.
+         */
         private List<RequestContext.RCCookie> outputCookies = new ArrayList<>();
+
+        /**
+         * The session ID.
+         */
         private String SID;
 
+        /**
+         * The context of the request.
+         */
         private RequestContext context;
 
+        /**
+         * Creates a new {@link ClientWorker} with the given argument.
+         *
+         * @param csocket the socket of the request
+         *
+         * @throws NullPointerException if {@code csocket} is {@code null}
+         */
         public ClientWorker(Socket csocket) {
             super();
-            this.csocket = csocket;
+            this.csocket = Objects.requireNonNull(csocket, "Socket cannot be null.");
         }
 
         @Override
@@ -188,6 +337,11 @@ public class SmartHttpServer {
             }
         }
 
+        /**
+         * Respond to a request made to the server.
+         *
+         * @throws Exception if an error occurs while responding to the request
+         */
         private void unsafelyRun() throws Exception {
             istream = new PushbackInputStream(csocket.getInputStream());
             ostream = csocket.getOutputStream();
@@ -242,6 +396,11 @@ public class SmartHttpServer {
             internalDispatchRequest(path, true);
         }
 
+        /**
+         * Checks the session of the request and either extends it or creates a new one.
+         *
+         * @param request the header lines of the request
+         */
         private void checkSession(List<String> request) {
             List<String> cookies = request.stream()
                                           .filter(l -> l.startsWith("Cookie: "))
@@ -304,6 +463,11 @@ public class SmartHttpServer {
             }
         }
 
+        /**
+         * Generates a session ID made of 20 upper case letters.
+         *
+         * @return the generated session ID
+         */
         private String generateSessionID() {
             char[] sid = new char[20];
 
@@ -316,6 +480,14 @@ public class SmartHttpServer {
             return new String(sid);
         }
 
+        /**
+         * Returns an error response with the specified parameters.
+         *
+         * @param statusCode the status code of the error
+         * @param statusText the status text of the error
+         *
+         * @throws IOException if an error occurs while respond to the request
+         */
         private void returnError(int statusCode, String statusText) throws IOException {
             if (context == null) {
                 context = new RequestContext(ostream, null, null, null,
@@ -330,6 +502,11 @@ public class SmartHttpServer {
             csocket.close();
         }
 
+        /**
+         * Parses parameters from the parameter string.
+         *
+         * @param paramString the string to parse parameters from
+         */
         private void parseParameters(String paramString) {
             if (paramString.isBlank()) {
                 return;
@@ -340,10 +517,22 @@ public class SmartHttpServer {
             for (String param : splitParams) {
                 String[] splitParam = param.split("=");
 
-                params.put(splitParam[0], splitParam[1]);
+                if (splitParam.length == 2) {
+                    params.put(splitParam[0], splitParam[1]);
+                }
+                else if (splitParam.length == 1) { // If the name was given without the value
+                    params.put(splitParam[0], "");
+                }
             }
         }
 
+        /**
+         * Reads the header lines from the request into a list.
+         *
+         * @return the list of the header lines
+         *
+         * @throws IOException if an error occurs while reading the header lines
+         */
         private List<String> readRequest() throws IOException {
             String request = getRequestHeader();
                                    // Handle multiline headers by removing the new line character
@@ -353,6 +542,12 @@ public class SmartHttpServer {
             return List.of(lines);
         }
 
+        /**
+         * Extracts the header from the request.
+         *
+         * @return the header extracted from the request
+         * @throws IOException if an error occurs while extracting the header
+         */
         private String getRequestHeader() throws IOException {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -384,6 +579,14 @@ public class SmartHttpServer {
             return new String(bos.toByteArray(), StandardCharsets.US_ASCII);
         }
 
+        /**
+         * Dispatch the request internally.
+         *
+         * @param urlPath the path which was requested
+         * @param directCall whether it is a direct call or not
+         *
+         * @throws Exception if an error occurs while dispatching the request
+         */
         public void internalDispatchRequest(String urlPath, boolean directCall) throws Exception {
             if (workersMap.containsKey(urlPath)) {
                 if (context == null) {
@@ -450,6 +653,13 @@ public class SmartHttpServer {
             csocket.close();
         }
 
+        /**
+         * Executes the specified web worker.
+         *
+         * @param className the fully qualified class name of the web worker to execute
+         *
+         * @throws IOException if an error occurs while executing the web worker
+         */
         private void executeWorker(String className) throws IOException {
             try {
                 String fqcn = "hr.fer.zemris.java.webserver.workers." + className;
@@ -473,6 +683,13 @@ public class SmartHttpServer {
             }
         }
 
+        /**
+         * Executes a smart script file.
+         *
+         * @param file the path to the smart script
+         *
+         * @throws IOException if an error occurs while executing the smart script file
+         */
         private void handleSmartScript(Path file) throws IOException {
             String contents = Files.readString(file);
             SmartScriptParser parser = new SmartScriptParser(contents);
@@ -495,12 +712,40 @@ public class SmartHttpServer {
         }
     }
 
+    /**
+     * Models a single session map entry.
+     *
+     * @author Marko Lazarić
+     */
     private static class SessionMapEntry {
+
+        /**
+         * The session ID.
+         */
         private String sid;
+
+        /**
+         * The session host.
+         */
         private String host;
+
+        /**
+         * The expiration time of the session.
+         */
         private long validUntil;
+
+        /**
+         * The map of persistent parameters.
+         */
         private Map<String, String> map;
 
+        /**
+         * Creates a new {@link SessionMapEntry} with the given arguments.
+         *
+         * @param sid the session ID
+         * @param host the session host
+         * @param validUntil the expiration time of the session
+         */
         public SessionMapEntry(String sid, String host, long validUntil) {
             this.sid = sid;
             this.host = host;
@@ -509,6 +754,11 @@ public class SmartHttpServer {
         }
     }
 
+    /**
+     * Cleaner thread which runs every 5 minutes and deletes expired sessions.
+     *
+     * @author Marko Lazarić
+     */
     private class CleanerThread extends Thread {
 
         public CleanerThread() {
@@ -535,6 +785,11 @@ public class SmartHttpServer {
 
     }
 
+    /**
+     * Starts the smart script server.
+     *
+     * @param args the one and only argument is the path to the main configuration file
+     */
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Program expects one argument: path to main configuration file.");

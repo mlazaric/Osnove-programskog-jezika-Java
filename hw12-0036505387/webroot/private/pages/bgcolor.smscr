@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{$= "text/html" @setMimeType $}<!DOCTYPE html>
 <html>
  <body>
   <h2>{$= "message" "message" @tparamGet $}</h2>

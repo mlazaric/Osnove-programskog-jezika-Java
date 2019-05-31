@@ -4,9 +4,12 @@ import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
+/**
+ * Prints all passed paramets in an HTML table.
+ *
+ * @author Marko Lazarić
+ */
 public class EchoParams implements IWebWorker {
 
     @Override

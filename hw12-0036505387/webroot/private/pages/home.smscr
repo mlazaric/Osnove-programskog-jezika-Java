@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{$= "text/html" @setMimeType $}<!DOCTYPE html>
 <html>
  <head>
  <style>

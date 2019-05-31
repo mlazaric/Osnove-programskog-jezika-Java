@@ -12,10 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Demonstration program for {@code osnovni.smscr}.
+ */
 public class OsnovniDemo {
 
     public static void main(String[] args) throws IOException {
-        String documentBody = Files.readString(Paths.get("src/test/resources/examples/osnovni.smscr"));
+        String documentBody = Files.readString(Paths.get("webroot/scripts/osnovni.smscr"));
         Map<String,String> parameters = new HashMap<String, String>();
         Map<String,String> persistentParameters = new HashMap<String, String>();
         List<RequestContext.RCCookie> cookies = new ArrayList<RequestContext.RCCookie>();

@@ -8,9 +8,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
+/**
+ * Renders a 200x200 circle image.
+ *
+ * @author Marko Lazarić
+ */
 public class CircleWorker implements IWebWorker {
 
     @Override

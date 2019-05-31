@@ -7,6 +7,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Greets user if they set the "name" GET parameter.
+ *
+ * @author Marko Lazarić
+ */
 public class HelloWorker implements IWebWorker {
 
     @Override

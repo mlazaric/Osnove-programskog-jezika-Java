@@ -8,11 +8,30 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Stack;
 
+/**
+ * A class for executing a Smart Script document.
+ *
+ * @author Marko Lazarić
+ */
 public class SmartScriptEngine {
+    /**
+     * The smart script's {@link DocumentNode}.
+     */
     private DocumentNode documentNode;
+
+    /**
+     * The {@link RequestContext} used for execution.
+     */
     private RequestContext requestContext;
+
+    /**
+     * The {@link ObjectMultistack} used for execution.
+     */
     private ObjectMultistack multistack = new ObjectMultistack();
 
+    /**
+     * Executes a Smart Script document using the {@link INodeVisitor} to visit all nodes.
+     */
     private INodeVisitor visitor = new INodeVisitor() {
 
         @Override
@@ -54,6 +73,14 @@ public class SmartScriptEngine {
             multistack.pop(variable);
         }
 
+        /**
+         * Extracts a {@link Number} from {@link ElementConstantDouble} or {@link ElementConstantInteger}.
+         *
+         * @param element the element whose {@link Number} should be extracted
+         * @return the extracted {@link Number}
+         *
+         * @throws RuntimeException if {@code element} is not a constant number element
+         */
         private Number getNumberFromElementConstant(Element element) {
             if (element instanceof ElementConstantInteger) {
                 return ((ElementConstantInteger) element).getValue();
@@ -119,6 +146,11 @@ public class SmartScriptEngine {
             visitChildren(node);
         }
 
+        /**
+         * Visits all children of a node.
+         *
+         * @param node the node whose children should be visited
+         */
         private void visitChildren(Node node) {
             int numberOfChildren = node.numberOfChildren();
 
@@ -128,11 +160,20 @@ public class SmartScriptEngine {
         }
     };
 
+    /**
+     * Creates a new {@link SmartScriptEngine} with the given arguments.
+     *
+     * @param documentNode the smart script's {@link DocumentNode}
+     * @param requestContext the {@link RequestContext} used for execution
+     */
     public SmartScriptEngine(DocumentNode documentNode, RequestContext requestContext) {
         this.documentNode = Objects.requireNonNull(documentNode, "Document node cannot be null.");
         this.requestContext = Objects.requireNonNull(requestContext, "Request context cannot be null.");
     }
 
+    /**
+     * Executes the Smart Script document.
+     */
     public void execute() {
         documentNode.accept(visitor);
     }

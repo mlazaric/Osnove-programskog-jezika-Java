@@ -4,10 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+/**
+ * Helper class for evaluating Smart Script operators.
+ *
+ * @author Marko Lazarić
+ */
 public final class Operators {
 
-    private Operators() {}
+    private Operators() {} // Instances of this class should not be created.
 
+    /**
+     * The mapping of operator symbols to operators.
+     */
     private static final Map<String, BiConsumer<ValueWrapper, Object>> OPERATORS;
 
     static {
@@ -19,6 +27,16 @@ public final class Operators {
         OPERATORS.put("/", ValueWrapper::divide);
     }
 
+    /**
+     * Evaluates the specified operator using the given arguments.
+     *
+     * @param symbol the symbol of the operator
+     * @param first the first argument for the operator
+     * @param second the second argument for the operator
+     * @return the result of evaluating the operator
+     *
+     * @throws RuntimeException if {@code symbol} is not a valid Smart Script operator
+     */
     public static ValueWrapper applyOperator(String symbol, ValueWrapper first, ValueWrapper second) {
         BiConsumer<ValueWrapper, Object> operator = OPERATORS.get(symbol);
 
