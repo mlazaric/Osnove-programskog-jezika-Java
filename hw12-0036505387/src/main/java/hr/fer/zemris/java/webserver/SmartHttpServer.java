@@ -436,7 +436,7 @@ public class SmartHttpServer {
                         sidCandidate = null;
                     }
                     else if (entry.validUntil < System.currentTimeMillis()) {
-                        sessions.remove(entry);
+                        sessions.remove(sidCandidate);
                     }
                     else {
                         entry.validUntil = System.currentTimeMillis() + sessionTimeout * 1000; // Seconds -> milliseconds
@@ -793,6 +793,11 @@ public class SmartHttpServer {
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Program expects one argument: path to main configuration file.");
+            return;
+        }
+
+        if (!Files.isReadable(Paths.get(args[0]))) {
+            System.out.println("'" + args[0] + "' is not readable.");
             return;
         }
 
