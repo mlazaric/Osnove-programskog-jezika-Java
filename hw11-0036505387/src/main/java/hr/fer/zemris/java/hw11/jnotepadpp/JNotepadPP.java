@@ -541,6 +541,9 @@ public class JNotepadPP extends JFrame {
             }
         };
 
+        provider.addLocalizationListener(() -> updateDocumentLabel(documentLabel));
+        provider.addLocalizationListener(() -> updateCaretLabel(caretLabel));
+
         tabs.addMultipleDocumentListener(new MultipleDocumentListener() {
             @Override
             public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
@@ -554,6 +557,7 @@ public class JNotepadPP extends JFrame {
                     currentModel.getTextComponent().getDocument().addDocumentListener(documentListener);
                 }
 
+                updateDocumentLabel(documentLabel);
                 updateCaretLabel(caretLabel);
             }
 
