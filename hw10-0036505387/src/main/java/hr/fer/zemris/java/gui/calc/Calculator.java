@@ -54,6 +54,8 @@ public class Calculator extends JFrame {
         this.model = model;
         this.stack = new Stack<>();
 
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
         initGUI();
         pack();
     }

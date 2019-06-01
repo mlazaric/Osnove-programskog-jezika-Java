@@ -6,6 +6,7 @@ import java.awt.geom.AffineTransform;
 import java.util.Objects;
 
 import static java.lang.Math.ceil;
+import static java.lang.Math.max;
 
 /**
  * Draws a bar chart modeled by {@link BarChart}.
@@ -18,7 +19,7 @@ public class BarChartComponent extends JComponent {
     /**
      * The space between the description of the y values and the y labels.
      */
-    private static final int SPACE_BETWEEN_Y_DESC_AND_Y_LABEL = 20;
+    private static final int SPACE_BETWEEN_Y_DESC_AND_Y_LABEL = 5;
 
     /**
      * The space between the description of the x values and the x labels.
@@ -80,8 +81,11 @@ public class BarChartComponent extends JComponent {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
+        int widthLabelY = max(g.getFontMetrics().stringWidth(barChart.getMinY() + ""),
+                              g.getFontMetrics().stringWidth(barChart.getMaxY() + ""));
+
         // Origin coordinates
-        int originX = LEFT_MARGIN + g.getFontMetrics().getHeight() + SPACE_BETWEEN_Y_DESC_AND_Y_LABEL;
+        int originX = LEFT_MARGIN + g.getFontMetrics().getHeight() + SPACE_BETWEEN_Y_DESC_AND_Y_LABEL + widthLabelY;
         int originY = getHeight() - BOTTOM_MARGIN - g.getFontMetrics().getHeight() - SPACE_BETWEEN_X_DESC_AND_X_LABEL;
 
         // Widths and heights of the labels

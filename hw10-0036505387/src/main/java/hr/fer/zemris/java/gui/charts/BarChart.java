@@ -1,7 +1,5 @@
 package hr.fer.zemris.java.gui.charts;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -90,8 +88,8 @@ public class BarChart {
             throw new IllegalArgumentException("minY is not the minimum y of values.");
         }
 
-        // Sort based on x values
-        Collections.sort(this.values, Comparator.comparingInt(XYValue::getX));
+        // Sort based on x values -- not sure if necessary
+        // Collections.sort(this.values, Comparator.comparingInt(XYValue::getX));
     }
 
     /**
