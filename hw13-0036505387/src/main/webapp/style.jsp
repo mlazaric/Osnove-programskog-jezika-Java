@@ -1,4 +1,4 @@
-<%@ page contentType="text/css;charset=UTF-8" pageEncoding="UTF-8" language="java" session="true" %>
+<%@ page contentType="text/css;charset=UTF-8" pageEncoding="UTF-8" %>
 
 body {
     <%
