@@ -125,6 +125,7 @@ public class FileBandVotesStorage implements IBandVotesStorage {
     public Iterable<BandVoteCount> sortedByVoteCount(IBandDefinitionStorage bandDefinition) {
         return votes.entrySet()
                     .stream()
+                    .filter(e -> bandDefinition.getById(e.getKey()) != null)                       // Remove vote counts with invalid band identifiers
                     .map(e -> new BandVoteCount(bandDefinition.getById(e.getKey()), e.getValue())) // Map to java bean objects
                     .sorted()                                                                      // Sort by vote count and band id
                     ::iterator;                                                                    // Return Iterable instead of Iterator
@@ -142,6 +143,7 @@ public class FileBandVotesStorage implements IBandVotesStorage {
         return votes.entrySet()
                     .stream()
                     .filter(e -> maxVotes == e.getValue())                                          // Only filter the bands with max votes
+                    .filter(e -> bandDefinition.getById(e.getKey()) != null)                        // Remove vote counts with invalid band identifiers
                     .map(e -> new BandVoteCount(bandDefinition.getById(e.getKey()), e.getValue()))  // Map to java bean objects
                     .sorted()                                                                       // Sort by band id since the vote counts are equal
                     ::iterator;                                                                     // Return Iterable instead of Iterator

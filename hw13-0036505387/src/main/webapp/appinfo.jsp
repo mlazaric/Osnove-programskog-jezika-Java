@@ -51,6 +51,6 @@
     <link rel="stylesheet" href="${styleUrl}">
 </head>
 <body>
-    <h4>The server has been running for <%= printFormattedTime() %>.</h4>
+    <h4>The server has been running for <%= printFormattedTime() %></h4>
 </body>
 </html>
