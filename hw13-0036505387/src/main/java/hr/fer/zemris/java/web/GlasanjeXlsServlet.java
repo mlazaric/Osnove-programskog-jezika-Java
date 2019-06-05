@@ -13,6 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Creates the votes spreadsheet. It contains a single sheet with 4 columns: band id, band name, representative song and
+ * the number of votes the band received.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(name = "glasanje-xls", urlPatterns = { "/glasanje-xls" })
 public class GlasanjeXlsServlet extends HttpServlet {
 
@@ -29,6 +35,13 @@ public class GlasanjeXlsServlet extends HttpServlet {
         spreadsheet.write(resp.getOutputStream());
     }
 
+    /**
+     * Create the votes spreadsheet as described.
+     *
+     * @param votes the votes to tabulate in the spreadsheet
+     * @param bandDefinition the band definitions to use for joining ids to other attributes
+     * @return the newly created spreadsheet
+     */
     private HSSFWorkbook createVotesSpreadsheet(IBandVotesStorage votes, IBandDefinitionStorage bandDefinition) {
         HSSFWorkbook spreadsheet = new HSSFWorkbook();
         HSSFSheet sheet = spreadsheet.createSheet("Rezultati glasanja");

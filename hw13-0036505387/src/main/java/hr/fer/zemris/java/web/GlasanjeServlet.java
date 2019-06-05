@@ -9,6 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Shows a list of bands the users can vote for with links to vote for those bands.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(name = "glasanje", urlPatterns = { "/glasanje" })
 public class GlasanjeServlet extends HttpServlet {
 

@@ -9,6 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Adds a single vote to the band with the specified id (GET parameter "id") and redirects the user to the results of
+ * the voting.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(name = "glasanje-glasaj", urlPatterns = { "/glasanje-glasaj" })
 public class GlasanjeGlasajServlet extends HttpServlet {
 

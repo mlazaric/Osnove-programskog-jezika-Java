@@ -7,6 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Sets the "pickedBgCol" session attribute to the value of the "pickedBgCol" GET parameter.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(name = "setcolor", urlPatterns = { "/setcolor" })
 public class SetColorServlet extends HttpServlet {
 

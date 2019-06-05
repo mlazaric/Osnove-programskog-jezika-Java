@@ -13,6 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * Renders a pie chart of the reported OS usage.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(name = "reportImage", urlPatterns = { "/reportImage" })
 public class ReportImageServlet extends HttpServlet {
 

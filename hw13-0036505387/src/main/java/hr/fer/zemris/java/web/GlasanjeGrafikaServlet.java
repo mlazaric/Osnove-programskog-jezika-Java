@@ -15,6 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * Renders a pie chart representing the vote counts for each band.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(name = "glasanje-grafika", urlPatterns = { "/glasanje-grafika" })
 public class GlasanjeGrafikaServlet extends HttpServlet {
 

@@ -9,11 +9,29 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A concrete implementation of {@link IBandVotesStorage} which uses a file for storage.
+ *
+ * @author Marko Lazarić
+ */
 public class FileBandVotesStorage implements IBandVotesStorage {
 
+    /**
+     * The path to the file to use as the votes storage.
+     */
     private final Path path;
+
+    /**
+     * The mapping of band unique identifiers to their vote counts.
+     */
     private final Map<Integer, Integer> votes;
 
+    /**
+     * Creates a new {@link FileBandDefinitionStorage} with the specified argument.
+     *
+     * @param path the path to the file to use as the votes storage
+     * @throws IOException if an error occurs while reading from the file
+     */
     public FileBandVotesStorage(Path path) throws IOException {
         this.path = path;
         votes = new HashMap<>();
@@ -23,16 +41,36 @@ public class FileBandVotesStorage implements IBandVotesStorage {
         }
     }
 
+    /**
+     * Creates a new {@link FileBandDefinitionStorage} with the specified argument.
+     *
+     * @param path the path to the file to use as the votes storage
+     * @throws IOException if an error occurs while reading from the file
+     */
     public FileBandVotesStorage(String path) throws IOException {
         this(Paths.get(path));
     }
 
+    /**
+     * Loads the band vote counts from the specified file.
+     *
+     * @param path the path to load the band vote counts from
+     * @throws IOException if an error occurs while reading from the file or during parsing
+     */
     private void loadFromFile(Path path) throws IOException {
         Files.lines(path, StandardCharsets.UTF_8)
              .filter(l -> !l.isEmpty())
              .forEach(this::parseLine);
     }
 
+    /**
+     * Parse a single line which contains two integers (the band's unique identifier and the vote count) and adds it to
+     * the map. The fields are separated by a single TAB character.
+     *
+     * @param line the line to parse
+     *
+     * @throws IllegalArgumentException if the line is not parsable, with an appropriate message
+     */
     private void parseLine(String line) {
         String[] parts = line.split("\\t");
 
@@ -52,11 +90,16 @@ public class FileBandVotesStorage implements IBandVotesStorage {
         }
     }
 
+    /**
+     * Saves the vote counts to the file.
+     *
+     * @throws IOException if an error occurs while writing to the file
+     */
     private void saveToFile() throws IOException {
         try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             votes.entrySet()
                  .stream()
-                 .map(e -> e.getKey() + "\t" + e.getValue()) // Form lines
+                 .map(e -> e.getKey() + "\t" + e.getValue()) // Concatenate lines
                  .forEach(line -> {
                      try {
                          writer.append(line).append('\n');

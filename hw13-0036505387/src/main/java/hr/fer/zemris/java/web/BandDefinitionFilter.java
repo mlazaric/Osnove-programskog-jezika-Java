@@ -7,6 +7,12 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
+/**
+ * A web filter which loads the band definitions for the pages which use it, so it easier to change the implementation
+ * (for example switching from a file to a database) and stores it as a "bandDefinition" attribute.
+ *
+ * @author Marko Lazarić
+ */
 @WebFilter(servletNames = { "glasanje-grafika", "glasanje-rezultati", "glasanje", "glasanje-xls" })
 public class BandDefinitionFilter implements Filter {
 

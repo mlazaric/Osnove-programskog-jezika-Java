@@ -7,6 +7,12 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
+/**
+ * A web filter which loads the vote storage for the pages which use it, so it easier to change the implementation
+ * (for example switching from a file to a database) and stores it as a "votes" attribute.
+ *
+ * @author Marko Lazarić
+ */
 @WebFilter(servletNames = { "glasanje-glasaj", "glasanje-grafika", "glasanje-rezultati", "glasanje-xls" })
 public class BandVotesFilter implements Filter {
 

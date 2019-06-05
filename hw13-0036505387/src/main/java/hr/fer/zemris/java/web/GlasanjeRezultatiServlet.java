@@ -10,6 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Shows the results of the voting. Displays the number of votes each band received, a pie chart representation of the
+ * votes, a link to an excel spreadsheet of the votes and the bands with the most votes.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(name = "glasanje-rezultati", urlPatterns = { "/glasanje-rezultati" })
 public class GlasanjeRezultatiServlet extends HttpServlet {
 
