@@ -1,17 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <html>
 <head>
-    <title>OS usage</title>
+    <title>Error page</title>
 
     <%-- We do not have to worry about the context path if we use this --%>
     <c:url value="/style.jsp" var="styleUrl" />
     <link rel="stylesheet" href="${styleUrl}">
 </head>
 <body>
-    <h1>OS usage</h1>
-    <p>Here are the results of the OS usage survey.</p>
-
-    <img src="reportImage" alt="OS usage report image">
+    <h1>Error encountered</h1>
+    <p>The following error was encountered: ${message}</p>
 </body>
 </html>

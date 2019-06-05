@@ -1,4 +1,4 @@
-package hr.fer.zemris.java;
+package hr.fer.zemris.java.web;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
