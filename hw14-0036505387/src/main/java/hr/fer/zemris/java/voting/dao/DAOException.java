@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.p12.dao;
+package hr.fer.zemris.java.voting.dao;
 
 public class DAOException extends RuntimeException {
 

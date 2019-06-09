@@ -28,7 +28,7 @@
 				<configuration>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<webApp>
-						<contextPath>/webapp-baza</contextPath>
+						<contextPath>/voting-app</contextPath>
 					</webApp>
 				</configuration>
 			</plugin>

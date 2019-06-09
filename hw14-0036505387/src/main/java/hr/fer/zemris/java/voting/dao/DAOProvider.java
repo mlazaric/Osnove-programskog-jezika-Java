@@ -1,6 +1,6 @@
-package hr.fer.zemris.java.p12.dao;
+package hr.fer.zemris.java.voting.dao;
 
-import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
+import hr.fer.zemris.java.voting.dao.sql.SQLDAO;
 
 /**
  * Singleton razred koji zna koga treba vratiti kao pružatelja usluge pristupa

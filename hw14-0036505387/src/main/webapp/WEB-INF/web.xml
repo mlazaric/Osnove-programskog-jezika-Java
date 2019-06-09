@@ -5,11 +5,11 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
 		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1"
-  metadata-complete="false">
+         metadata-complete="false">
 
-  <display-name>Moja prva aplikacija</display-name>
+  <display-name>14th homework</display-name>
   <description>
-     Prva aplikacija
+     14th homework - a voting app
   </description>
 
 </web-app>

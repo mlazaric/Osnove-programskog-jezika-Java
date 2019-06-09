@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.p12.dao.sql;
+package hr.fer.zemris.java.voting.dao.sql;
 
 import java.sql.Connection;
 
