@@ -23,6 +23,8 @@ import java.util.List;
 @WebServlet(urlPatterns = "/servleti/glasanje-xls")
 public class GlasanjeXlsServlet extends HttpServlet {
 
+    private static final long serialVersionUID = -3801322262489241514L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("pollID"));

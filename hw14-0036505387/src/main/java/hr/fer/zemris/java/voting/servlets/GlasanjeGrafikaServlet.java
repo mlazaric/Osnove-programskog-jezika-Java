@@ -22,6 +22,8 @@ import java.io.IOException;
 @WebServlet(urlPatterns = "/servleti/glasanje-grafika")
 public class GlasanjeGrafikaServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 289564584742693523L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("image/png");

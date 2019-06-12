@@ -20,6 +20,8 @@ import java.util.List;
 @WebServlet(urlPatterns = "/servleti/index.html")
 public class GlasanjeIndexServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 6702524693188706762L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Poll> polls = DAOProvider.getDao().listPolls();
