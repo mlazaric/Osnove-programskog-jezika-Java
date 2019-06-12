@@ -81,11 +81,13 @@ public class SQLDAO implements DAO {
 					"WHERE id = ?";
 
 	/**
-	 * A query to get the number of records in the Polls table.
+	 * A query to get the number of records in the Polls table which have valid options.
 	 */
 	private static final String NUMBER_OF_POLLS =
 			"SELECT COUNT(*)\n" +
-					"FROM Polls";
+					"FROM Polls\n" +
+					"JOIN PollOptions\n" +
+						"ON polls.id = pollOptions.pollID";
 
 	/**
 	 * A query to list all records from the Polls table.
@@ -99,7 +101,8 @@ public class SQLDAO implements DAO {
 	 */
 	private static final String LIST_POLL_OPTIONS =
 			"SELECT *\n" +
-					"FROM PollOptions";
+					"FROM PollOptions\n" +
+					"ORDER BY votesCount DESC";
 
 	/**
 	 * A query to efficiently increment the number of votes for a record in the PollOptions table.
@@ -116,6 +119,15 @@ public class SQLDAO implements DAO {
 			"SELECT *\n" +
 					"FROM Polls\n" +
 					"WHERE id = ?";
+
+	/**
+	 * A query to efficiently select all the poll options for the specific poll ordered by votes count in descending order.
+	 */
+	private static final String LIST_POLL_OPTIONS_FOR_POLL =
+			"SELECT *\n" +
+					"FROM PollOptions\n" +
+					"WHERE pollID = ?\n" +
+					"ORDER BY votesCount DESC";
 
 	@Override
 	public void setUp() throws DAOException {
@@ -151,7 +163,7 @@ public class SQLDAO implements DAO {
 	}
 
 	/**
-	 * Returns whether the Polls table contains any records.
+	 * Returns whether the Polls table contains any records which have valid options.
 	 *
 	 * @return true if it contains 0 records,
 	 *         false otherwise
@@ -179,18 +191,18 @@ public class SQLDAO implements DAO {
 	 * Adds a couple test records to the Polls and PollOptions tables, used for testing.
 	 */
 	private void populateTables() {
-		new Poll("Glasanje za omiljeni bend:", "Od sljedećih bendova, koji Vam je bend najdraži?",
+		new Poll("Glasanje za omiljeni bend:", "Od sljedećih bendova, koji Vam je bend najdraži? Kliknite na link kako biste glasali!",
 				List.of(
-						new PollOption("The Beatles", "https://www.youtube.com/watch?v=z9ypq6_5bsg"),
-						new PollOption("The Platters", "https://www.youtube.com/watch?v=H2di83WAOhU"),
-						new PollOption("The Beach Boys", "https://www.youtube.com/watch?v=2s4slliAtQU"),
-						new PollOption("The Four Seasons", "https://www.youtube.com/watch?v=y8yvnqHmFds"),
-						new PollOption("The Marcels", "https://www.youtube.com/watch?v=qoi3TH59ZEs"),
-						new PollOption("The Everly Brothers", "https://www.youtube.com/watch?v=tbU3zdAgiX8"),
-						new PollOption("The Mamas And The Papas", "https://www.youtube.com/watch?v=N-aK6JnyFmk")
+						new PollOption("The Beatles", "https://www.youtube.com/watch?v=z9ypq6_5bsg", 150),
+						new PollOption("The Platters", "https://www.youtube.com/watch?v=H2di83WAOhU", 150),
+						new PollOption("The Beach Boys", "https://www.youtube.com/watch?v=2s4slliAtQU", 60),
+						new PollOption("The Four Seasons", "https://www.youtube.com/watch?v=y8yvnqHmFds", 33),
+						new PollOption("The Marcels", "https://www.youtube.com/watch?v=qoi3TH59ZEs", 28),
+						new PollOption("The Everly Brothers", "https://www.youtube.com/watch?v=tbU3zdAgiX8", 25),
+						new PollOption("The Mamas And The Papas", "https://www.youtube.com/watch?v=N-aK6JnyFmk", 20)
 				)).save();
 
-		new Poll("Glasanje za omiljenu knjigu:", "Od sljedećih knjiga, koja Vam je knjiga najdraža?",
+		new Poll("Glasanje za omiljenu knjigu:", "Od sljedećih knjiga, koja Vam je knjiga najdraža? Kliknite na link kako biste glasali!",
 				List.of(
 						new PollOption("Jostein Gaarder: Sofijin svijet", "https://www.goodreads.com/book/show/11250800-sophie-s-world"),
 						new PollOption("Miroslav Krleža: Gospoda Glembajevi", "https://www.goodreads.com/book/show/6918013-gospoda-glembajevi"),
@@ -358,4 +370,30 @@ public class SQLDAO implements DAO {
 
 		return poll;
 	}
+
+	@Override
+	public List<PollOption> getPollOptionsByPollId(int pollId) throws DAOException {
+		Connection con = SQLConnectionProvider.getConnection();
+		List<PollOption> options = new ArrayList<>();
+
+		try (PreparedStatement pst = con.prepareStatement(LIST_POLL_OPTIONS_FOR_POLL)) {
+			pst.setInt(1, pollId);
+
+			try (ResultSet results = pst.executeQuery()) {
+				while (results != null && results.next()) {
+					int id = results.getInt("id");
+					String title = results.getString("optionTitle");
+					String link = results.getString("optionLink");
+					int votesCount = results.getInt("votesCount");
+
+					options.add(new PollOption(id, title, link, pollId, votesCount));
+				}
+			}
+		} catch (SQLException e) {
+			throw new DAOException("Error occurred while listing poll options.", e);
+		}
+
+		return options;
+	}
+
 }

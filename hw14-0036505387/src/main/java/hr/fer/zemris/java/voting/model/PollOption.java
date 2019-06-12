@@ -47,6 +47,17 @@ public class PollOption {
     /**
      * Creates a new {@link PollOption} with the given arguments.
      *
+     * @param title the title of the poll option
+     * @param link the link for the poll option
+     * @param voteCount the number of votes this option has received
+     */
+    public PollOption(String title, String link, int voteCount) {
+        this(-1, title, link, -1, voteCount);
+    }
+
+    /**
+     * Creates a new {@link PollOption} with the given arguments.
+     *
      * @param id the unique identifier of the option
      * @param title the title of the poll option
      * @param link the link for the poll option

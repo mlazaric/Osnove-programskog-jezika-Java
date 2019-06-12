@@ -32,8 +32,6 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 
         int id = Integer.parseInt(req.getParameter("pollID"));
 
-        DAOProvider.getDao().voteFor(id);
-
         DAOProvider.getDao()
                    .getPollOptionsByPollId(id)
                    .stream()
