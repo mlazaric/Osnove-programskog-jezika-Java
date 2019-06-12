@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Adds a single vote to the band with the specified id (GET parameter "id") and redirects the user to the results of
+ * Adds a single vote to the poll option with the specified id (GET parameter "id") and redirects the user to the results of
  * the voting.
  *
  * @author Marko Lazarić
@@ -35,7 +35,7 @@ public class GlasanjeGlasajServlet extends HttpServlet {
                                 .getPollOptionById(id)
                                 .getPollId();
 
-        resp.sendRedirect(req.getContextPath() + "/servleti/glasanje-rezultati?id=" + pollID);
+        resp.sendRedirect(req.getContextPath() + "/servleti/glasanje-rezultati?pollID=" + pollID);
     }
 
 }

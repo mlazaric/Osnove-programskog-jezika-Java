@@ -9,6 +9,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * A filter which creates a connection for every servlet specified by the urlPatterns attribute.
+ * It also closes the connection after the servlet is done with it.
+ */
 @WebFilter(filterName = "f1", urlPatterns = { "/servleti/*" })
 public class ConnectionSetterFilter implements Filter {
 
@@ -32,6 +36,13 @@ public class ConnectionSetterFilter implements Filter {
 		}
 	}
 
+	/**
+	 * Gets a connection from the pool and sets it using {@link SQLConnectionProvider#setConnection(Connection)}.
+	 *
+	 * @param context the context used to get the data source
+	 *
+	 * @throws RuntimeException if the database is not available
+	 */
 	public static void setConnection(ServletContext context) {
 		DataSource ds = (DataSource) context.getAttribute(DataSourceInitialisationListener.DBPOOL);
 		Connection con = null;
@@ -39,12 +50,15 @@ public class ConnectionSetterFilter implements Filter {
 		try {
 			con = ds.getConnection();
 		} catch (SQLException e) {
-			throw new RuntimeException("Baza podataka nije dostupna.", e);
+			throw new RuntimeException("Database is not available.", e);
 		}
 
 		SQLConnectionProvider.setConnection(con);
 	}
 
+	/**
+	 * Closes the connection and sets it to null.
+	 */
 	public static void closeConnection() {
 		Connection con = SQLConnectionProvider.getConnection();
 		SQLConnectionProvider.setConnection(null);

@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.voting.servlets;
 
+import hr.fer.zemris.java.voting.dao.DAOProvider;
+import hr.fer.zemris.java.voting.model.PollOption;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -10,10 +12,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
- * Creates the votes spreadsheet. It contains a single sheet with 4 columns: band id, band name, representative song and
- * the number of votes the band received.
+ * Creates the votes spreadsheet. It contains a single sheet with 4 columns: poll option id, title, link and
+ * the number of votes it received.
  *
  * @author Marko Lazarić
  */
@@ -22,40 +25,39 @@ public class GlasanjeXlsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        /*IBandVotesStorage votes = (IBandVotesStorage) req.getAttribute("votes");
-        IBandDefinitionStorage bandDefinition = (IBandDefinitionStorage) req.getAttribute("bandDefinition");
+        int id = Integer.parseInt(req.getParameter("pollID"));
 
-        HSSFWorkbook spreadsheet = createVotesSpreadsheet(votes, bandDefinition);
+        List<PollOption> options = DAOProvider.getDao().getPollOptionsByPollId(id);
+
+        HSSFWorkbook spreadsheet = createVotesSpreadsheet(options);
 
         resp.setContentType("application/vnd.ms-excel");
-        resp.setHeader("Content-Disposition", "attachment; filename=\"glasanje.xls\"");
+        resp.setHeader("Content-Disposition", "attachment; filename=\"poll.xls\"");
 
-        spreadsheet.write(resp.getOutputStream());*/
+        spreadsheet.write(resp.getOutputStream());
     }
 
     /**
      * Create the votes spreadsheet as described.
      *
-     * @param votes the votes to tabulate in the spreadsheet
-     * @param bandDefinition the band definitions to use for joining ids to other attributes
+     * @param options the votes to tabulate in the spreadsheet
      * @return the newly created spreadsheet
      */
-    /*private HSSFWorkbook createVotesSpreadsheet(IBandVotesStorage votes, IBandDefinitionStorage bandDefinition) {
+    private HSSFWorkbook createVotesSpreadsheet(List<PollOption> options) {
         HSSFWorkbook spreadsheet = new HSSFWorkbook();
         HSSFSheet sheet = spreadsheet.createSheet("Rezultati glasanja");
-        int[] rowNumber = {0}; // We cannot use a simple int because we would not be able to increment it in the lambda
+        int rowNumber = 0;
 
-        votes.sortedByVoteCount(bandDefinition)
-             .forEach(bvc -> {
-                HSSFRow row = sheet.createRow(rowNumber[0]);
-                rowNumber[0]++;
+        for (PollOption option : options) {
+            HSSFRow row = sheet.createRow(rowNumber);
+            rowNumber++;
 
-                 row.createCell(0).setCellValue(bvc.getBand().getId());
-                 row.createCell(1).setCellValue(bvc.getBand().getName());
-                 row.createCell(2).setCellValue(bvc.getBand().getSong());
-                 row.createCell(3).setCellValue(bvc.getVoteCount());
-             });
+            row.createCell(0).setCellValue(option.getId());
+            row.createCell(1).setCellValue(option.getTitle());
+            row.createCell(2).setCellValue(option.getLink());
+            row.createCell(3).setCellValue(option.getVoteCount());
+        }
 
         return spreadsheet;
-    }*/
+    }
 }

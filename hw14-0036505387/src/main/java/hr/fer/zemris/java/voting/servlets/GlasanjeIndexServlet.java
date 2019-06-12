@@ -11,6 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+
+/**
+ * Shows a list of available polls and links to them.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(urlPatterns = "/servleti/index.html")
 public class GlasanjeIndexServlet extends HttpServlet {
 

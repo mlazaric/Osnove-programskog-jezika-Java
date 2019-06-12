@@ -21,10 +21,10 @@
     </table>
 
     <h2>Grafički prikaz rezultata</h2>
-    <img alt="Pie-chart" src="glasanje-grafika?id=${id}" width="400" height="400" />
+    <img alt="Pie-chart" src="glasanje-grafika?pollID=${id}" width="400" height="400" />
 
     <h2>Rezultati u XLS formatu</h2>
-    <p>Rezultati u XLS formatu dostupni su <a href="glasanje-xls">ovdje</a></p>
+    <p>Rezultati u XLS formatu dostupni su <a href="glasanje-xls?pollID=${id}">ovdje</a></p>
 
     <h2>Razno</h2>
     <p>Opcije s najviše glasova:</p>

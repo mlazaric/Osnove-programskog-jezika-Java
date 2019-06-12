@@ -1,5 +1,8 @@
 package hr.fer.zemris.java.voting.dao;
 
+/**
+ * The exception used for any errors which occur in {@link DAO} methods.
+ */
 public class DAOException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;

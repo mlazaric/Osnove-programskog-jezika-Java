@@ -17,11 +17,22 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * A web listener which initialises a data source pool for use by servlets and filters.
+ *
+ * @author Marko Lazarić
+ */
 @WebListener
 public class DataSourceInitialisationListener implements ServletContextListener {
 
+	/**
+	 * The path to the file defining the settings for the database connection.
+	 */
 	private static final String DATABASE_CONNECTION_SETTINGS_PATH = "/WEB-INF/dbsettings.properties";
 
+	/**
+	 * The key to use for storing the data source poool in the servlet context.
+	 */
 	public static final String DBPOOL = "hr.fer.zemris.dbpool";
 
 	@Override
@@ -49,6 +60,14 @@ public class DataSourceInitialisationListener implements ServletContextListener 
 		ConnectionSetterFilter.closeConnection();
 	}
 
+	/**
+	 * Calculates the connection url using the settings from {@link #DATABASE_CONNECTION_SETTINGS_PATH} file.
+	 *
+	 * @param context the context to use to parse the relative file path
+	 * @return the calculated connection url
+	 *
+	 * @throws RuntimeException if the database settings file is not readable or does not exist
+	 */
     private String getConnectionUrl(ServletContext context) {
         Path settings = Paths.get(context.getRealPath(DATABASE_CONNECTION_SETTINGS_PATH));
 

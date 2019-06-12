@@ -7,6 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Redirects /index.html to /servleti/index.html.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(urlPatterns = "/index.html")
 public class IndexRedirectionServlet extends HttpServlet {
 

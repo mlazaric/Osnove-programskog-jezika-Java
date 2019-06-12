@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Shows the results of the voting. Displays the number of votes each band received, a pie chart representation of the
- * votes, a link to an excel spreadsheet of the votes and the bands with the most votes.
+ * Shows the results of the voting. Displays the number of votes each poll option received, a pie chart representation of the
+ * votes, a link to an excel spreadsheet of the votes and the options with the most votes.
  *
  * @author Marko Lazarić
  */
@@ -22,7 +22,7 @@ public class GlasanjeRezultatiServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int id = Integer.parseInt(req.getParameter("id"));
+        int id = Integer.parseInt(req.getParameter("pollID"));
 
         List<PollOption> options = DAOProvider.getDao().getPollOptionsByPollId(id);
         List<PollOption> bestVoted = DAOProvider.getDao().getBestVotedOptions(id);

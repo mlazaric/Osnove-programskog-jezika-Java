@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Shows a list of bands the users can vote for with links to vote for those bands.
+ * Shows a list of poll options the users can vote for with links to vote for those options.
  *
  * @author Marko Lazarić
  */

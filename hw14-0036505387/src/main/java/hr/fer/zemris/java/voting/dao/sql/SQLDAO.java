@@ -10,18 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Ovo je implementacija podsustava DAO uporabom tehnologije SQL. Ova konkretna
- * implementacija očekuje da joj veza stoji na raspolaganju preko
- * {@link SQLConnectionProvider} razreda, što znači da bi netko prije no što
- * izvođenje dođe do ove točke to trebao tamo postaviti. U web-aplikacijama
- * tipično rješenje je konfigurirati jedan filter koji će presresti pozive
- * servleta i prije toga ovdje ubaciti jednu vezu iz connection-poola, a po
- * zavrsetku obrade je maknuti.
+ * A concrete implementation of {@link DAO} using SQL for the data persistence. It assumes an available SQL connection
+ * using {@link SQLConnectionProvider} and does not close the connection.
  * 
- * @author marcupic
+ * @author Marko Lazarić
  */
 public class SQLDAO implements DAO {
 
+	/**
+	 * A query to create the Polls table.
+	 */
 	private static final String CREATE_POLLS_TABLE =
 			"CREATE TABLE Polls\n" +
 				" (id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,\n" +
@@ -29,6 +27,9 @@ public class SQLDAO implements DAO {
 				" message CLOB(2048) NOT NULL\n" +
 			")";
 
+	/**
+	 * A query to create the PollOptions table.
+	 */
 	private static final String CREATE_POLL_OPTIONS_TABLE =
 			"CREATE TABLE PollOptions\n" +
 				" (id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,\n" +
@@ -39,12 +40,18 @@ public class SQLDAO implements DAO {
 				" FOREIGN KEY (pollID) REFERENCES Polls(id)\n" +
 			")";
 
+	/**
+	 * A query to insert a new record into the Polls table.
+	 */
 	private static final String INSERT_INTO_POLLS =
 			"INSERT INTO Polls\n" +
 					"(title, message)\n" +
 					"VALUES\n" +
 					"(?, ?)";
 
+	/**
+	 * A query to update an existing record in the Polls table.
+	 */
 	private static final String UPDATE_POLL =
 			"UPDATE Polls\n" +
 					"SET\n" +
@@ -52,12 +59,18 @@ public class SQLDAO implements DAO {
 						"message = ?\n" +
 					"WHERE id = ?";
 
+	/**
+	 * A query to insert a new record into the PollOptions table.
+	 */
 	private static final String INSERT_INTO_POLL_OPTIONS =
 			"INSERT INTO PollOptions\n" +
 					"(optionTitle, optionLink, pollID, votesCount)\n" +
 					"VALUES\n" +
 					"(?, ?, ?, ?)";
 
+	/**
+	 * A query to update an existing record in the PollOptions table.
+	 */
 	private static final String UPDATE_POLL_OPTION =
 			"UPDATE PollOptions\n" +
 					"SET\n" +
@@ -67,23 +80,38 @@ public class SQLDAO implements DAO {
 						"votesCount = ?\n" +
 					"WHERE id = ?";
 
+	/**
+	 * A query to get the number of records in the Polls table.
+	 */
 	private static final String NUMBER_OF_POLLS =
 			"SELECT COUNT(*)\n" +
 					"FROM Polls";
 
+	/**
+	 * A query to list all records from the Polls table.
+	 */
 	private static final String LIST_POLLS =
 			"SELECT *\n" +
 					"FROM Polls";
 
+	/**
+	 * A query to list all records from the PollOptions table.
+	 */
 	private static final String LIST_POLL_OPTIONS =
 			"SELECT *\n" +
 					"FROM PollOptions";
 
+	/**
+	 * A query to efficiently increment the number of votes for a record in the PollOptions table.
+	 */
 	private static final String INCREMENT_VOTES =
 			"UPDATE PollOptions\n" +
 					"SET votesCount = votesCount + 1\n" +
 					"WHERE id = ?";
 
+	/**
+	 * A query to efficiently select a record from the Polls table using the unique identifier of the poll.
+	 */
 	private static final String SELECT_POLL_BY_ID =
 			"SELECT *\n" +
 					"FROM Polls\n" +
@@ -99,6 +127,13 @@ public class SQLDAO implements DAO {
 		}
 	}
 
+	/**
+	 * Creates the table if does not already exist. If it exists, it does nothing.
+	 *
+	 * @param tableQuery the query to create the table
+	 *
+	 * @throws DAOException if an error occurs while creating the table
+	 */
 	private void createTableIfItDoesNotExist(String tableQuery) {
 		Connection con = SQLConnectionProvider.getConnection();
 
@@ -115,6 +150,14 @@ public class SQLDAO implements DAO {
 		}
 	}
 
+	/**
+	 * Returns whether the Polls table contains any records.
+	 *
+	 * @return true if it contains 0 records,
+	 *         false otherwise
+	 *
+	 * @throws DAOException if an error occurs while calculating the number of records in the Polls table
+	 */
 	private boolean pollsIsEmpty() {
 		Connection con = SQLConnectionProvider.getConnection();
 
@@ -132,6 +175,9 @@ public class SQLDAO implements DAO {
 		}
 	}
 
+	/**
+	 * Adds a couple test records to the Polls and PollOptions tables, used for testing.
+	 */
 	private void populateTables() {
 		new Poll("Glasanje za omiljeni bend:", "Od sljedećih bendova, koji Vam je bend najdraži?",
 				List.of(

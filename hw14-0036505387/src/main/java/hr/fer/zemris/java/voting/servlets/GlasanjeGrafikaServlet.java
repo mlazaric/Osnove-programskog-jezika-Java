@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * Renders a pie chart representing the vote counts for each band.
+ * Renders a pie chart representing the vote counts for each poll option.
  *
  * @author Marko Lazarić
  */
@@ -28,7 +28,7 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 
         DefaultPieDataset results = new DefaultPieDataset();
 
-        int id = Integer.parseInt(req.getParameter("id"));
+        int id = Integer.parseInt(req.getParameter("pollID"));
 
         DAOProvider.getDao().voteFor(id);
 
