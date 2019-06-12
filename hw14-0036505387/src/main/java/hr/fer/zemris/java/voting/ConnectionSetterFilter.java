@@ -1,14 +1,13 @@
 package hr.fer.zemris.java.voting;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
+import hr.fer.zemris.java.voting.dao.sql.SQLConnectionProvider;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.sql.DataSource;
-
-import hr.fer.zemris.java.voting.dao.sql.SQLConnectionProvider;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 @WebFilter(filterName = "f1", urlPatterns = { "/servleti/*" })
 public class ConnectionSetterFilter implements Filter {

@@ -2,7 +2,7 @@ package hr.fer.zemris.java.voting.model;
 
 import hr.fer.zemris.java.voting.dao.DAOProvider;
 
-public class PollOption {
+public class PollOption implements Comparable<PollOption> {
 
     private int id;
     private String title;
@@ -63,7 +63,12 @@ public class PollOption {
     }
 
     public void save() {
-        DAOProvider.getDao().savePollOption(this);
+        if (id == -1) {
+            DAOProvider.getDao().createPollOption(this);
+        }
+        else {
+            DAOProvider.getDao().updatePollOption(this);
+        }
     }
 
     @Override
@@ -75,5 +80,11 @@ public class PollOption {
                 ", pollId=" + pollId +
                 ", voteCount=" + voteCount +
                 '}';
+    }
+
+
+    @Override
+    public int compareTo(PollOption other) {
+        return Integer.compare(this.voteCount, other.voteCount);
     }
 }

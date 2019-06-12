@@ -4,7 +4,7 @@ import hr.fer.zemris.java.voting.dao.DAOProvider;
 
 import java.util.List;
 
-public class Poll {
+public class Poll implements Comparable<Poll> {
 
     private int id;
     private String title;
@@ -55,7 +55,12 @@ public class Poll {
     }
 
     public void save() {
-        DAOProvider.getDao().savePoll(this);
+        if (id == -1) {
+            DAOProvider.getDao().createPoll(this);
+        }
+        else {
+            DAOProvider.getDao().updatePoll(this);
+        }
 
         if (options != null) {
             for (PollOption option : options) {
@@ -75,4 +80,8 @@ public class Poll {
                 '}';
     }
 
+    @Override
+    public int compareTo(Poll other) {
+        return Integer.compare(this.id, other.id);
+    }
 }
