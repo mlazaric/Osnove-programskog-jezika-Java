@@ -23,6 +23,8 @@ import static java.lang.Math.pow;
 @WebServlet(name = "powers", urlPatterns = { "/powers" })
 public class PowersServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 6428160076347114222L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try (HSSFWorkbook spreadsheet = checkAndCreateSpreadsheet(req, resp)) {

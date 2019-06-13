@@ -1,7 +1,7 @@
-package hr.fer.zemris.java.web;
+package hr.fer.zemris.java.web.voting;
 
-import hr.fer.zemris.java.web.voting.IBandDefinitionStorage;
-import hr.fer.zemris.java.web.voting.IBandVotesStorage;
+import hr.fer.zemris.java.voting.IBandDefinitionStorage;
+import hr.fer.zemris.java.voting.IBandVotesStorage;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
@@ -23,6 +23,8 @@ import java.io.IOException;
 @WebServlet(name = "glasanje-grafika", urlPatterns = { "/glasanje-grafika" })
 public class GlasanjeGrafikaServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 6547413337481299718L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         IBandVotesStorage votes = (IBandVotesStorage) req.getAttribute("votes");
@@ -33,7 +35,11 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
         DefaultPieDataset results = new DefaultPieDataset();
 
         votes.sortedByVoteCount(bandDefinition)
-             .forEach(bvc -> results.setValue(bvc.getBand().getName(), bvc.getVoteCount()));
+             .forEach(bvc -> {
+                 if (bvc.getVoteCount() > 0) {
+                     results.setValue(bvc.getBand().getName(), bvc.getVoteCount());
+                 }
+             });
 
         JFreeChart chart = ChartFactory.createPieChart("Rezultati glasanja", results);
 

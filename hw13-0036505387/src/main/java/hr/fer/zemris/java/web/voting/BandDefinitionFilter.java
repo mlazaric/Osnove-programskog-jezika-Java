@@ -1,7 +1,7 @@
-package hr.fer.zemris.java.web;
+package hr.fer.zemris.java.web.voting;
 
-import hr.fer.zemris.java.web.voting.FileBandDefinitionStorage;
-import hr.fer.zemris.java.web.voting.IBandDefinitionStorage;
+import hr.fer.zemris.java.voting.FileBandDefinitionStorage;
+import hr.fer.zemris.java.voting.IBandDefinitionStorage;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

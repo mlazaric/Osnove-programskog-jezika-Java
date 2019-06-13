@@ -19,6 +19,8 @@ import static java.lang.Math.*;
 @WebServlet(name = "trigonometric", urlPatterns = { "/trigonometric" })
 public class TrigonometricServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 8011381631709818819L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int a = getIntOrDefault(req.getParameter("a"), 0);

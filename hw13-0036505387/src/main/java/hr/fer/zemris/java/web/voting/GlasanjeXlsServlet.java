@@ -1,7 +1,7 @@
-package hr.fer.zemris.java.web;
+package hr.fer.zemris.java.web.voting;
 
-import hr.fer.zemris.java.web.voting.IBandDefinitionStorage;
-import hr.fer.zemris.java.web.voting.IBandVotesStorage;
+import hr.fer.zemris.java.voting.IBandDefinitionStorage;
+import hr.fer.zemris.java.voting.IBandVotesStorage;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -21,6 +21,8 @@ import java.io.IOException;
  */
 @WebServlet(name = "glasanje-xls", urlPatterns = { "/glasanje-xls" })
 public class GlasanjeXlsServlet extends HttpServlet {
+
+    private static final long serialVersionUID = -9041708891900363375L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -1,6 +1,6 @@
-package hr.fer.zemris.java.web;
+package hr.fer.zemris.java.web.voting;
 
-import hr.fer.zemris.java.web.voting.IBandDefinitionStorage;
+import hr.fer.zemris.java.voting.IBandDefinitionStorage;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +16,8 @@ import java.io.IOException;
  */
 @WebServlet(name = "glasanje", urlPatterns = { "/glasanje" })
 public class GlasanjeServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 6700666185077990351L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

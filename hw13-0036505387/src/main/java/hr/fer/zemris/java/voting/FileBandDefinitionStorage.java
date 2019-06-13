@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.web.voting;
+package hr.fer.zemris.java.voting;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

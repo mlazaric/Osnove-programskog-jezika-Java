@@ -15,6 +15,8 @@ import java.io.IOException;
 @WebServlet(name = "setcolor", urlPatterns = { "/setcolor" })
 public class SetColorServlet extends HttpServlet {
 
+    private static final long serialVersionUID = -7162095442912141335L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pickedBgCol = req.getParameter("pickedBgCol");

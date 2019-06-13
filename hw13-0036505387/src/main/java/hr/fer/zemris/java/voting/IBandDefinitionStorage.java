@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.web.voting;
+package hr.fer.zemris.java.voting;
 
 /**
  * An interface which models the storage of band definitions.
