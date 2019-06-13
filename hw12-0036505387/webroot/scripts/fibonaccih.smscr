@@ -1,0 +1,31 @@
+{$= "text/html" @setMimeType $}
+<html>
+ <head>
+ <title>Tablica Fibonaccijevih brojeva</title>
+ </head>
+ <body>
+ <h1>Fibonaccijevi brojevi</h1>
+ <p>U nastavku je prikazana tablica prvih 10
+ Fibonaccijevih brojeva.</p>
+
+{$= "0" "a" @tparamSet
+ "1" "b" @tparamSet $}
+ <table>
+ <thead>
+ <tr><th>Redni broj</th><th>Fibonaccijev broj</th></tr>
+ </thead>
+ <tbody>
+ <tr><td>1</td><td>0</td></tr>
+ <tr><td>2</td><td>1</td></tr>
+ {$FOR i 3 10 1$}
+ {$=
+ "b" "0" @tparamGet @dup
+ "a" "0" @tparamGet +
+ "b" @tparamSet "a" @tparamSet
+ $}
+ <tr><td>{$= i $}</td><td>{$= "b" "0" @tparamGet $}</td></tr>
+ {$END$}
+ </tbody>
+ </table>
+ </body>
+</html>

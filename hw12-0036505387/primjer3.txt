@@ -1,0 +1,6 @@
+HTTP/1.1 205 Idemo dalje
+Content-Type: text/plain; charset=UTF-8
+Set-Cookie: korisnik="perica"; Domain=127.0.0.1; Path=/; Max-Age=3600
+Set-Cookie: zgrada="B4"; Path=/
+
+Čevapčići i Šiščevapčići.

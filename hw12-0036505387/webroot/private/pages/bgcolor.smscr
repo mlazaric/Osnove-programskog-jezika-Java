@@ -1,0 +1,8 @@
+{$= "text/html" @setMimeType $}<!DOCTYPE html>
+<html>
+ <body>
+  <h2>{$= "message" "message" @tparamGet $}</h2>
+
+  Link to <a href="/index2.html">index2.html</a>.
+ </body>
+</html>

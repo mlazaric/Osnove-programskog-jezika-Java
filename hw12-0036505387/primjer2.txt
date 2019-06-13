@@ -1,0 +1,4 @@
+HTTP/1.1 205 Idemo dalje
+Content-Type: text/plain; charset=UTF-8
+
+Čevapčići i Šiščevapčići.

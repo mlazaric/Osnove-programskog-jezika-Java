@@ -1,0 +1,9 @@
+{$= "text/plain" @setMimeType $}Prvih 10 fibonaccijevih brojeva je:
+{$= "0" "a" @tparamSet
+ "1" "b" @tparamSet
+ "0\r\n1\r\n" $}{$FOR i 3 10 1$}{$=
+"b" "0" @tparamGet @dup
+"a" "0" @tparamGet +
+"b" @tparamSet "a" @tparamSet
+"b" "0" @tparamGet "\r\n"
+$}{$END$}
