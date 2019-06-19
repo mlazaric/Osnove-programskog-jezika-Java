@@ -1,0 +1,69 @@
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+	version="2.1">
+	<persistence-unit name="baza.podataka.za.blog" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+		<class>hr.fer.zemris.java.tecaj_13.model.BlogEntry</class>
+		<class>hr.fer.zemris.java.tecaj_13.model.BlogComment</class>
+
+		<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode> <!-- NONE, ALL, ENABLE_SELECTIVE, DISABLE_SELECTIVE -->
+
+		<properties>
+
+			<!-- Generalne postavke Hibernate-a -->			
+			<!-- Za informacije vidi poglavlje 3, od 3.3 na dalje u službenoj dokumentaciji: -->
+			<!-- http://docs.jboss.org/hibernate/orm/4.3/manual/en-US/html_single/ -->
+			<!-- ============================== -->
+			<property name="hibernate.archive.autodetection" value="class" />
+			<property name="hibernate.hbm2ddl.auto" value="update" /> <!-- mogućnosti: create, create-drop, update, validate -->
+			<property name="hibernate.format_sql" value="true" /> <!-- kasnije na false -->
+			<property name="hibernate.show_sql" value="true" /> <!-- kasnije na false -->
+			<property name="hibernate.use_sql_comments" value="true" />  <!-- kasnije staviti na false -->
+			<property name="hibernate.bytecode.use_reflection_optimizer" value="true" />
+			<property name="hibernate.bytecode.provider" value="javassist" />
+			<property name="hibernate.ejb.naming_strategy_delegator" value="org.hibernate.cfg.naming.ImprovedNamingStrategyDelegator" />
+			<property name="hibernate.id.new_generator_mappings" value="true" />
+			<property name="hibernate.jdbc.use_get_generated_keys" value="true" />
+			
+			<!-- Postavke za spajanje na bazu podataka -->			
+			<!-- ===================================== -->
+			<property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.ClientDriver" />
+			<property name="hibernate.connection.url" value="jdbc:derby://localhost:1527/blogBaza" />
+			<property name="hibernate.connection.username" value="blogDBAdmin" />
+			<property name="hibernate.connection.password" value="blogDBPassword" />
+			<property name="hibernate.connection.CharSet" value="utf8" />
+			<property name="hibernate.connection.characterEncoding" value="utf8" />
+			<property name="hibernate.connection.useUnicode" value="true" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect" />
+			
+			<!-- Postavke transakcijskog rada -->			
+			<!-- ============================ -->
+			<property name="hibernate.connection.isolation" value="2"/> <!-- isolation level; 2: read_commited, 4: repeatable_read -->
+
+			<!-- Konfiguracija pool-a za bazu podataka -->			
+			<!-- ===================================== -->
+			<property name="hibernate.c3p0.min_size" value="5" />
+			<property name="hibernate.c3p0.max_size" value="20" />
+			<property name="hibernate.c3p0.timeout" value="1800" />
+			<property name="hibernate.c3p0.max_statements" value="50" />
+			<property name="hibernate.c3p0.idle_test_period" value="3600" />
+
+			<!-- Postavke za 2nd-level kojima hibernate-u kazemo sta da koristi kao implementaciju -->			
+			<!-- ================================================================================= -->
+			<property name="hibernate.cache.use_second_level_cache" value="true" />
+			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.jcache.JCacheRegionFactory"/>
+			<property name="hibernate.javax.cache.provider" value="org.ehcache.jsr107.EhcacheCachingProvider" />
+			<property name="hibernate.javax.cache.uri" value="classpath:ehcache.xml"/> <!-- Ovo će raditi u tomcatu; u jetty-ju zamijeni s file:/apsolutna/staza/na/disku/do/ehcache.xml -->
+			<property name="hibernate.cache.default_cache_concurrency_strategy" value="read-write" />
+			<property name="hibernate.cache.use_query_cache" value="false" />
+			<property name="hibernate.generate_statistics" value="false" />
+			<property name="hibernate.cache.use_minimal_puts" value="true" />
+			<property name="hibernate.cache.use_structured_entries" value="true" />
+			
+			
+		</properties>
+	</persistence-unit>
+</persistence>
+
