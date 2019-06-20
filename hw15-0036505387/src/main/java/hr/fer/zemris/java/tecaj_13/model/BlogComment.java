@@ -41,7 +41,7 @@ public class BlogComment {
 		this.blogEntry = blogEntry;
 	}
 
-	@Column(length=100,nullable=false)
+	@Column(length=100, nullable=false)
 	public String getUsersEMail() {
 		return usersEMail;
 	}
@@ -50,7 +50,7 @@ public class BlogComment {
 		this.usersEMail = usersEMail;
 	}
 
-	@Column(length=4096,nullable=false)
+	@Column(length=4096, nullable=false)
 	public String getMessage() {
 		return message;
 	}

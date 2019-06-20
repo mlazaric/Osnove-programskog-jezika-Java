@@ -5,7 +5,9 @@ import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @NamedQueries({
 		@NamedQuery(name="BlogUser.nickExists", query="select COUNT(u) from BlogUser as u where u.nick = :nick")
@@ -20,6 +22,7 @@ public class BlogUser {
 	private String nick;
 	private String email;
 	private String passwordHash;
+	private List<BlogEntry> entries = new ArrayList<>();
 	
 	@Id @GeneratedValue
 	public Long getId() {
@@ -73,6 +76,15 @@ public class BlogUser {
 
 	public void setPasswordHash(String passwordHash) {
 		this.passwordHash = passwordHash;
+	}
+
+	@OneToMany(mappedBy="creator")
+	public List<BlogEntry> getEntries() {
+		return entries;
+	}
+
+	public void setEntries(List<BlogEntry> entries) {
+		this.entries = entries;
 	}
 
 	public static String hashPassword(String password) {
