@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.tecaj_13.dao;
+package hr.fer.zemris.java.blog.dao;
 
 public class DAOException extends RuntimeException {
 

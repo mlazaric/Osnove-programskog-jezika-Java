@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.tecaj_13.model;
+package hr.fer.zemris.java.blog.model;
 
 import javax.persistence.*;
 import javax.xml.bind.DatatypeConverter;
@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @NamedQueries({

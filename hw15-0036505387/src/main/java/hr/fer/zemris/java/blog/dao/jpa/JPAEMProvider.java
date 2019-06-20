@@ -1,6 +1,6 @@
-package hr.fer.zemris.java.tecaj_13.dao.jpa;
+package hr.fer.zemris.java.blog.dao.jpa;
 
-import hr.fer.zemris.java.tecaj_13.dao.DAOException;
+import hr.fer.zemris.java.blog.dao.DAOException;
 
 import javax.persistence.EntityManager;
 

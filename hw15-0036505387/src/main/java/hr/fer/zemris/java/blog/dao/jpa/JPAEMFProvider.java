@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.tecaj_13.dao.jpa;
+package hr.fer.zemris.java.blog.dao.jpa;
 
 import javax.persistence.EntityManagerFactory;
 

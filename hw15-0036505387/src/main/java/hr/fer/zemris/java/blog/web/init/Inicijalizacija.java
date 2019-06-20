@@ -1,6 +1,6 @@
-package hr.fer.zemris.java.tecaj_13.web.init;
+package hr.fer.zemris.java.blog.web.init;
 
-import hr.fer.zemris.java.tecaj_13.dao.jpa.JPAEMFProvider;
+import hr.fer.zemris.java.blog.dao.jpa.JPAEMFProvider;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;

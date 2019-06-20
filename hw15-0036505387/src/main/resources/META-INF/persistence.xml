@@ -5,8 +5,8 @@
 	<persistence-unit name="baza.podataka.za.blog" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-		<class>hr.fer.zemris.java.tecaj_13.model.BlogEntry</class>
-		<class>hr.fer.zemris.java.tecaj_13.model.BlogComment</class>
+		<class>hr.fer.zemris.java.blog.model.BlogEntry</class>
+		<class>hr.fer.zemris.java.blog.model.BlogComment</class>
 
 		<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode> <!-- NONE, ALL, ENABLE_SELECTIVE, DISABLE_SELECTIVE -->
 

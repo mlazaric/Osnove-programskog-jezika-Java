@@ -1,7 +1,7 @@
-package hr.fer.zemris.java.tecaj_13.web.servlets;
+package hr.fer.zemris.java.blog.web.servlets;
 
-import hr.fer.zemris.java.tecaj_13.dao.DAOProvider;
-import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
+import hr.fer.zemris.java.blog.dao.DAOProvider;
+import hr.fer.zemris.java.blog.model.BlogEntry;
 
 import java.io.IOException;
 

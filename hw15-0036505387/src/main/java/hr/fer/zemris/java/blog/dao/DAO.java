@@ -1,7 +1,7 @@
-package hr.fer.zemris.java.tecaj_13.dao;
+package hr.fer.zemris.java.blog.dao;
 
-import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
-import hr.fer.zemris.java.tecaj_13.model.BlogUser;
+import hr.fer.zemris.java.blog.model.BlogEntry;
+import hr.fer.zemris.java.blog.model.BlogUser;
 
 public interface DAO {
 

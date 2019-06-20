@@ -1,7 +1,7 @@
-package hr.fer.zemris.java.tecaj_13.web.forms;
+package hr.fer.zemris.java.blog.web.forms;
 
-import hr.fer.zemris.java.tecaj_13.dao.DAOProvider;
-import hr.fer.zemris.java.tecaj_13.model.BlogUser;
+import hr.fer.zemris.java.blog.dao.DAOProvider;
+import hr.fer.zemris.java.blog.model.BlogUser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;

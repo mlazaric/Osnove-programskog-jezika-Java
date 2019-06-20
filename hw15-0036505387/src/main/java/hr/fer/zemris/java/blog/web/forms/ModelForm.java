@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.tecaj_13.web.forms;
+package hr.fer.zemris.java.blog.web.forms;
 
 import javax.servlet.http.HttpServletRequest;
 

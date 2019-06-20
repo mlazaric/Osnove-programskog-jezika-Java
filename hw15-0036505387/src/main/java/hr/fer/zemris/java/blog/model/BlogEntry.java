@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.tecaj_13.model;
+package hr.fer.zemris.java.blog.model;
 
 import java.util.ArrayList;
 import java.util.Date;

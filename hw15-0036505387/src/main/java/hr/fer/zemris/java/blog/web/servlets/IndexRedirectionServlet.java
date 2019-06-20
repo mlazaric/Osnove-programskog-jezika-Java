@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.tecaj_13.web.servlets;
+package hr.fer.zemris.java.blog.web.servlets;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

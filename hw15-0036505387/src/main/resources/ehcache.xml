@@ -46,7 +46,7 @@
   <heap unit="entries">10</heap>
  </cache>
 
- <cache alias="hr.fer.zemris.java.tecaj_13.model.BlogEntry" uses-template="defaultCacheTemplate"/>
+ <cache alias="hr.fer.zemris.java.blog.model.BlogEntry" uses-template="defaultCacheTemplate"/>
 
  </config>
  

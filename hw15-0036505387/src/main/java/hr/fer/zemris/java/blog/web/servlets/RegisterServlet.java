@@ -1,8 +1,8 @@
-package hr.fer.zemris.java.tecaj_13.web.servlets;
+package hr.fer.zemris.java.blog.web.servlets;
 
-import hr.fer.zemris.java.tecaj_13.dao.DAOProvider;
-import hr.fer.zemris.java.tecaj_13.model.BlogUser;
-import hr.fer.zemris.java.tecaj_13.web.forms.BlogUserForm;
+import hr.fer.zemris.java.blog.dao.DAOProvider;
+import hr.fer.zemris.java.blog.model.BlogUser;
+import hr.fer.zemris.java.blog.web.forms.BlogUserForm;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

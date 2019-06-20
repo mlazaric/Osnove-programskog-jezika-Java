@@ -1,9 +1,9 @@
-package hr.fer.zemris.java.tecaj_13.dao.jpa;
+package hr.fer.zemris.java.blog.dao.jpa;
 
-import hr.fer.zemris.java.tecaj_13.dao.DAO;
-import hr.fer.zemris.java.tecaj_13.dao.DAOException;
-import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
-import hr.fer.zemris.java.tecaj_13.model.BlogUser;
+import hr.fer.zemris.java.blog.dao.DAO;
+import hr.fer.zemris.java.blog.dao.DAOException;
+import hr.fer.zemris.java.blog.model.BlogEntry;
+import hr.fer.zemris.java.blog.model.BlogUser;
 
 import javax.persistence.Query;
 import java.util.List;

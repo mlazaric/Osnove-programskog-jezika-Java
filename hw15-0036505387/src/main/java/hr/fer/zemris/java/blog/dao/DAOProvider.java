@@ -1,6 +1,6 @@
-package hr.fer.zemris.java.tecaj_13.dao;
+package hr.fer.zemris.java.blog.dao;
 
-import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
+import hr.fer.zemris.java.blog.dao.jpa.JPADAOImpl;
 
 public class DAOProvider {
 
