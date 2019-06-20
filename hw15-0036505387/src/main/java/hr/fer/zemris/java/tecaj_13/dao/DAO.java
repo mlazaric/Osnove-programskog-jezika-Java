@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.tecaj_13.dao;
 
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
+import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
 public interface DAO {
 
@@ -12,6 +13,10 @@ public interface DAO {
 	 * @return entry ili <code>null</code> ako entry ne postoji
 	 * @throws DAOException ako dođe do pogreške pri dohvatu podataka
 	 */
-	public BlogEntry getBlogEntry(Long id) throws DAOException;
+	BlogEntry getBlogEntry(Long id) throws DAOException;
+
+	boolean nicknameExists(String nick) throws DAOException;
+
+	void persistUser(BlogUser user) throws DAOException;
 	
 }

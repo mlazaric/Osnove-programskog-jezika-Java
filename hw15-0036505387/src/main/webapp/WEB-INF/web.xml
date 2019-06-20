@@ -7,9 +7,9 @@
   version="3.0"
   metadata-complete="false">
 
-  <display-name>Web aplikacija s JPA</display-name>
+  <display-name>Blog</display-name>
   <description>
-     Web aplikacija s JPA
+     15th homework - a simple blog
   </description>
 
 </web-app>
