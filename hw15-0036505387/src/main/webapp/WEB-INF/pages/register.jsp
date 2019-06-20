@@ -12,8 +12,6 @@
   </head>
   <body>
     <form action="<c:url value="/servleti/register"/>" method="POST">
-      <input type="hidden" name="id" value="<c:out value="${form.id}" />">
-
       <label for="firstName">First name:</label>
       <input type="text" name="firstName" id="firstName" required maxlength="30" value="<c:out value="${form.firstName}" />">
       <c:if test="${form.hasErrorForAttribute('firstName')}">

@@ -1,10 +1,9 @@
 package hr.fer.zemris.java.blog.model;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.*;
 
 @NamedQueries({
 	@NamedQuery(name="BlogEntry.upit1",query="select b from BlogComment as b where b.blogEntry=:be and b.postedOn>:when")

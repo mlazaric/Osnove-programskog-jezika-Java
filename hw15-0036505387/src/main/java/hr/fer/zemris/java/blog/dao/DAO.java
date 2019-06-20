@@ -3,6 +3,8 @@ package hr.fer.zemris.java.blog.dao;
 import hr.fer.zemris.java.blog.model.BlogEntry;
 import hr.fer.zemris.java.blog.model.BlogUser;
 
+import java.util.List;
+
 public interface DAO {
 
 	/**
@@ -18,5 +20,9 @@ public interface DAO {
 	boolean nicknameExists(String nick) throws DAOException;
 
 	void persistUser(BlogUser user) throws DAOException;
+
+	List<BlogUser> listUsers() throws DAOException;
+
+	BlogUser getUserByNickAndPasswordHash(String nick, String passwordHash) throws DAOException;
 	
 }

@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NamedQueries({
-		@NamedQuery(name="BlogUser.nickExists", query="select COUNT(u) from BlogUser as u where u.nick = :nick")
+		@NamedQuery(name="BlogUser.nickExists", query="select COUNT(u) from BlogUser as u where u.nick = :nick"),
+		@NamedQuery(name="BlogUser.allUsers", query="select u from BlogUser as u"),
+		@NamedQuery(name="BlogUser.selectByNick", query="select u from BlogUser as u where u.nick = :nick")
 })
 @Entity
 @Table(name="blog_users")

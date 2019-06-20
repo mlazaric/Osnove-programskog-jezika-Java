@@ -4,10 +4,8 @@ import hr.fer.zemris.java.blog.dao.DAOProvider;
 import hr.fer.zemris.java.blog.model.BlogUser;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
-public class BlogUserForm implements ModelForm<BlogUser> {
+public class BlogUserForm extends AbstractModelForm<BlogUser> {
 
     private String id;
     private String firstName;
@@ -15,23 +13,6 @@ public class BlogUserForm implements ModelForm<BlogUser> {
     private String nick;
     private String email;
     private String passwordHash;
-
-    private final Map<String, String> errors = new HashMap<>();
-
-    @Override
-    public boolean hasAnyErrors() {
-        return !errors.isEmpty();
-    }
-
-    @Override
-    public boolean hasErrorForAttribute(String attribute) {
-        return errors.containsKey(attribute);
-    }
-
-    @Override
-    public String getErrorForAttribute(String attribute) {
-        return errors.get(attribute);
-    }
 
     @Override
     public void fillFromHTTPRequst(HttpServletRequest request) {
@@ -154,7 +135,4 @@ public class BlogUserForm implements ModelForm<BlogUser> {
         this.passwordHash = passwordHash;
     }
 
-    public Map<String, String> getErrors() {
-        return errors;
-    }
 }

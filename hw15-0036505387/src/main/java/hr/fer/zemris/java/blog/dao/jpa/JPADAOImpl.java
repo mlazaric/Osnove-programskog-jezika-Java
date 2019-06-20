@@ -13,6 +13,7 @@ public class JPADAOImpl implements DAO {
 	@Override
 	public BlogEntry getBlogEntry(Long id) throws DAOException {
 		BlogEntry blogEntry = JPAEMProvider.getEntityManager().find(BlogEntry.class, id);
+
 		return blogEntry;
 	}
 
@@ -30,6 +31,31 @@ public class JPADAOImpl implements DAO {
 	@Override
 	public void persistUser(BlogUser user) throws DAOException {
 		JPAEMProvider.getEntityManager().persist(user);
+	}
+
+	@Override
+	public List<BlogUser> listUsers() throws DAOException {
+		return JPAEMProvider.getEntityManager()
+				            .createNamedQuery("BlogUser.allUsers", BlogUser.class)
+						    .getResultList();
+	}
+
+	@Override
+	public BlogUser getUserByNickAndPasswordHash(String nick, String passwordHash) throws DAOException {
+		List<BlogUser> users = JPAEMProvider.getEntityManager()
+											.createNamedQuery("BlogUser.selectByNick", BlogUser.class)
+											.setParameter("nick", nick)
+											.getResultList();
+
+		if (users.size() == 0) {
+			return null;
+		}
+
+		if (users.get(0).getPasswordHash().equals(passwordHash)) {
+			return users.get(0);
+		}
+
+		return null;
 	}
 
 }
