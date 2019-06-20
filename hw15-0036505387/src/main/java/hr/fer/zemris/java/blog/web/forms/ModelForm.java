@@ -8,9 +8,9 @@ public interface ModelForm<E> {
     boolean hasErrorForAttribute(String attribute);
     String getErrorForAttribute(String attribute);
 
-    void fillFromHTTPRequst(HttpServletRequest request);
-    void fillFromEntity(E entity);
-    void fillEntity(E entity);
+    void loadFromHTTPRequest(HttpServletRequest request);
+    void loadFromEntity(E entity);
+    void saveToEntity(E entity);
 
     void validate();
 

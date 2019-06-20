@@ -2,6 +2,7 @@ package hr.fer.zemris.java.blog.dao.jpa;
 
 import hr.fer.zemris.java.blog.dao.DAO;
 import hr.fer.zemris.java.blog.dao.DAOException;
+import hr.fer.zemris.java.blog.model.BlogComment;
 import hr.fer.zemris.java.blog.model.BlogEntry;
 import hr.fer.zemris.java.blog.model.BlogUser;
 
@@ -18,6 +19,11 @@ public class JPADAOImpl implements DAO {
 	}
 
 	@Override
+	public BlogUser getBlogUser(Long id) throws DAOException {
+		return JPAEMProvider.getEntityManager().find(BlogUser.class, id);
+	}
+
+	@Override
 	public boolean nicknameExists(String nick) throws DAOException {
 		Query query = JPAEMProvider.getEntityManager().createNamedQuery("BlogUser.nickExists");
 
@@ -31,6 +37,16 @@ public class JPADAOImpl implements DAO {
 	@Override
 	public void persistUser(BlogUser user) throws DAOException {
 		JPAEMProvider.getEntityManager().persist(user);
+	}
+
+	@Override
+	public void persistComment(BlogComment comment) {
+		JPAEMProvider.getEntityManager().persist(comment);
+	}
+
+	@Override
+	public void persistEntry(BlogEntry entry) {
+		JPAEMProvider.getEntityManager().persist(entry);
 	}
 
 	@Override
@@ -56,6 +72,14 @@ public class JPADAOImpl implements DAO {
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<BlogEntry> listEntriesForUser(String nick) throws DAOException {
+		return JPAEMProvider.getEntityManager()
+				     		.createNamedQuery("BlogEntry.entriesByUser", BlogEntry.class)
+				     		.setParameter("nick", nick)
+					 		.getResultList();
 	}
 
 }

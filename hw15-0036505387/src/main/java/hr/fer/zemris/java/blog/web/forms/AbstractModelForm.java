@@ -26,4 +26,18 @@ public abstract class AbstractModelForm<E> implements ModelForm<E> {
         return errors;
     }
 
+    protected String normalise(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        return value.trim();
+    }
+
+    protected void checkAssumptions(String name, Assumptions assumptions) {
+        if (assumptions.hasError()) {
+            errors.put(name, assumptions.getError());
+        }
+    }
+
 }

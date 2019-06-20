@@ -12,7 +12,7 @@ public class LoginForm extends AbstractModelForm<BlogUser> {
     private BlogUser user;
 
     @Override
-    public void fillFromHTTPRequst(HttpServletRequest request) {
+    public void loadFromHTTPRequest(HttpServletRequest request) {
         nick = normalise(request.getParameter("nick"));
 
         String password = normalise(request.getParameter("password"));
@@ -25,22 +25,13 @@ public class LoginForm extends AbstractModelForm<BlogUser> {
         }
     }
 
-    private String normalise(String value) {
-        if (value == null) {
-            return "";
-        }
-
-        return value.trim();
-    }
-
-
     @Override
-    public void fillFromEntity(BlogUser entity) {
+    public void loadFromEntity(BlogUser entity) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void fillEntity(BlogUser entity) {
+    public void saveToEntity(BlogUser entity) {
         throw new UnsupportedOperationException();
     }
 
@@ -55,12 +46,6 @@ public class LoginForm extends AbstractModelForm<BlogUser> {
             if (user == null) {
                 errors.put("nick", "Invalid combination of nickname and password.");
             }
-        }
-    }
-
-    private void checkAssumptions(String name, Assumptions assumptions) {
-        if (assumptions.hasError()) {
-            errors.put(name, assumptions.getError());
         }
     }
 

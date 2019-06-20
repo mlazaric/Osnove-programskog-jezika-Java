@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.blog.model;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -58,6 +60,12 @@ public class BlogComment {
 
 	public void setPostedOn(Date postedOn) {
 		this.postedOn = postedOn;
+	}
+
+	@PrePersist
+	protected void onCreate() {
+		// TODO: @CreationTimestamp does not work for some reason...
+		postedOn = new Date();
 	}
 
 	@Override

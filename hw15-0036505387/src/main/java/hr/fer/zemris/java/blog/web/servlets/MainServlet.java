@@ -30,7 +30,7 @@ public class MainServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LoginForm form = new LoginForm();
 
-        form.fillFromHTTPRequst(req);
+        form.loadFromHTTPRequest(req);
 
         form.validate();
 
@@ -40,7 +40,10 @@ public class MainServlet extends HttpServlet {
             return;
         }
 
-        req.getSession().setAttribute("user", form.getUser());
+        req.getSession().setAttribute("current.user.id", form.getUser().getId());
+        req.getSession().setAttribute("current.user.firstName", form.getUser().getFirstName());
+        req.getSession().setAttribute("current.user.lastName", form.getUser().getLastName());
+        req.getSession().setAttribute("current.user.nick", form.getUser().getNick());
 
         resp.sendRedirect(req.getContextPath() + "/servleti/main");
     }

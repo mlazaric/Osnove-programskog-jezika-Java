@@ -26,4 +26,5 @@ public class Inicijalizacija implements ServletContextListener {
 			emf.close();
 		}
 	}
+
 }

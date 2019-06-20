@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
@@ -86,7 +86,7 @@
 	    <artifactId>activation</artifactId>
 	    <version>1.1.1</version>
 	</dependency>
-	
+
 		<!-- junit testing: -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -106,7 +106,7 @@
 			<version>${junit.jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
-  	
+
   	<!--Log4j2 API -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -155,7 +155,7 @@
   			</exclusion>
   		</exclusions>
   	</dependency>
-    
+
   </dependencies>
 
   <build>

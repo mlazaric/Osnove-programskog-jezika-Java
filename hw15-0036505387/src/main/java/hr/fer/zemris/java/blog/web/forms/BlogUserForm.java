@@ -15,7 +15,7 @@ public class BlogUserForm extends AbstractModelForm<BlogUser> {
     private String passwordHash;
 
     @Override
-    public void fillFromHTTPRequst(HttpServletRequest request) {
+    public void loadFromHTTPRequest(HttpServletRequest request) {
         id = normalise(request.getParameter("id"));
         firstName = normalise(request.getParameter("firstName"));
         lastName = normalise(request.getParameter("lastName"));
@@ -32,22 +32,13 @@ public class BlogUserForm extends AbstractModelForm<BlogUser> {
         }
     }
 
-    private String normalise(String value) {
-        if (value == null) {
-            return "";
-        }
-
-        return value.trim();
-    }
-
-
     @Override
-    public void fillFromEntity(BlogUser entity) {
+    public void loadFromEntity(BlogUser entity) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void fillEntity(BlogUser entity) {
+    public void saveToEntity(BlogUser entity) {
         if (id.isEmpty()) {
             entity.setId(null);
         }
@@ -69,7 +60,7 @@ public class BlogUserForm extends AbstractModelForm<BlogUser> {
         }
 
         checkAssumptions("firstName", new Assumptions("first name", firstName).isRequired());
-        checkAssumptions("lastName", new Assumptions("last name", firstName).isRequired());
+        checkAssumptions("lastName", new Assumptions("last name", lastName).isRequired());
         checkAssumptions("nick", new Assumptions("nickname", nick).isRequired());
         checkAssumptions("email", new Assumptions("email", email).isRequired().isValidEmailAddress());
         checkAssumptions("passwordHash", new Assumptions("password", passwordHash).isRequired());
@@ -78,12 +69,6 @@ public class BlogUserForm extends AbstractModelForm<BlogUser> {
             if (DAOProvider.getDAO().nicknameExists(nick)) {
                 errors.put("nick", "Nick is already in use.");
             }
-        }
-    }
-
-    private void checkAssumptions(String name, Assumptions assumptions) {
-        if (assumptions.hasError()) {
-            errors.put(name, assumptions.getError());
         }
     }
 

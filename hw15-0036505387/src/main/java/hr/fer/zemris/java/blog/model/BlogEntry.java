@@ -1,12 +1,16 @@
 package hr.fer.zemris.java.blog.model;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @NamedQueries({
-	@NamedQuery(name="BlogEntry.upit1",query="select b from BlogComment as b where b.blogEntry=:be and b.postedOn>:when")
+		@NamedQuery(name="BlogEntry.upit1",query="select b from BlogComment as b where b.blogEntry=:be and b.postedOn>:when"),
+		@NamedQuery(name="BlogEntry.entriesByUser", query="select b from BlogEntry as b inner join b.creator as u" +
+															" where u.nick=:nick")
 })
 @Entity
 @Table(name="blog_entries")
@@ -86,6 +90,19 @@ public class BlogEntry {
 
 	public void setCreator(BlogUser creator) {
 		this.creator = creator;
+	}
+
+	@PrePersist
+	protected void onCreate() {
+		// TODO: @CreationTimestamp does not work for some reason...
+		createdAt = new Date();
+		lastModifiedAt = new Date();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		// TODO: @UpdateTimestamp does not work for some reason...
+		lastModifiedAt = new Date();
 	}
 
 	@Override

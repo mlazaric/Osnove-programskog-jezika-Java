@@ -10,7 +10,9 @@
       }
     </style>
   </head>
-  <body>
+  <body class="center">
+    <%@ include file="header.jsp" %>
+
     <form action="<c:url value="/servleti/register"/>" method="POST">
       <label for="firstName">First name:</label>
       <input type="text" name="firstName" id="firstName" required maxlength="30" value="<c:out value="${form.firstName}" />">

@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
   <head>
-    <title>Register</title>
+    <title>Main page</title>
 
     <style>
       .error {
@@ -11,7 +11,9 @@
     </style>
   </head>
   <body>
-    <c:if test="${sessionScope.user == null}">
+    <%@ include file="header.jsp" %>
+
+    <c:if test="${sessionScope['current.user.id'] == null}">
       <form action="<c:url value="/servleti/main"/>" method="POST">
         <c:if test="${form.hasAnyErrors()}">
           <ul>
@@ -31,6 +33,8 @@
 
         <input type="submit" value="Login">
       </form>
+
+      Register here: <a href="<c:url value="/servleti/register"/>">register</a>.
     </c:if>
 
     <h5>List of authors:</h5>

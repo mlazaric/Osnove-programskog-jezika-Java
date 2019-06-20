@@ -27,7 +27,7 @@ public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         BlogUserForm form = new BlogUserForm();
 
-        form.fillFromHTTPRequst(req);
+        form.loadFromHTTPRequest(req);
 
         form.validate();
 
@@ -39,7 +39,7 @@ public class RegisterServlet extends HttpServlet {
 
         BlogUser user = new BlogUser();
 
-        form.fillEntity(user);
+        form.saveToEntity(user);
 
         DAOProvider.getDAO().persistUser(user);
 
