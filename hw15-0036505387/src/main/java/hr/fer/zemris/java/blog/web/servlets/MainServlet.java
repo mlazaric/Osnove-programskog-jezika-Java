@@ -43,7 +43,11 @@ public class MainServlet extends HttpServlet {
         form.validate();
 
         if (form.hasAnyErrors()) {
+            List<BlogUser> authors = DAOProvider.getDAO().listUsers();
+
+            req.setAttribute("authors", authors);
             req.setAttribute("form", form);
+
             req.getRequestDispatcher("/WEB-INF/pages/main.jsp").forward(req, resp);
             return;
         }
