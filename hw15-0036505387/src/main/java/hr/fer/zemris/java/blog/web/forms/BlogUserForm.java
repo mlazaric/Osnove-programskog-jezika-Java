@@ -5,13 +5,41 @@ import hr.fer.zemris.java.blog.model.BlogUser;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * The form used registering as a {@link BlogUser}.
+ *
+ * @author Marko Lazarić
+ */
 public class BlogUserForm extends AbstractModelForm<BlogUser> {
 
+    /**
+     * The unique identifier of the {@link BlogUser}.
+     */
     private String id;
+
+    /**
+     * The first name of the {@link BlogUser}.
+     */
     private String firstName;
+
+    /**
+     * The last name of the {@link BlogUser}.
+     */
     private String lastName;
+
+    /**
+     * The nick of the {@link BlogUser}.
+     */
     private String nick;
+
+    /**
+     * The email address of the {@link BlogUser}.
+     */
     private String email;
+
+    /**
+     * The SHA-1 hash of the {@link BlogUser}'s password.
+     */
     private String passwordHash;
 
     @Override
@@ -72,50 +100,86 @@ public class BlogUserForm extends AbstractModelForm<BlogUser> {
         }
     }
 
+    /**
+     * @return {@link #id}
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets the {@link #id} to the given argument.
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * @return {@link #firstName}
+     */
     public String getFirstName() {
         return firstName;
     }
 
+    /**
+     * Sets the {@link #firstName} to the given argument.
+     */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    /**
+     * @return {@link #lastName}
+     */
     public String getLastName() {
         return lastName;
     }
 
+    /**
+     * Sets the {@link #lastName} to the given argument.
+     */
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    /**
+     * @return {@link #nick}
+     */
     public String getNick() {
         return nick;
     }
 
+    /**
+     * Sets the {@link #nick} to the given argument.
+     */
     public void setNick(String nick) {
         this.nick = nick;
     }
 
+    /**
+     * @return {@link #email}
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Sets the {@link #email} to the given argument.
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * @return {@link #passwordHash}
+     */
     public String getPasswordHash() {
         return passwordHash;
     }
 
+    /**
+     * Sets the {@link #passwordHash} to the given argument.
+     */
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }

@@ -11,6 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Servlet which renders a registration form and allows a {@link BlogUser} to register.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(urlPatterns = "/servleti/register")
 public class RegisterServlet extends HttpServlet {
 

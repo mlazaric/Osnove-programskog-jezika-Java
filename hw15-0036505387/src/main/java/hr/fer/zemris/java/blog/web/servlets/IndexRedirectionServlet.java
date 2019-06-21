@@ -7,6 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Servlet which redirects {@code /index.jsp} to {@code /servleti/main}.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(urlPatterns = "/index.jsp")
 public class IndexRedirectionServlet extends HttpServlet {
 

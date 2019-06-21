@@ -12,6 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Servlet which renders a login form and allows a {@link BlogUser} to login.
+ * It also lists the registered {@link BlogUser}s.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(urlPatterns = "/servleti/main")
 public class MainServlet extends HttpServlet {
 

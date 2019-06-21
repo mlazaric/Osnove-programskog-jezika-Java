@@ -8,121 +8,226 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Models a single blog user who can post blog entries.
+ */
 @NamedQueries({
-		@NamedQuery(name="BlogUser.nickExists", query="select COUNT(u) from BlogUser as u where u.nick = :nick"),
-		@NamedQuery(name="BlogUser.allUsers", query="select u from BlogUser as u"),
-		@NamedQuery(name="BlogUser.selectByNick", query="select u from BlogUser as u where u.nick = :nick")
+        @NamedQuery(name = "BlogUser.nickExists", query = "select COUNT(u) from BlogUser as u where u.nick = :nick"),
+        @NamedQuery(name = "BlogUser.allUsers", query = "select u from BlogUser as u"),
+        @NamedQuery(name = "BlogUser.selectByNick", query = "select u from BlogUser as u where u.nick = :nick")
 })
 @Entity
-@Table(name="blog_users")
+@Table(name = "blog_users")
 public class BlogUser {
 
-	private Long id;
-	private String firstName;
-	private String lastName;
-	private String nick;
-	private String email;
-	private String passwordHash;
-	private List<BlogEntry> entries = new ArrayList<>();
-	
-	@Id @GeneratedValue
-	public Long getId() {
-		return id;
-	}
-	
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * The unique identifier of the {@link BlogUser}.
+     */
+    private Long id;
 
-	@Column(length=30, nullable=false)
-	public String getFirstName() {
-		return firstName;
-	}
+    /**
+     * The first name of the {@link BlogUser}.
+     */
+    private String firstName;
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    /**
+     * The last name of the {@link BlogUser}.
+     */
+    private String lastName;
 
-	@Column(length=30, nullable=false)
-	public String getLastName() {
-		return lastName;
-	}
+    /**
+     * The nickname of the {@link BlogUser}. Must be unique.
+     */
+    private String nick;
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    /**
+     * The email of the {@link BlogUser}.
+     */
+    private String email;
 
-	@Column(length=30, nullable=false, unique=true)
-	public String getNick() {
-		return nick;
-	}
+    /**
+     * The SHA-1 hash of the {@link BlogUser}'s password.
+     */
+    private String passwordHash;
 
-	public void setNick(String nick) {
-		this.nick = nick;
-	}
+    /**
+     * A list of {@link BlogEntry} posted by this {@link BlogUser}.
+     */
+    private List<BlogEntry> entries = new ArrayList<>();
 
-	@Column(length=30, nullable=false)
-	public String getEmail() {
-		return email;
-	}
+    /**
+     * Returns the unique identifier of the {@link BlogUser}.
+     *
+     * @return {@link #id}
+     */
+    @Id
+    @GeneratedValue
+    public Long getId() {
+        return id;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    /**
+     * Sets the {@link #id} to the given argument.
+     *
+     * @param id the new value of {@link #id}
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@Column(length=100, nullable=false)
-	public String getPasswordHash() {
-		return passwordHash;
-	}
+    /**
+     * Returns the first name of the {@link BlogUser}.
+     *
+     * @return {@link #firstName}
+     */
+    @Column(length = 30, nullable = false)
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setPasswordHash(String passwordHash) {
-		this.passwordHash = passwordHash;
-	}
+    /**
+     * Sets the {@link #firstName} to the given argument.
+     *
+     * @param firstName the new value of {@link #firstName}
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	@OneToMany(mappedBy="creator")
-	public List<BlogEntry> getEntries() {
-		return entries;
-	}
+    /**
+     * Returns the last name of the {@link BlogUser}.
+     *
+     * @return {@link #lastName}
+     */
+    @Column(length = 30, nullable = false)
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setEntries(List<BlogEntry> entries) {
-		this.entries = entries;
-	}
+    /**
+     * Sets the {@link #lastName} to the given argument.
+     *
+     * @param lastName the new value of {@link #lastName}
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public static String hashPassword(String password) {
-		MessageDigest digest = null;
+    /**
+     * Returns the nickname of the {@link BlogUser}.
+     *
+     * @return {@link #nick}
+     */
+    @Column(length = 30, nullable = false, unique = true)
+    public String getNick() {
+        return nick;
+    }
 
-		try {
-			digest = MessageDigest.getInstance("SHA-1");
-		} catch (NoSuchAlgorithmException ignorable) {}
+    /**
+     * Sets the {@link #nick} to the given argument.
+     *
+     * @param nick the new value of {@link #nick}
+     */
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
 
-		digest.update(password.getBytes(StandardCharsets.UTF_8));
-		byte[] digestBytes = digest.digest();
+    /**
+     * Returns the email address of the {@link BlogUser}.
+     *
+     * @return {@link #email}
+     */
+    @Column(length = 30, nullable = false)
+    public String getEmail() {
+        return email;
+    }
 
-		return DatatypeConverter.printHexBinary(digestBytes);
-	}
+    /**
+     * Sets the {@link #email} to the given argument.
+     *
+     * @param email the new value of {@link #email}
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
+    /**
+     * Returns the SHA-1 hash of the {@link BlogUser}'s password.
+     *
+     * @return {@link #passwordHash}
+     */
+    @Column(length = 100, nullable = false)
+    public String getPasswordHash() {
+        return passwordHash;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BlogUser other = (BlogUser) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
+    /**
+     * Sets the {@link #passwordHash} to the given argument.
+     *
+     * @param passwordHash the new value of {@link #passwordHash}
+     */
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    /**
+     * Returns a list of {@link BlogEntry}ies posted by this {@link BlogUser}.
+     *
+     * @return {@link #entries}
+     */
+    @OneToMany(mappedBy = "creator")
+    public List<BlogEntry> getEntries() {
+        return entries;
+    }
+
+    /**
+     * Sets the {@link #entries} to the given argument.
+     *
+     * @param entries the new value of {@link #entries}
+     */
+    public void setEntries(List<BlogEntry> entries) {
+        this.entries = entries;
+    }
+
+    /**
+     * Hashes the argument using SHA-1 and returns the result.
+     *
+     * @param password the password to hash
+     * @return the result of hashing the argument using SHA-1
+     */
+    public static String hashPassword(String password) {
+        MessageDigest digest = null;
+
+        try {
+            digest = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException ignorable) {
+        }
+
+        digest.update(password.getBytes(StandardCharsets.UTF_8));
+        byte[] digestBytes = digest.digest();
+
+        return DatatypeConverter.printHexBinary(digestBytes);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        BlogUser other = (BlogUser) obj;
+        if (id == null) {
+            return other.id == null;
+        } else return id.equals(other.id);
+    }
 }

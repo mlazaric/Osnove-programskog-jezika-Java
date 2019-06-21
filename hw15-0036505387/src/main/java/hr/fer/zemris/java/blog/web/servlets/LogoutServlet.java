@@ -7,6 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Servlet which logs the {@link hr.fer.zemris.java.blog.model.BlogUser} out.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(urlPatterns = "/servleti/logout")
 public class LogoutServlet extends HttpServlet {
 
