@@ -18,12 +18,15 @@ import java.util.List;
 @WebServlet(urlPatterns = "/servleti/author/*")
 public class AuthorServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 8986799602781210061L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pathInfo = req.getPathInfo();
 
         if (pathInfo == null) {
-            resp.sendError(404, "Author not found.");
+            req.setAttribute("message", "Author was not found.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
             return;
         }
 
@@ -47,7 +50,8 @@ public class AuthorServlet extends HttpServlet {
             showEditBlogEntryForm(req, resp, parts[1], parts[2]);
         }
         else {
-            resp.sendError(404, "File not found.");
+            req.setAttribute("message", "Invalid url.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
         }
     }
 
@@ -56,7 +60,8 @@ public class AuthorServlet extends HttpServlet {
         String pathInfo = req.getPathInfo();
 
         if (pathInfo == null) {
-            resp.sendError(404, "Author not found.");
+            req.setAttribute("message", "Author was not found.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
             return;
         }
 
@@ -76,7 +81,8 @@ public class AuthorServlet extends HttpServlet {
             editBlogEntry(req, resp, parts[1], parts[2]);
         }
         else {
-            resp.sendError(404, "File not found.");
+            req.setAttribute("message", "Invalid url.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
         }
     }
 
@@ -91,7 +97,8 @@ public class AuthorServlet extends HttpServlet {
 
     private void showCreateBlogEntryForm(HttpServletRequest req, HttpServletResponse resp, String nick) throws ServletException, IOException {
         if (req.getSession().getAttribute("current.user.id") == null) {
-            resp.sendRedirect(req.getContextPath() + "/servleti/register");
+            req.setAttribute("message", "Permission denied.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
             return;
         }
 
@@ -104,7 +111,8 @@ public class AuthorServlet extends HttpServlet {
 
     private void createBlogEntry(HttpServletRequest req, HttpServletResponse resp, String part) throws ServletException, IOException {
         if (req.getSession().getAttribute("current.user.id") == null) {
-            resp.sendRedirect(req.getContextPath() + "/servleti/register");
+            req.setAttribute("message", "Permission denied.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
             return;
         }
 
@@ -141,7 +149,8 @@ public class AuthorServlet extends HttpServlet {
             entryID = Long.valueOf(eid);
         }
         catch (NumberFormatException e) {
-            resp.sendError(404, "Blog entry not found.");
+            req.setAttribute("message", "Blog entry not found.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
             return;
         }
 
@@ -150,7 +159,8 @@ public class AuthorServlet extends HttpServlet {
         if (req.getSession().getAttribute("current.user.id") == null ||
            !req.getSession().getAttribute("current.user.id").equals(entry.getCreator().getId())) {
 
-            resp.sendRedirect(req.getContextPath() + "/servleti/register");
+            req.setAttribute("message", "Permission denied.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
             return;
         }
 
@@ -170,7 +180,8 @@ public class AuthorServlet extends HttpServlet {
             entryID = Long.valueOf(eid);
         }
         catch (NumberFormatException e) {
-            resp.sendError(404, "Blog entry not found.");
+            req.setAttribute("message", "Blog entry not found.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
             return;
         }
 
@@ -179,7 +190,8 @@ public class AuthorServlet extends HttpServlet {
         if (req.getSession().getAttribute("current.user.id") == null ||
                 !req.getSession().getAttribute("current.user.id").equals(entry.getCreator().getId())) {
 
-            resp.sendRedirect(req.getContextPath() + "/servleti/register");
+            req.setAttribute("message", "Permission denied.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
             return;
         }
 
@@ -206,7 +218,8 @@ public class AuthorServlet extends HttpServlet {
             entryID = Long.valueOf(eid);
         }
         catch (NumberFormatException e) {
-            resp.sendError(404, "Blog entry not found.");
+            req.setAttribute("message", "Blog entry not found.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
             return;
         }
 
@@ -214,7 +227,8 @@ public class AuthorServlet extends HttpServlet {
         BlogEntry entry = DAOProvider.getDAO().getBlogEntry(entryID);
 
         if (entry == null || !entry.getCreator().getNick().equals(nick)) {
-            resp.sendError(404, "Blog entry not found.");
+            req.setAttribute("message", "Blog entry not found.");
+            req.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(req, resp);
             return;
         }
 

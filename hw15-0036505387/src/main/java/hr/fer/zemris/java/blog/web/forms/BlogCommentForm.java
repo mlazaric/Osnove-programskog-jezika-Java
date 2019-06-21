@@ -15,6 +15,10 @@ public class BlogCommentForm extends AbstractModelForm<BlogComment> {
         id = normalise(request.getParameter("id"));
         email = normalise(request.getParameter("email"));
         message = normalise(request.getParameter("message"));
+
+        if (request.getSession().getAttribute("current.user.email") != null) {
+            email = normalise((String) request.getSession().getAttribute("current.user.email"));
+        }
     }
 
     @Override

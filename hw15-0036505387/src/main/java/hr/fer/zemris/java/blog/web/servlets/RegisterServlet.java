@@ -14,6 +14,8 @@ import java.io.IOException;
 @WebServlet(urlPatterns = "/servleti/register")
 public class RegisterServlet extends HttpServlet {
 
+    private static final long serialVersionUID = -1472693120784333102L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         BlogUserForm form = new BlogUserForm();

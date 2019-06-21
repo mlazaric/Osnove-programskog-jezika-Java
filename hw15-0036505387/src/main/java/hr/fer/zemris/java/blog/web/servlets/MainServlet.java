@@ -15,6 +15,8 @@ import java.util.List;
 @WebServlet(urlPatterns = "/servleti/main")
 public class MainServlet extends HttpServlet {
 
+    private static final long serialVersionUID = -1922205196207147389L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<BlogUser> authors = DAOProvider.getDAO().listUsers();
@@ -44,6 +46,7 @@ public class MainServlet extends HttpServlet {
         req.getSession().setAttribute("current.user.firstName", form.getUser().getFirstName());
         req.getSession().setAttribute("current.user.lastName", form.getUser().getLastName());
         req.getSession().setAttribute("current.user.nick", form.getUser().getNick());
+        req.getSession().setAttribute("current.user.email", form.getUser().getEmail());
 
         resp.sendRedirect(req.getContextPath() + "/servleti/main");
     }
