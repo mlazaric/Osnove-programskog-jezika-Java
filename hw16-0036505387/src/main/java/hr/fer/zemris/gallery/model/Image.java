@@ -1,4 +1,4 @@
-package hr.fer.zemris.gallery;
+package hr.fer.zemris.gallery.model;
 
 import java.util.Arrays;
 import java.util.Objects;

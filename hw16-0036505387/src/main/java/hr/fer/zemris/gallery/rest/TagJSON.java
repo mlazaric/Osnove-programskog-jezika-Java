@@ -1,8 +1,7 @@
 package hr.fer.zemris.gallery.rest;
 
-import hr.fer.zemris.gallery.Gallery;
-import hr.fer.zemris.gallery.GalleryProvider;
-import hr.fer.zemris.gallery.Image;
+import hr.fer.zemris.gallery.model.GalleryProvider;
+import hr.fer.zemris.gallery.model.Image;
 import org.json.JSONArray;
 
 import javax.ws.rs.GET;

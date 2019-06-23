@@ -1,7 +1,7 @@
 package hr.fer.zemris.gallery.listeners;
 
-import hr.fer.zemris.gallery.Gallery;
-import hr.fer.zemris.gallery.GalleryProvider;
+import hr.fer.zemris.gallery.model.FileGalleryStorage;
+import hr.fer.zemris.gallery.model.GalleryProvider;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -14,7 +14,7 @@ public class GalleryListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        GalleryProvider.setInstance(new Gallery(sce.getServletContext().getRealPath(GALLERY_FILE_PATH)));
+        GalleryProvider.setInstance(new FileGalleryStorage(sce.getServletContext().getRealPath(GALLERY_FILE_PATH)));
     }
 
     @Override
