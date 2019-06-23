@@ -1,0 +1,163 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>hr.fer.zemris.jmbag0036505387.webapps</groupId>
+  <artifactId>galerija</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <!-- configuration of basic properties -->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+    <junit.jupiter.version>5.4.0</junit.jupiter.version>
+  </properties>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.4.18.v20190429</version>
+        <configuration>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <webApp>
+            <contextPath>/galerija</contextPath>
+          </webApp>
+        </configuration>
+      </plugin>
+    </plugins>
+    <finalName>galerija</finalName>
+  </build>
+  
+  <dependencies>
+
+	<!-- +++++++++++++++++++ -->
+	<!-- Podrška za testove: -->
+	<!-- +++++++++++++++++++ -->
+
+	<!-- junit testing: -->
+	<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter-api</artifactId>
+		<version>${junit.jupiter.version}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter-params</artifactId>
+		<version>${junit.jupiter.version}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter-engine</artifactId>
+		<version>${junit.jupiter.version}</version>
+		<scope>test</scope>
+	</dependency>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- Podrška za izradu servleta i uporabu JSPova: -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++ -->
+
+        <!-- servlet/jsp api support: -->
+  	<dependency>
+  		<groupId>javax.servlet</groupId>
+  		<artifactId>javax.servlet-api</artifactId>
+  		<version>3.1.0</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>javax.servlet.jsp</groupId>
+  		<artifactId>javax.servlet.jsp-api</artifactId>
+  		<version>2.3.1</version>
+  		<scope>provided</scope>
+  	</dependency>
+
+        <!-- jstl support: -->
+  	<dependency>
+  		<groupId>javax.servlet.jsp.jstl</groupId>
+  		<artifactId>javax.servlet.jsp.jstl-api</artifactId>
+  		<version>1.2.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.glassfish.web</groupId>
+  		<artifactId>javax.servlet.jsp.jstl</artifactId>
+  		<version>1.2.1</version>
+  		<exclusions>
+  			<exclusion>
+  				<artifactId>jstl-api</artifactId>
+  				<groupId>javax.servlet.jsp.jstl</groupId>
+  			</exclusion>
+  		</exclusions>
+  	</dependency>
+
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- Podrška za JSON format, razne biblioteke korištene u primjerima -->
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<!-- https://mvnrepository.com/artifact/org.json/json -->
+	<dependency>
+	    <groupId>org.json</groupId>
+	    <artifactId>json</artifactId>
+	    <version>20180130</version>
+	</dependency>
+
+	<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+	<dependency>
+	    <groupId>com.google.code.gson</groupId>
+	    <artifactId>gson</artifactId>
+	    <version>2.8.5</version>
+	</dependency>
+
+	<!-- +++++++ -->
+	<!-- Jersey: -->
+	<!-- +++++++ -->
+
+	<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-server -->
+	<dependency>
+	    <groupId>org.glassfish.jersey.core</groupId>
+	    <artifactId>jersey-server</artifactId>
+	    <version>2.27</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.glassfish.jersey.containers</groupId>
+	    <artifactId>jersey-container-servlet</artifactId>
+	    <version>2.27</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.inject/jersey-hk2 -->
+	<dependency>
+	    <groupId>org.glassfish.jersey.inject</groupId>
+	    <artifactId>jersey-hk2</artifactId>
+	    <version>2.27</version>
+	</dependency>
+
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- Sljedeće je potrebno od Jave 9 koja više ne uključuje JAXB niti javax.activation: -->
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<dependency>
+	    <groupId>javax.xml.bind</groupId>
+	    <artifactId>jaxb-api</artifactId>
+	    <version>2.3.0</version>
+	</dependency>
+	<dependency>
+	    <groupId>com.sun.xml.bind</groupId>
+	    <artifactId>jaxb-core</artifactId>
+	    <version>2.3.0.1</version>
+	</dependency>
+	<dependency>
+	   <groupId>com.sun.xml.bind</groupId>
+	   <artifactId>jaxb-impl</artifactId>
+	   <version>2.3.0.1</version>
+	</dependency>
+	<dependency>
+	    <groupId>javax.activation</groupId>
+	    <artifactId>activation</artifactId>
+	    <version>1.1.1</version>
+	</dependency>
+
+  </dependencies>
+
+</project>
