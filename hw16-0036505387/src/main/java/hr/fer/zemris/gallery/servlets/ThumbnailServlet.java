@@ -19,8 +19,8 @@ public class ThumbnailServlet extends HttpServlet  {
     private final static String IMAGE_LOCATION = "/images";
     private final static String THUMBNAIL_LOCATION = "/WEB-INF/thumbnails";
 
-    private final static int THUMBNAIL_WIDTH = 200;
-    private final static int THUMBNAIL_HEIGHT = 200;
+    private final static int THUMBNAIL_WIDTH = 150;
+    private final static int THUMBNAIL_HEIGHT = 150;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -29,6 +29,7 @@ public class ThumbnailServlet extends HttpServlet  {
         Path thumbnailFolder = Paths.get(req.getServletContext().getRealPath(THUMBNAIL_LOCATION));
         Path imageFolder = Paths.get(req.getServletContext().getRealPath(IMAGE_LOCATION));
 
+        // If the thumbnails folder does not exist, create it
         if (Files.notExists(thumbnailFolder)) {
             Files.createDirectories(thumbnailFolder);
         }
@@ -36,6 +37,7 @@ public class ThumbnailServlet extends HttpServlet  {
         Path thumbnail = thumbnailFolder.resolve("./" + imageName);
         Path image = imageFolder.resolve("./" + imageName);
 
+        // If the user is trying to access a thumbnail of an image that does not exist, return 404
         if (Files.notExists(image)) {
             resp.sendError(404);
             return;
@@ -43,6 +45,8 @@ public class ThumbnailServlet extends HttpServlet  {
 
         String fileType = imageName.substring(imageName.lastIndexOf('.') + 1).toLowerCase();
 
+        // For simplicity's sake, we can assume we only serve PNG and JPG images, requesting anything else should return
+        // a 404
         if (!(fileType.equals("png") || fileType.equals("jpg"))) {
             resp.sendError(404);
             return;
@@ -52,6 +56,8 @@ public class ThumbnailServlet extends HttpServlet  {
 
         BufferedImage bufferedThumbnail;
 
+        // Load already generated thumbnail image if it exists, otherwise create a thumbnail by downscaling the original
+        // image, save the resulting thumbnail and serve it to the user
         if (Files.notExists(thumbnail)) {
             BufferedImage bufferedImage = ImageIO.read(image.toFile());
 
@@ -67,7 +73,7 @@ public class ThumbnailServlet extends HttpServlet  {
     }
 
     private static BufferedImage scaleImage(BufferedImage image, int newWidth, int newHeight) {
-        Image scaled = image.getScaledInstance(newWidth, newHeight, Image.SCALE_DEFAULT);
+        Image scaled = image.getScaledInstance(newWidth, newHeight, Image.SCALE_FAST);
         BufferedImage bufferedImage = new BufferedImage(newWidth, newHeight, image.getType());
 
         Graphics2D graphics2D = (Graphics2D) bufferedImage.getGraphics();

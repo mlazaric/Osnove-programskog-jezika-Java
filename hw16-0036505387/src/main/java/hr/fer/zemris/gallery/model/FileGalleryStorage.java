@@ -9,7 +9,8 @@ import java.util.*;
 
 public class FileGalleryStorage implements GalleryStorage {
 
-    private final Map<String, List<Image>> images = new HashMap<>();
+    private final Map<String, List<Image>> tagsToImages = new HashMap<>();
+    private final Map<String, Image> namesToImages = new HashMap<>();
 
     public FileGalleryStorage(Path pathToFile) {
         if (!Files.isReadable(pathToFile)) {
@@ -43,13 +44,15 @@ public class FileGalleryStorage implements GalleryStorage {
 
             Image image = new Image(imageName, description, tags);
 
+            namesToImages.put(image.getFileName(), image);
+
             for (String tag : tags) {
-                List<Image> imagesForTag = images.get(tag);
+                List<Image> imagesForTag = tagsToImages.get(tag);
 
                 if (imagesForTag == null) {
                     imagesForTag = new ArrayList<>();
 
-                    images.put(tag, imagesForTag);
+                    tagsToImages.put(tag, imagesForTag);
                 }
 
                 imagesForTag.add(image);
@@ -59,12 +62,17 @@ public class FileGalleryStorage implements GalleryStorage {
 
     @Override
     public Set<String> getTags() {
-        return images.keySet();
+        return tagsToImages.keySet();
     }
 
     @Override
     public List<Image> getImagesForTag(String tag) {
-        return images.get(tag);
+        return tagsToImages.get(tag);
+    }
+
+    @Override
+    public Image getImageFromName(String name) {
+        return namesToImages.get(name);
     }
 
 }

@@ -7,5 +7,6 @@ public interface GalleryStorage {
 
     Set<String> getTags();
     List<Image> getImagesForTag(String tag);
+    Image getImageFromName(String name);
 
 }
