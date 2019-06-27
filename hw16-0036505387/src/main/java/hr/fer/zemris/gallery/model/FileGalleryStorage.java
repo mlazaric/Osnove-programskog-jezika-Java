@@ -7,11 +7,31 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * A concrete implementation of {@link GalleryStorage} using a file to store the information about the images within
+ * the gallery.
+ *
+ * @author Marko Lazarić
+ */
 public class FileGalleryStorage implements GalleryStorage {
 
+    /**
+     * The mapping of tag names to images tagged with that tag.
+     */
     private final Map<String, List<Image>> tagsToImages = new HashMap<>();
+
+    /**
+     * The mapping of image names to their image object.
+     */
     private final Map<String, Image> namesToImages = new HashMap<>();
 
+    /**
+     * Creates a new {@link FileGalleryStorage} with the given argument.
+     *
+     * @param pathToFile path to the file containing the information about the images
+     *
+     * @throws IllegalArgumentException if the file is not readable or parsable
+     */
     public FileGalleryStorage(Path pathToFile) {
         if (!Files.isReadable(pathToFile)) {
             throw new IllegalArgumentException("File " + pathToFile.toString() + " is not readable.");
@@ -20,10 +40,24 @@ public class FileGalleryStorage implements GalleryStorage {
         loadFromFile(pathToFile);
     }
 
+    /**
+     * Creates a new {@link FileGalleryStorage} with the given argument.
+     *
+     * @param pathToFile path to the file containing the information about the images
+     *
+     * @throws IllegalArgumentException if the file is not readable or parsable
+     */
     public FileGalleryStorage(String pathToFile) {
         this(Paths.get(pathToFile));
     }
 
+    /**
+     * Loads the information about the images from the file.
+     *
+     * @param pathToFile path to the file containing the information about the images
+     *
+     * @throws IllegalArgumentException if the file is not parsable
+     */
     private void loadFromFile(Path pathToFile) {
         List<String> lines;
 

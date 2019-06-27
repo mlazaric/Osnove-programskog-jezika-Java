@@ -13,14 +13,36 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * A servlet which creates "thumbnail" versions of the images and serves them to the client. It uses local storage for
+ * caching the created thumbnails.
+ *
+ * @author Marko Lazarić
+ */
 @WebServlet(urlPatterns = "/thumbnails/*")
 public class ThumbnailServlet extends HttpServlet  {
 
+    /**
+     * The folder in which the full sized images are stored.
+     */
     private final static String IMAGE_LOCATION = "/images";
+
+    /**
+     * The folder in which the thumbnails are cached.
+     */
     private final static String THUMBNAIL_LOCATION = "/WEB-INF/thumbnails";
 
+    /**
+     * The width of the generated thumbnail.
+     */
     private final static int THUMBNAIL_WIDTH = 150;
+
+    /**
+     * The height of the generated thumbnail.
+     */
     private final static int THUMBNAIL_HEIGHT = 150;
+
+    private static final long serialVersionUID = 5786755313526390948L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -72,6 +94,14 @@ public class ThumbnailServlet extends HttpServlet  {
         ImageIO.write(bufferedThumbnail, fileType, resp.getOutputStream());
     }
 
+    /**
+     * Scales an existing image to the specified dimensions.
+     *
+     * @param image the image to scale
+     * @param newWidth the width of the image after scaling
+     * @param newHeight the height of the image after scaling
+     * @return the existing image scaled to the specified dimensions
+     */
     private static BufferedImage scaleImage(BufferedImage image, int newWidth, int newHeight) {
         Image scaled = image.getScaledInstance(newWidth, newHeight, Image.SCALE_FAST);
         BufferedImage bufferedImage = new BufferedImage(newWidth, newHeight, image.getType());
