@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.hw17.trazilica.model;
 
-import javax.print.Doc;
 import java.nio.file.Path;
 import java.util.Objects;
 

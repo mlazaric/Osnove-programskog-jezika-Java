@@ -1,14 +1,18 @@
 package hr.fer.zemris.java.hw17.trazilica;
 
-import hr.fer.zemris.java.hw17.trazilica.model.Document;
 import hr.fer.zemris.java.hw17.trazilica.model.DocumentGroup;
 import hr.fer.zemris.java.hw17.trazilica.model.DocumentVector;
+import hr.fer.zemris.java.hw17.trazilica.model.document.Document;
+import hr.fer.zemris.java.hw17.trazilica.model.document.FileDocument;
+import hr.fer.zemris.java.hw17.trazilica.model.document.StringDocument;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Konzola {
@@ -28,11 +32,11 @@ public class Konzola {
             System.exit(1);
         }
 
-        List<Document> documents = null;
+        List<FileDocument> documents = null;
 
         try {
             documents = Files.list(documentsDir)
-                             .map(Document::new)
+                             .map(FileDocument::new)
                              .collect(Collectors.toList());
         } catch (IOException e) {
             System.out.println("Error occurred while reading from '" + args[0] + "'.");
@@ -72,18 +76,10 @@ public class Konzola {
 
         System.out.println("Query is: " + Arrays.toString(query));
 
-        Document document = new Document(null);
-        Map<String, Integer> wordFrequency = document.getWordFrequency();
-        Set<String> wordSet = new HashSet<>(documentGroup.getVocabulary());
+        Document queryDocument = new StringDocument(String.join(" ", query));
+        System.out.println(queryDocument.getWordFrequency());
+        DocumentVector documentVector = queryDocument.toDocumentVector(documentGroup);
 
-        for (String word : query) {
-            if (wordSet.contains(word)) {
-                wordFrequency.merge(word, 1, Integer::sum);
-            }
-        }
-        System.out.println(wordFrequency);
-
-        DocumentVector documentVector = documentGroup.buildDocumentVector(document);
 
         for (DocumentVector documentVector1 : documentGroup.getDocumentVectors()) {
             System.out.println(documentVector.similarity(documentVector1));

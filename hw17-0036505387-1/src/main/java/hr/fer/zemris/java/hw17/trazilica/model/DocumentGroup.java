@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw17.trazilica.model;
 
+import hr.fer.zemris.java.hw17.trazilica.model.document.FileDocument;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,7 +19,7 @@ public class DocumentGroup {
     private DocumentVector idfVector;
     private List<DocumentVector> documentVectors;
 
-    public DocumentGroup(List<Document> documents) {
+    public DocumentGroup(List<FileDocument> documents) {
         this.vocabulary = new ArrayList<>();
 
         buildVocabulary(documents);
@@ -26,12 +28,12 @@ public class DocumentGroup {
         buildDocumentVectors(documents);
     }
 
-    private void buildVocabulary(List<Document> documents) {
+    private void buildVocabulary(List<FileDocument> documents) {
         Set<String> wordSet = new HashSet<>();
 
         // Add vocabularies from all documents
         documents.stream()
-                 .map(Document::getVocabulary)
+                 .map(FileDocument::getVocabulary)
                  .forEach(wordSet::addAll);
 
         // Remove the stop words from the vocabulary
@@ -40,15 +42,15 @@ public class DocumentGroup {
         vocabulary.addAll(wordSet);
     }
 
-    private void buildWordFrequencies(List<Document> documents) {
+    private void buildWordFrequencies(List<FileDocument> documents) {
         documents.forEach(d -> d.buildWordFrequency(vocabulary));
     }
 
-    private void buildNumberOfDocumentsForWord(List<Document> documents) {
+    private void buildNumberOfDocumentsForWord(List<FileDocument> documents) {
         Map<String, Integer> numberOfDocumentsWithWord = new HashMap<>();
 
         documents.stream()
-                 .map(Document::getWordFrequency)
+                 .map(FileDocument::getWordFrequency)
                  .map(Map::keySet)
                  .forEach(words -> {
                      for (String word : words) {
@@ -68,7 +70,7 @@ public class DocumentGroup {
         }
     }
 
-    private void buildIDFVector(List<Document> documents, Map<String, Integer> numberOfDocumentsWithWord) {
+    private void buildIDFVector(List<FileDocument> documents, Map<String, Integer> numberOfDocumentsWithWord) {
         double[] vector = new double[vocabulary.size()];
         int index = 0;
 
@@ -81,25 +83,13 @@ public class DocumentGroup {
         idfVector =  new DocumentVector(vector);
     }
 
-    private void buildDocumentVectors(List<Document> documents) {
+    private void buildDocumentVectors(List<FileDocument> documents) {
         documentVectors = documents.stream()
-                                   .map(this::buildDocumentVector)
+                                   .map(doc -> doc.toDocumentVector(this))
                                    .collect(Collectors.toList());
     }
 
-    public DocumentVector buildDocumentVector(Document document) {
-        double[] vector = new double[vocabulary.size()];
-        int index = 0;
 
-        for (String word : vocabulary) {
-            vector[index] = document.getWordFrequency().getOrDefault(word, 0) * // TF component
-                            idfVector.getVector()[index]; // IDF component
-
-            index++;
-        }
-
-        return new DocumentVector(vector, document.getPathToDocument());
-    }
 
     public List<String> getVocabulary() {
         return vocabulary;
