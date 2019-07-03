@@ -11,6 +11,8 @@ public class DrawingObjectListModel extends AbstractListModel<GeometricalObject>
 
     public DrawingObjectListModel(DrawingModel model) {
         this.model = Objects.requireNonNull(model, "Drawing model cannot be null.");
+
+        this.model.addDrawingModelListener(this);
     }
 
     @Override

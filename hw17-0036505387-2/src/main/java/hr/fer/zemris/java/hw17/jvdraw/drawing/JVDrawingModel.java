@@ -4,6 +4,8 @@ import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObjectListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class JVDrawingModel implements DrawingModel, GeometricalObjectListener {
@@ -125,5 +127,11 @@ public class JVDrawingModel implements DrawingModel, GeometricalObjectListener {
             listeners.stream()
                      .forEach(l -> l.objectsChanged(this, index, index));
         }
+    }
+
+    @Override
+    public Iterator<GeometricalObject> iterator() {
+        // Prevent modification through the iterator
+        return Collections.unmodifiableCollection(geometricalObjects).iterator();
     }
 }

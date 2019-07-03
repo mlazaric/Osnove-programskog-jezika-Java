@@ -11,6 +11,8 @@ public abstract class GeometricalObject {
     public abstract Rectangle getBoundingBox();
     public abstract void accept(GeometricalObjectVisitor v);
     public abstract void paint(Graphics2D graphics);
+    public abstract boolean isValid();
+    public abstract String toString();
 
     public void addGeometricalObjectListener(GeometricalObjectListener l) {
         listeners.add(l);

@@ -2,7 +2,7 @@ package hr.fer.zemris.java.hw17.jvdraw.drawing;
 
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject;
 
-public interface DrawingModel {
+public interface DrawingModel extends Iterable<GeometricalObject> {
 
     int getSize();
 
