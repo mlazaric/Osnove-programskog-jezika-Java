@@ -10,15 +10,41 @@ import java.util.stream.Collectors;
 
 import static java.lang.Math.log;
 
+/**
+ * Models a group of {@link hr.fer.zemris.java.hw17.trazilica.model.document.Document}s which can be searched together
+ * using an IDF vector.
+ *
+ * @author Marko Lazarić
+ */
 public class DocumentGroup {
 
+    /**
+     * The path to the file containing the stop words for that language.
+     */
     private static final String PATH_TO_STOP_WORDS = "src/main/resources/stopwords.txt";
 
+    /**
+     * The list of words used in the documents without stop words.
+     *
+     * Notice: it is a {@link List} since we need to guarantee an ordering, but it could have also been a {@link Set}.
+     */
     private final List<String> vocabulary;
 
+    /**
+     * The generated IDF vector.
+     */
     private DocumentVector idfVector;
+
+    /**
+     * The list of {@link DocumentVector}s contained in this {@link DocumentGroup}.
+     */
     private List<DocumentVector> documentVectors;
 
+    /**
+     * Creates a new {@link DocumentGroup} with the given argument.
+     *
+     * @param documents the list of {@link hr.fer.zemris.java.hw17.trazilica.model.document.Document} contained in this {@link DocumentGroup}
+     */
     public DocumentGroup(List<FileDocument> documents) {
         this.vocabulary = new ArrayList<>();
 
@@ -28,6 +54,9 @@ public class DocumentGroup {
         buildDocumentVectors(documents);
     }
 
+    /**
+     * Builds the list of all words from all contained documents and removes the stop words.
+     */
     private void buildVocabulary(List<FileDocument> documents) {
         Set<String> wordSet = new HashSet<>();
 
@@ -42,10 +71,16 @@ public class DocumentGroup {
         vocabulary.addAll(wordSet);
     }
 
+    /**
+     * Builds word frequencies in all contained documents.
+     */
     private void buildWordFrequencies(List<FileDocument> documents) {
         documents.forEach(d -> d.buildWordFrequency(vocabulary));
     }
 
+    /**
+     * For each word in the vocabulary, it calculates the number of documents that contain that word.
+     */
     private void buildNumberOfDocumentsForWord(List<FileDocument> documents) {
         Map<String, Integer> numberOfDocumentsWithWord = new HashMap<>();
 
@@ -61,6 +96,11 @@ public class DocumentGroup {
         buildIDFVector(documents, numberOfDocumentsWithWord);
     }
 
+    /**
+     * Returns all the stop words loaded from the file.
+     *
+     * @return all the stop words loaded from the file
+     */
     private Set<String> getStopWords() {
         try {
             return Files.lines(Paths.get(PATH_TO_STOP_WORDS))
@@ -70,6 +110,9 @@ public class DocumentGroup {
         }
     }
 
+    /**
+     * Creates the IDF vector.
+     */
     private void buildIDFVector(List<FileDocument> documents, Map<String, Integer> numberOfDocumentsWithWord) {
         double[] vector = new double[vocabulary.size()];
         int index = 0;
@@ -83,6 +126,10 @@ public class DocumentGroup {
         idfVector =  new DocumentVector(vector);
     }
 
+    /**
+     * For each {@link hr.fer.zemris.java.hw17.trazilica.model.document.Document}, it creates a {@link DocumentVector}
+     * which is easier to search with.
+     */
     private void buildDocumentVectors(List<FileDocument> documents) {
         documentVectors = documents.stream()
                                    .map(doc -> doc.toDocumentVector(this))
@@ -90,16 +137,31 @@ public class DocumentGroup {
     }
 
 
-
+    /**
+     * Returns the list of words used in the documents without stop words.
+     *
+     * @return the list of words used in the documents without stop words
+     */
     public List<String> getVocabulary() {
         return vocabulary;
     }
 
+    /**
+     * Returns the generated IDF vector.
+     *
+     * @return the generated IDF vector
+     */
     public DocumentVector getIdfVector() {
         return idfVector;
     }
 
+    /**
+     * Returns the list of {@link DocumentVector}s contained in this {@link DocumentGroup}..
+     *
+     * @return the list of {@link DocumentVector}s contained in this {@link DocumentGroup}.
+     */
     public List<DocumentVector> getDocumentVectors() {
         return documentVectors;
     }
+
 }
