@@ -71,7 +71,7 @@ public class JVDrawingModel implements DrawingModel, GeometricalObjectListener {
         // Add it to the new position
         geometricalObjects.add(index + offset, object);
 
-        // Notify listeners of a change to the order of the objects
+        // Notify listeners of a change to the order of the object
         listeners.stream()
                  .forEach(l -> l.objectsChanged(this, index, index + offset));
         isModified = true;
@@ -86,14 +86,14 @@ public class JVDrawingModel implements DrawingModel, GeometricalObjectListener {
     public void clear() {
         int lastIndex = geometricalObjects.size() - 1;
 
-        // Remove listener from all the objects
+        // Remove listener from all the object
         geometricalObjects.stream()
                           .forEach(l -> l.removeGeometricalObjectListener(this));
 
-        // Remove all objects
+        // Remove all object
         geometricalObjects.clear();
 
-        // Notify the listeners of the removal of all objects
+        // Notify the listeners of the removal of all object
         listeners.stream()
                  .forEach(l -> l.objectsRemoved(this, 0, lastIndex));
         isModified = true;

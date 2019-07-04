@@ -1,6 +1,8 @@
-package hr.fer.zemris.java.hw17.jvdraw.geometrical.objects;
+package hr.fer.zemris.java.hw17.jvdraw.geometrical.object;
 
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObjectVisitor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.editor.FilledCircleEditor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.editor.GeometricalObjectEditor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.visitor.GeometricalObjectVisitor;
 
 import java.awt.*;
 import java.util.Objects;
@@ -30,13 +32,18 @@ public class FilledCircle extends Circle {
     }
 
     @Override
+    public GeometricalObjectEditor createGeometricalObjectEditor() {
+        return new FilledCircleEditor(this);
+    }
+
+    @Override
     public boolean isValid() {
         return fillColor != null && super.isValid();
     }
 
     @Override
     public String toString() {
-        return super.toString() + ", " +
+        return "Filled circle (" + center.x + "," + center.y + "), " + radius + ", " +
                 String.format("#%02X%02X%02X", fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue());
     }
 

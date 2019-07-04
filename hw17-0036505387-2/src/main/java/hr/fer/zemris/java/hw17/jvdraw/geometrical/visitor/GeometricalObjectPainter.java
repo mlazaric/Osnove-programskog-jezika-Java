@@ -1,9 +1,8 @@
-package hr.fer.zemris.java.hw17.jvdraw.geometrical.visitors;
+package hr.fer.zemris.java.hw17.jvdraw.geometrical.visitor;
 
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObjectVisitor;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.objects.Circle;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.objects.FilledCircle;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.objects.Line;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Circle;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.FilledCircle;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Line;
 
 import java.awt.*;
 import java.util.Objects;

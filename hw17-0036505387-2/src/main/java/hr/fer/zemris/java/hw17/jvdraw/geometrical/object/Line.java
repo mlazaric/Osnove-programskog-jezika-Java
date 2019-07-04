@@ -1,7 +1,9 @@
-package hr.fer.zemris.java.hw17.jvdraw.geometrical.objects;
+package hr.fer.zemris.java.hw17.jvdraw.geometrical.object;
 
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObjectVisitor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.editor.GeometricalObjectEditor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.editor.LineEditor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.visitor.GeometricalObjectVisitor;
 
 import java.awt.*;
 import java.util.Objects;
@@ -48,6 +50,11 @@ public class Line extends GeometricalObject {
     @Override
     public String toString() {
         return "Line (" + start.x + "," + start.y + ")-(" + end.x + "," + end.y + ")";
+    }
+
+    @Override
+    public GeometricalObjectEditor createGeometricalObjectEditor() {
+        return new LineEditor(this);
     }
 
     public Point getStart() {

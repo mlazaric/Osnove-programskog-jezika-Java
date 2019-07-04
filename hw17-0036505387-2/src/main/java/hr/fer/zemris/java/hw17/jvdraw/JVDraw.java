@@ -7,13 +7,18 @@ import hr.fer.zemris.java.hw17.jvdraw.drawing.DrawingObjectListModel;
 import hr.fer.zemris.java.hw17.jvdraw.drawing.JDrawingCanvas;
 import hr.fer.zemris.java.hw17.jvdraw.drawing.JVDrawingModel;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.tools.CircleTool;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.tools.FilledCircleTool;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.tools.Tool;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.tools.LineTool;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.editor.GeometricalObjectEditor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.tool.CircleTool;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.tool.FilledCircleTool;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.tool.Tool;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.tool.LineTool;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class JVDraw extends JFrame {
 
@@ -31,8 +36,8 @@ public class JVDraw extends JFrame {
 
     private void initGUI() {
         // Tool bar
-        ColorArea foreground = new ColorArea(Color.RED);
-        ColorArea background = new ColorArea(Color.BLUE);
+        ColorArea foreground = new ColorArea(Color.BLACK);
+        ColorArea background = new ColorArea(Color.WHITE);
 
         JRadioButton lineButton = new JRadioButton("Line");
         JRadioButton circleButton = new JRadioButton("Circle");
@@ -61,11 +66,60 @@ public class JVDraw extends JFrame {
 
         add(colorLabel, BorderLayout.PAGE_END);
 
-        // List of geometrical objects
+        // List of geometrical object
         DrawingModel model = new JVDrawingModel();
         JList<GeometricalObject> listOfObjects = new JList<>(new DrawingObjectListModel(model));
 
         add(new JScrollPane(listOfObjects), BorderLayout.LINE_END);
+
+        listOfObjects.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listOfObjects.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+                    model.remove(listOfObjects.getSelectedValue());
+                }
+                else if (e.getKeyChar() == '+' && listOfObjects.getSelectedIndex() > 0) {
+                    model.changeOrder(listOfObjects.getSelectedValue(), -1);
+                }
+                else if (e.getKeyChar() == '-' && listOfObjects.getSelectedIndex() < model.getSize() - 1) {
+                    model.changeOrder(listOfObjects.getSelectedValue(), 1);
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {}
+        });
+        listOfObjects.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    GeometricalObject object = listOfObjects.getSelectedValue();
+
+                    if (object == null) {
+                        return;
+                    }
+
+                    GeometricalObjectEditor editor = object.createGeometricalObjectEditor();
+
+                    int option = JOptionPane.showConfirmDialog(JVDraw.this, editor, "Edit", JOptionPane.OK_CANCEL_OPTION);
+
+                    if (option == JOptionPane.OK_OPTION) {
+                        try {
+                            editor.checkEditing();
+                            editor.acceptEditing();
+                            canvas.repaint();
+                        }
+                        catch (RuntimeException editingFailed) {}
+                    }
+                }
+            }
+
+        });
 
         // Drawing canvas
         canvas = new JDrawingCanvas(model, this::getCurrentTool, background);

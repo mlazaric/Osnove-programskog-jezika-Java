@@ -1,7 +1,9 @@
-package hr.fer.zemris.java.hw17.jvdraw.geometrical.objects;
+package hr.fer.zemris.java.hw17.jvdraw.geometrical.object;
 
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObjectVisitor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.editor.CircleEditor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.editor.GeometricalObjectEditor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.visitor.GeometricalObjectVisitor;
 
 import java.awt.*;
 import java.util.Objects;
@@ -44,6 +46,11 @@ public class Circle extends GeometricalObject {
     @Override
     public String toString() {
         return "Circle (" + center.x + "," + center.y + "), " + radius;
+    }
+
+    @Override
+    public GeometricalObjectEditor createGeometricalObjectEditor() {
+        return new CircleEditor(this);
     }
 
     public Point getCenter() {

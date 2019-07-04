@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw17.jvdraw.geometrical.tools;
+package hr.fer.zemris.java.hw17.jvdraw.geometrical.tool;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -12,7 +12,6 @@ public interface Tool extends MouseListener, MouseMotionListener {
     void paint(Graphics2D g2d);
 
     /* These are not offered by our API. */
-    default void mousePressed(MouseEvent e) {}
     default void mouseEntered(MouseEvent e) {}
     default void mouseExited(MouseEvent e) {}
 

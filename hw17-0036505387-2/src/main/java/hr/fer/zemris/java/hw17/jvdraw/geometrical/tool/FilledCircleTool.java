@@ -1,10 +1,9 @@
-package hr.fer.zemris.java.hw17.jvdraw.geometrical.tools;
+package hr.fer.zemris.java.hw17.jvdraw.geometrical.tool;
 
 import hr.fer.zemris.java.hw17.jvdraw.color.IColorProvider;
 import hr.fer.zemris.java.hw17.jvdraw.drawing.DrawingModel;
 import hr.fer.zemris.java.hw17.jvdraw.drawing.JDrawingCanvas;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.objects.Circle;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.objects.FilledCircle;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.FilledCircle;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -42,6 +41,11 @@ public class FilledCircleTool extends AbstractTool {
 
             canvas.repaint();
         }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
     }
 
     @Override
