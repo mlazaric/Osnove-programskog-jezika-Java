@@ -28,7 +28,10 @@ public class CircleTool extends AbstractTool {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {
         if (circle.getCenter() == null) {
             circle.setCenter(e.getPoint());
         }
@@ -40,11 +43,6 @@ public class CircleTool extends AbstractTool {
 
             canvas.repaint();
         }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
     }
 
     @Override

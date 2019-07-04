@@ -86,6 +86,10 @@ public class JVDrawingModel implements DrawingModel, GeometricalObjectListener {
     public void clear() {
         int lastIndex = geometricalObjects.size() - 1;
 
+        if (lastIndex == -1) {
+            return;
+        }
+
         // Remove listener from all the object
         geometricalObjects.stream()
                           .forEach(l -> l.removeGeometricalObjectListener(this));

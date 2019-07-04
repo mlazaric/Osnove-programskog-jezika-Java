@@ -28,7 +28,10 @@ public class LineTool extends AbstractTool {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {
         if (line.getStart() == null) {
             line.setStart(e.getPoint());
         }
@@ -41,9 +44,6 @@ public class LineTool extends AbstractTool {
             canvas.repaint();
         }
     }
-
-    @Override
-    public void mousePressed(MouseEvent e) {}
 
     @Override
     public void mouseReleased(MouseEvent e) {}

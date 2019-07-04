@@ -8,36 +8,64 @@ import hr.fer.zemris.java.hw17.jvdraw.drawing.JDrawingCanvas;
 import hr.fer.zemris.java.hw17.jvdraw.drawing.JVDrawingModel;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.editor.GeometricalObjectEditor;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Circle;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.FilledCircle;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Line;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.tool.CircleTool;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.tool.FilledCircleTool;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.tool.Tool;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.tool.LineTool;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.tool.Tool;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.visitor.GeometricalObjectBBCalculator;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.visitor.GeometricalObjectPainter;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.visitor.GeometricalObjectWriter;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JVDraw extends JFrame {
 
+    private ColorArea foreground;
+    private ColorArea background;
+
     private JDrawingCanvas canvas;
+    private DrawingModel model;
     private Tool currentTool;
+
+    private Path currentFile;
 
     public JVDraw() {
         setTitle("JVDraw");
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setVisible(true);
-        setSize(500, 500);
+        setSize(750, 750);
 
         initGUI();
+
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exit();
+            }
+
+        });
     }
 
     private void initGUI() {
         // Tool bar
-        ColorArea foreground = new ColorArea(Color.BLACK);
-        ColorArea background = new ColorArea(Color.WHITE);
+        foreground = new ColorArea(Color.BLACK);
+        background = new ColorArea(Color.WHITE);
 
         JRadioButton lineButton = new JRadioButton("Line");
         JRadioButton circleButton = new JRadioButton("Circle");
@@ -67,7 +95,7 @@ public class JVDraw extends JFrame {
         add(colorLabel, BorderLayout.PAGE_END);
 
         // List of geometrical object
-        DrawingModel model = new JVDrawingModel();
+        model = new JVDrawingModel();
         JList<GeometricalObject> listOfObjects = new JList<>(new DrawingObjectListModel(model));
 
         add(new JScrollPane(listOfObjects), BorderLayout.LINE_END);
@@ -114,7 +142,9 @@ public class JVDraw extends JFrame {
                             editor.acceptEditing();
                             canvas.repaint();
                         }
-                        catch (RuntimeException editingFailed) {}
+                        catch (RuntimeException exc) {
+                            JOptionPane.showMessageDialog(JVDraw.this, exc.getMessage());
+                        }
                     }
                 }
             }
@@ -131,6 +161,178 @@ public class JVDraw extends JFrame {
         lineButton.addActionListener(a -> setCurrentTool(new LineTool(model, foreground, background, canvas)));
         circleButton.addActionListener(a -> setCurrentTool(new CircleTool(model, foreground, background, canvas)));
         filledCircleButton.addActionListener(a -> setCurrentTool(new FilledCircleTool(model, foreground, background, canvas)));
+
+        // Menu bar
+        JMenuBar bar = createMenuBar();
+
+        setJMenuBar(bar);
+    }
+
+    private JMenuBar createMenuBar() {
+        JMenuBar bar = new JMenuBar();
+
+        JMenu file = new JMenu("File");
+
+        file.add(new AbstractAction("Open") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser jfc = new JFileChooser(".");
+
+                jfc.setFileFilter(new FileNameExtensionFilter("JVD Files", "jvd"));
+
+                if (jfc.showOpenDialog(JVDraw.this) == JFileChooser.APPROVE_OPTION) {
+                    if (Files.isReadable(jfc.getSelectedFile().toPath())) {
+                        model.clear();
+
+                        parseFile(jfc.getSelectedFile().toPath());
+
+                        currentFile = jfc.getSelectedFile().toPath();
+                        model.clearModifiedFlag();
+                    }
+                }
+            }
+
+        });
+
+        file.add(new AbstractAction("Save") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentFile == null) {
+                    saveAs();
+                }
+                else {
+                    save();
+                }
+            }
+
+        });
+
+        file.add(new AbstractAction("Save As") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveAs();
+            }
+
+        });
+
+        file.add(new AbstractAction("Export") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                export();
+            }
+
+        });
+
+        file.add(new AbstractAction("Exit") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exit();
+            }
+
+        });
+
+        bar.add(file);
+
+        return bar;
+    }
+
+    private void exit() {
+        if (model.isModified()) {
+            int result = JOptionPane.showConfirmDialog(this, "You have unsaved changes. " +
+                    "Do you want to save them before exiting?", "Unsaved changes.", JOptionPane.YES_NO_CANCEL_OPTION);
+
+            if (result == JOptionPane.YES_OPTION) {
+                if (currentFile == null) {
+                    saveAs();
+                }
+                else {
+                    save();
+                }
+            }
+            else if (result == JOptionPane.NO_OPTION) {
+                dispose();
+            }
+        }
+        else {
+            dispose();
+        }
+    }
+
+    private void export() {
+        JFileChooser jfc = new JFileChooser(".");
+
+        jfc.setFileFilter(new FileNameExtensionFilter("Images", "jpg", "png", "gif"));
+
+        if (jfc.showSaveDialog(JVDraw.this) == JFileChooser.APPROVE_OPTION) {
+            Path imagePath = jfc.getSelectedFile().toPath();
+            String[] parts = imagePath.toString().split("\\.");
+            String extension = parts[parts.length - 1];
+
+            if (extension.equals("jpg") || extension.equals("png") || extension.equals("gif")) {
+                GeometricalObjectBBCalculator boundingBoxCalc = new GeometricalObjectBBCalculator();
+
+                for (GeometricalObject object : model) {
+                    object.accept(boundingBoxCalc);
+                }
+
+                Rectangle boundingBox = boundingBoxCalc.getBoundingBox();
+
+                BufferedImage image = new BufferedImage(
+                        boundingBox.width, boundingBox.height, BufferedImage.TYPE_3BYTE_BGR
+                );
+                Graphics2D g = image.createGraphics();
+
+                g.translate(-boundingBox.x, -boundingBox.y);
+
+                g.setColor(background.getCurrentColor());
+                g.fillRect(boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height);
+
+                GeometricalObjectPainter painter = new GeometricalObjectPainter(g);
+
+                for (GeometricalObject object : model) {
+                    object.accept(painter);
+                }
+
+                g.dispose();
+
+                try {
+                    ImageIO.write(image, extension, imagePath.toFile());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private void save() {
+        model.clearModifiedFlag();
+
+        try (Writer writer = Files.newBufferedWriter(currentFile)) {
+            GeometricalObjectWriter visitor = new GeometricalObjectWriter(writer);
+
+            for (GeometricalObject object : model) {
+                object.accept(visitor);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void saveAs() {
+        JFileChooser jfc = new JFileChooser(".");
+
+        jfc.setFileFilter(new FileNameExtensionFilter("JVD Files", "jvd"));
+
+        if (jfc.showSaveDialog(JVDraw.this) == JFileChooser.APPROVE_OPTION) {
+            currentFile = jfc.getSelectedFile().toPath();
+
+            save();
+        }
     }
 
     private void setCurrentTool(Tool currentTool) {
@@ -150,6 +352,56 @@ public class JVDraw extends JFrame {
 
     private Tool getCurrentTool() {
         return currentTool;
+    }
+
+    private static final Pattern LINE_REGEX = Pattern.compile("^LINE (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+)$");
+    private static final Pattern CIRCLE_REGEX = Pattern.compile("^CIRCLE (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+)$");
+    private static final Pattern FILLED_CIRCLE_REGEX = Pattern.compile("^FCIRCLE (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+)$");
+
+    private void parseFile(Path file) {
+        try {
+            Files.lines(file, StandardCharsets.UTF_8)
+                    .filter(l -> !l.isEmpty())
+                    .map(this::parseLine)
+                    .forEach(model::add);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private GeometricalObject parseLine(String line) {
+        Matcher matcher = LINE_REGEX.matcher(line);
+
+        if (matcher.matches()) {
+            return new Line(
+                    new Point(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2))),
+                    new Point(Integer.parseInt(matcher.group(3)), Integer.parseInt(matcher.group(4))),
+                    new Color(Integer.parseInt(matcher.group(5)), Integer.parseInt(matcher.group(6)), Integer.parseInt(matcher.group(7)))
+            );
+        }
+
+        matcher = CIRCLE_REGEX.matcher(line);
+
+        if (matcher.matches()) {
+            return new Circle(
+                    new Point(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2))),
+                    Integer.parseInt(matcher.group(3)),
+                    new Color(Integer.parseInt(matcher.group(4)), Integer.parseInt(matcher.group(5)), Integer.parseInt(matcher.group(6)))
+            );
+        }
+
+        matcher = FILLED_CIRCLE_REGEX.matcher(line);
+
+        if (matcher.matches()) {
+            return new FilledCircle(
+                    new Point(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2))),
+                    Integer.parseInt(matcher.group(3)),
+                    new Color(Integer.parseInt(matcher.group(4)), Integer.parseInt(matcher.group(5)), Integer.parseInt(matcher.group(6))),
+                    new Color(Integer.parseInt(matcher.group(7)), Integer.parseInt(matcher.group(8)), Integer.parseInt(matcher.group(9)))
+            );
+        }
+
+        throw new RuntimeException("'" + line + "' is not parsable.");
     }
 
     public static void main(String[] args) {

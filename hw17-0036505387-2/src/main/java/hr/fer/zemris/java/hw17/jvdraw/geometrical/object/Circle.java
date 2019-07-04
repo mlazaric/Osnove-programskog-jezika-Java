@@ -24,7 +24,7 @@ public class Circle extends GeometricalObject {
 
     @Override
     public Rectangle getBoundingBox() {
-        return new Rectangle(center.x - radius, center.y - radius, radius, radius);
+        return new Rectangle(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
     }
 
     @Override

@@ -2,8 +2,8 @@ package hr.fer.zemris.java.hw17.jvdraw.drawing;
 
 import hr.fer.zemris.java.hw17.jvdraw.color.ColorChangeListener;
 import hr.fer.zemris.java.hw17.jvdraw.color.IColorProvider;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.visitor.GeometricalObjectPainter;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.tool.Tool;
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.visitor.GeometricalObjectPainter;
 
 import javax.swing.*;
 import java.awt.*;
