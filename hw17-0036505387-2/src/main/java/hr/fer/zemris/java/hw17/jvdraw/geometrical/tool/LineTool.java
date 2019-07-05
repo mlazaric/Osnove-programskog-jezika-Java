@@ -8,10 +8,28 @@ import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Line;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
+/**
+ * A concrete {@link Tool} for drawing a {@link Line}.
+ *
+ * @author Marko Lazarić
+ */
 public class LineTool extends AbstractTool {
 
+    /**
+     * The buffered line used for keeping track of the information.
+     */
     private Line line;
 
+    /**
+     * Creates a new {@link LineTool} with the given arguments.
+     *
+     * @param model the model to draw the {@link hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject} on
+     * @param foreground the color provider for the foreground
+     * @param background the color provider for the background
+     * @param canvas the canvas to draw the {@link hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject} with
+     *
+     * @throws NullPointerException if any argument is null
+     */
     public LineTool(DrawingModel model, IColorProvider foreground, IColorProvider background, JDrawingCanvas canvas) {
         super(model, foreground, background, canvas);
 

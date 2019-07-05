@@ -8,10 +8,29 @@ import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Circle;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
+/**
+ * A concrete {@link Tool} for drawing a {@link Circle}.
+ *
+ * @author Marko Lazarić
+ */
 public class CircleTool extends AbstractTool {
 
+    /**
+     * The buffered circle used for keeping track of the information.
+     */
     private Circle circle;
 
+
+    /**
+     * Creates a new {@link CircleTool} with the given arguments.
+     *
+     * @param model the model to draw the {@link hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject} on
+     * @param foreground the color provider for the foreground
+     * @param background the color provider for the background
+     * @param canvas the canvas to draw the {@link hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject} with
+     *
+     * @throws NullPointerException if any argument is null
+     */
     public CircleTool(DrawingModel model, IColorProvider foreground, IColorProvider background, JDrawingCanvas canvas) {
         super(model, foreground, background, canvas);
 

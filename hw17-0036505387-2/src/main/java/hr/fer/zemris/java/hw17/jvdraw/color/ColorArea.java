@@ -8,19 +8,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Models a simple color chooser Swing component.
+ *
+ * @author Marko Lazarić
+ */
 public class ColorArea extends JComponent implements IColorProvider, MouseListener {
 
+    /**
+     * The preferred dimensions of the component.
+     */
     private static final Dimension PREFERRED_DIMENSION = new Dimension(15, 15);
 
+    /**
+     * The currently selected color.
+     */
     private Color selectedColor;
+
+    /**
+     * The list of listeners which should be notified after a color change.
+     */
     private List<ColorChangeListener> listeners;
 
+    /**
+     * Creates a new {@link ColorArea} with the given argument.
+     *
+     * @param selectedColor the currently selected color
+     *
+     * @throws NullPointerException if the argument is null
+     */
     public ColorArea(Color selectedColor) {
         this.selectedColor = Objects.requireNonNull(selectedColor, "Selected color cannot be null.");
         this.listeners = new ArrayList<>();
         this.addMouseListener(this);
     }
 
+    /**
+     * Sets {@link #selectedColor} to the argument and notifies the listeners.
+     *
+     * @param selectedColor the new value of {@link #selectedColor}
+     */
     public void setSelectedColor(Color selectedColor) {
         Color oldColor = this.selectedColor;
 
@@ -49,6 +76,9 @@ public class ColorArea extends JComponent implements IColorProvider, MouseListen
         listeners.remove(l);
     }
 
+    /**
+     * Notifies all registered listeners of a color change.
+     */
     private void fire(Color oldColor, Color newColor) {
         listeners.stream()
                  .forEach(l -> l.newColorSelected(this, oldColor, newColor));

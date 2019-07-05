@@ -1,18 +1,35 @@
 package hr.fer.zemris.java.hw17.jvdraw.geometrical.visitor;
 
+import hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Circle;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.FilledCircle;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Line;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Objects;
 
+/**
+ * A {@link GeometricalObjectVisitor} which writes all the {@link GeometricalObject} it visits to a {@link Writer}.
+ *
+ * @author Marko Lazarić
+ */
 public class GeometricalObjectWriter implements GeometricalObjectVisitor {
 
+    /**
+     * The {@link Writer} used for writing the {@link GeometricalObject}s.
+     */
     private final Writer writer;
 
+    /**
+     * Creates a new {@link GeometricalObjectWriter} with the given argument.
+     *
+     * @param writer the {@link Writer} used for writing the {@link GeometricalObject}s
+     *
+     * @throws NullPointerException if the argument is null
+     */
     public GeometricalObjectWriter(Writer writer) {
-        this.writer = writer;
+        this.writer = Objects.requireNonNull(writer, "Writer cannot be null.");
     }
 
     @Override

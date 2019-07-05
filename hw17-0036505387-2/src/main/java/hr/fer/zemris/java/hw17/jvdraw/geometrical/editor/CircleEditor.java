@@ -6,11 +6,30 @@ import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Circle;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * A concrete {@link GeometricalObjectEditor} for {@link hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Circle}.
+ *
+ * @param <C> the specific type of Circle
+ *
+ * @author Marko Lazarić
+ */
 public class CircleEditor<C extends Circle> extends GeometricalObjectEditor<C> {
 
+    /**
+     * The numeric values of the center x and y coordinates and the radius of the circle.
+     */
     private final JSpinner centerX, centerY, radius;
+
+    /**
+     * The color to use for the outline of the circle.
+     */
     private final ColorArea outlineColor;
 
+    /**
+     * Creates a new {@link CircleEditor} with the given argument.
+     *
+     * @param geometricalObject the {@link Circle} to edit
+     */
     public CircleEditor(C geometricalObject) {
         super(geometricalObject);
 
@@ -26,6 +45,9 @@ public class CircleEditor<C extends Circle> extends GeometricalObjectEditor<C> {
         initGUI();
     }
 
+    /**
+     * Initialises the editor GUI.
+     */
     private void initGUI() {
         setLayout(new GridLayout(0, 4));
 

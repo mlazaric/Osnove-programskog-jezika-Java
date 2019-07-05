@@ -10,12 +10,38 @@ import java.awt.*;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+/**
+ * A {@link JComponent} which draws all the {@link hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject}s within
+ * the {@link DrawingModel}.
+ *
+ * @author Marko Lazarić
+ */
 public class JDrawingCanvas extends JComponent implements DrawingModelListener, ColorChangeListener {
 
+    /**
+     * The drawing model containing the {@link hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject}s.
+     */
     private final DrawingModel model;
+
+    /**
+     * A provider for the current tool.
+     */
     private final Supplier<Tool> currentTool;
+
+    /**
+     * A provider for the background color.
+     */
     private final IColorProvider background;
 
+    /**
+     * Creates a new {@link JDrawingCanvas} with the given arguments.
+     *
+     * @param model the drawing model containing the {@link hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject}s
+     * @param currentTool a provider for the current tool
+     * @param background a provider for the background color
+     *
+     * @throws NullPointerException if any of the arguments is null
+     */
     public JDrawingCanvas(DrawingModel model, Supplier<Tool> currentTool, IColorProvider background) {
         this.model = Objects.requireNonNull(model, "Drawing model cannot be null.");
         this.currentTool = Objects.requireNonNull(currentTool, "Current tool cannot be null.");

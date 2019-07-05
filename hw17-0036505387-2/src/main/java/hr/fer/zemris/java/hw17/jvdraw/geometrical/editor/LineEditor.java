@@ -5,10 +5,23 @@ import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Line;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * A concrete {@link GeometricalObjectEditor} for {@link hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Line}.
+ *
+ * @author Marko Lazarić
+ */
 public class LineEditor extends GeometricalObjectEditor<Line> {
 
+    /**
+     * The numeric values of the start and end x and y coordinates.
+     */
     private final JSpinner startX, startY, endX, endY;
 
+    /**
+     * Creates a new {@link LineEditor} with the given argument.
+     *
+     * @param geometricalObject the instance of the {@link Line} which it is editing
+     */
     public LineEditor(Line geometricalObject) {
         super(geometricalObject);
 
@@ -25,6 +38,9 @@ public class LineEditor extends GeometricalObjectEditor<Line> {
         initGUI();
     }
 
+    /**
+     * Initialises the editor GUI.
+     */
     private void initGUI() {
         setLayout(new GridLayout(0, 5));
 

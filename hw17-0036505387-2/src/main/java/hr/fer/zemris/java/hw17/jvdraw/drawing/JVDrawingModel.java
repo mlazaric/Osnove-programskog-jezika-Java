@@ -8,11 +8,26 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * A concrete implementation of {@link DrawingModel} used by {@link hr.fer.zemris.java.hw17.jvdraw.JVDraw}.
+ *
+ * @author Marko Lazarić
+ */
 public class JVDrawingModel implements DrawingModel, GeometricalObjectListener {
 
+    /**
+     * A list of the {@link GeometricalObject}s stored in the model.
+     */
     private final List<GeometricalObject> geometricalObjects = new ArrayList<>();
+
+    /**
+     * A list of listeners which should be notified on any change.
+     */
     private final List<DrawingModelListener> listeners = new ArrayList<>();
 
+    /**
+     * Whether the model has been modified.
+     */
     private boolean isModified = false;
 
     @Override

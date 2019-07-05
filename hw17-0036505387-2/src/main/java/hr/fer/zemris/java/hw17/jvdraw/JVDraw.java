@@ -33,17 +33,46 @@ import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A simple vector graphics editor implemented in Swing.
+ *
+ * @author Marko Lazarić
+ */
 public class JVDraw extends JFrame {
 
+    /**
+     * The color area for the foreground.
+     */
     private ColorArea foreground;
+
+    /**
+     * The color area for the background.
+     */
     private ColorArea background;
 
+    /**
+     * The canvas to use to paint the {@link GeometricalObject}s on.
+     */
     private JDrawingCanvas canvas;
+
+    /**
+     * The model used to stored the drawn {@link GeometricalObject}.
+     */
     private DrawingModel model;
+
+    /**
+     * The currently selected tool.
+     */
     private Tool currentTool;
 
+    /**
+     * The currently opened file.
+     */
     private Path currentFile;
 
+    /**
+     * Creates a new {@link JVDraw}.
+     */
     public JVDraw() {
         setTitle("JVDraw");
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -62,6 +91,9 @@ public class JVDraw extends JFrame {
         });
     }
 
+    /**
+     * Initialises the GUI of the app.
+     */
     private void initGUI() {
         // Tool bar
         foreground = new ColorArea(Color.BLACK);
@@ -168,6 +200,9 @@ public class JVDraw extends JFrame {
         setJMenuBar(bar);
     }
 
+    /**
+     * Creates the menu bar.
+     */
     private JMenuBar createMenuBar() {
         JMenuBar bar = new JMenuBar();
 
@@ -241,6 +276,12 @@ public class JVDraw extends JFrame {
         return bar;
     }
 
+    /**
+     * Checks whether the model has been modified.
+     *
+     * If it has, it asks the user whether they want to save the file.
+     * Otherwise, it just closes the window.
+     */
     private void exit() {
         if (model.isModified()) {
             int result = JOptionPane.showConfirmDialog(this, "You have unsaved changes. " +
@@ -263,6 +304,9 @@ public class JVDraw extends JFrame {
         }
     }
 
+    /**
+     * Exports the currently drawn {@link GeometricalObject}s as a PNG/JPG/GIF.
+     */
     private void export() {
         JFileChooser jfc = new JFileChooser(".");
 
@@ -309,6 +353,9 @@ public class JVDraw extends JFrame {
         }
     }
 
+    /**
+     * Saves the model to the currently opened file.
+     */
     private void save() {
         model.clearModifiedFlag();
 
@@ -323,6 +370,9 @@ public class JVDraw extends JFrame {
         }
     }
 
+    /**
+     * Asks the user where to save the file and then saves the model to that file.
+     */
     private void saveAs() {
         JFileChooser jfc = new JFileChooser(".");
 
@@ -335,6 +385,9 @@ public class JVDraw extends JFrame {
         }
     }
 
+    /**
+     * Sets the current tool to the given argument.
+     */
     private void setCurrentTool(Tool currentTool) {
         // If the user clicked the same tool again, there is no need to set it
         if (this.currentTool != null && this.currentTool.getClass().equals(currentTool.getClass())) {
@@ -350,14 +403,33 @@ public class JVDraw extends JFrame {
         this.currentTool = currentTool;
     }
 
+    /**
+     * Returns the currently selected tool.
+     */
     private Tool getCurrentTool() {
         return currentTool;
     }
 
+    /**
+     * The regular expression used for parsing a {@link Line}.
+     */
     private static final Pattern LINE_REGEX = Pattern.compile("^LINE (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+)$");
+
+    /**
+     * The regular expression used for parsing a {@link Circle}.
+     */
     private static final Pattern CIRCLE_REGEX = Pattern.compile("^CIRCLE (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+)$");
+
+    /**
+     * The regular expression used for parsing a {@link FilledCircle}.
+     */
     private static final Pattern FILLED_CIRCLE_REGEX = Pattern.compile("^FCIRCLE (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+)$");
 
+    /**
+     * Parses a JVD file and adds the parsed {@link GeometricalObject}s to the model.
+     *
+     * @param file the file to parse
+     */
     private void parseFile(Path file) {
         try {
             Files.lines(file, StandardCharsets.UTF_8)
@@ -369,6 +441,14 @@ public class JVDraw extends JFrame {
         }
     }
 
+    /**
+     * Parses a line and returns the parsed {@link GeometricalObject}.
+     *
+     * @param line the line to parse
+     * @return the parsed {@link GeometricalObject}
+     *
+     * @throws RuntimeException if the line is not a parsable {@link GeometricalObject}
+     */
     private GeometricalObject parseLine(String line) {
         Matcher matcher = LINE_REGEX.matcher(line);
 
@@ -404,6 +484,11 @@ public class JVDraw extends JFrame {
         throw new RuntimeException("'" + line + "' is not parsable.");
     }
 
+    /**
+     * Starts the {@link JVDraw} GUI.
+     *
+     * @param args the arguments are ignored
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new JVDraw());
     }
