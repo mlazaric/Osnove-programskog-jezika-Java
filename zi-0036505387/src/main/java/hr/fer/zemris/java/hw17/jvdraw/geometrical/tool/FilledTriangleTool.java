@@ -3,7 +3,6 @@ package hr.fer.zemris.java.hw17.jvdraw.geometrical.tool;
 import hr.fer.zemris.java.hw17.jvdraw.color.IColorProvider;
 import hr.fer.zemris.java.hw17.jvdraw.drawing.DrawingModel;
 import hr.fer.zemris.java.hw17.jvdraw.drawing.JDrawingCanvas;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.Circle;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.FilledTriangle;
 
 import java.awt.*;

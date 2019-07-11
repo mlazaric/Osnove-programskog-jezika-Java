@@ -1,7 +1,6 @@
 package hr.fer.zemris.java.hw17.jvdraw.geometrical.editor;
 
 import hr.fer.zemris.java.hw17.jvdraw.color.ColorArea;
-import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.FilledCircle;
 import hr.fer.zemris.java.hw17.jvdraw.geometrical.object.FilledTriangle;
 
 import javax.swing.*;

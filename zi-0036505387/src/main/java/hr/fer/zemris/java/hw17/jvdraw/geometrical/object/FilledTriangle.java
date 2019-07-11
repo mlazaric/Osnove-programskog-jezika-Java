@@ -30,7 +30,13 @@ public class FilledTriangle extends GeometricalObject {
         poly.addPoint(b.x, b.y);
         poly.addPoint(c.x, c.y);
 
-        return poly.getBounds();
+        Rectangle rect = poly.getBounds();
+
+        // For some reason poly.getBounds() is sometimes off by 1
+        rect.grow(2, 2);
+        rect.translate(-1, -1);
+
+        return rect;
     }
 
     @Override

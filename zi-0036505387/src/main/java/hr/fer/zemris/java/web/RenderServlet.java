@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -72,7 +71,7 @@ public class RenderServlet extends HttpServlet {
         Rectangle boundingBox = boundingBoxCalc.getBoundingBox();
 
         BufferedImage image = new BufferedImage(
-                boundingBox.width, boundingBox.height, BufferedImage.TYPE_3BYTE_BGR
+                boundingBox.width, boundingBox.height, BufferedImage.TYPE_INT_ARGB
         );
         Graphics2D g = image.createGraphics();
 
@@ -87,6 +86,7 @@ public class RenderServlet extends HttpServlet {
         g.dispose();
 
         try {
+            resp.setContentType("image/png");
             ImageIO.write(image, "png", resp.getOutputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -118,6 +118,8 @@ public class RenderServlet extends HttpServlet {
      * @throws RuntimeException if the line is not a parsable {@link GeometricalObject}
      */
     private GeometricalObject parseLine(String line) {
+        line = line.strip();
+
         Matcher matcher = LINE_REGEX.matcher(line);
 
         if (matcher.matches()) {

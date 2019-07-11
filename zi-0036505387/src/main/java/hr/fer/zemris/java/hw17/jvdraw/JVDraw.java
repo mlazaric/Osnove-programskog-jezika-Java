@@ -347,7 +347,7 @@ public class JVDraw extends JFrame {
                 Rectangle boundingBox = boundingBoxCalc.getBoundingBox();
 
                 BufferedImage image = new BufferedImage(
-                        boundingBox.width, boundingBox.height, BufferedImage.TYPE_3BYTE_BGR
+                        boundingBox.width, boundingBox.height, BufferedImage.TYPE_INT_ARGB
                 );
                 Graphics2D g = image.createGraphics();
 
@@ -469,6 +469,8 @@ public class JVDraw extends JFrame {
      * @throws RuntimeException if the line is not a parsable {@link GeometricalObject}
      */
     private GeometricalObject parseLine(String line) {
+        line = line.strip();
+
         Matcher matcher = LINE_REGEX.matcher(line);
 
         if (matcher.matches()) {
