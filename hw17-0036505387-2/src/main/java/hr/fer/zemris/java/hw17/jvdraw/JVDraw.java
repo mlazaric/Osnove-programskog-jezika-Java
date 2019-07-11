@@ -113,6 +113,7 @@ public class JVDraw extends JFrame {
 
         JToolBar toolBar = new JToolBar();
 
+        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
         toolBar.add(foreground);
         toolBar.add(background);
         toolBar.add(lineButton);
