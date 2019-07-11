@@ -99,9 +99,15 @@ public class JVDraw extends JFrame {
         foreground = new ColorArea(Color.BLACK);
         background = new ColorArea(Color.WHITE);
 
-        JRadioButton lineButton = new JRadioButton("Line");
-        JRadioButton circleButton = new JRadioButton("Circle");
-        JRadioButton filledCircleButton = new JRadioButton("Filled circle");
+        JToggleButton lineButton = new JToggleButton("Line");
+        JToggleButton circleButton = new JToggleButton("Circle");
+        JToggleButton filledCircleButton = new JToggleButton("Filled circle");
+
+        // JToogleButton does not calculate its own size properly, so let us just steal JRadioButton's since it calculates
+        //   it correctly. NOTE: this is a bad solution, however it is good enough for this.
+        lineButton.setPreferredSize(new JRadioButton("Line").getPreferredSize());
+        circleButton.setPreferredSize(new JRadioButton("Circle").getPreferredSize());
+        filledCircleButton.setPreferredSize(new JRadioButton("Filled circle").getPreferredSize());
 
         ButtonGroup toolButtonGroup = new ButtonGroup();
 
@@ -300,6 +306,10 @@ public class JVDraw extends JFrame {
                 }
                 else {
                     save();
+                }
+
+                if (!model.isModified()) {
+                    dispose();
                 }
             }
             else if (result == JOptionPane.NO_OPTION) {
