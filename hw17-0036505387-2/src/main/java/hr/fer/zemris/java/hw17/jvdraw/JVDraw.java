@@ -143,10 +143,16 @@ public class JVDraw extends JFrame {
                     model.remove(listOfObjects.getSelectedValue());
                 }
                 else if (e.getKeyChar() == '+' && listOfObjects.getSelectedIndex() > 0) {
-                    model.changeOrder(listOfObjects.getSelectedValue(), -1);
+                    GeometricalObject object = listOfObjects.getSelectedValue();
+
+                    model.changeOrder(object, -1);
+                    listOfObjects.setSelectedValue(object, true);
                 }
                 else if (e.getKeyChar() == '-' && listOfObjects.getSelectedIndex() < model.getSize() - 1) {
-                    model.changeOrder(listOfObjects.getSelectedValue(), 1);
+                    GeometricalObject object = listOfObjects.getSelectedValue();
+
+                    model.changeOrder(object, 1);
+                    listOfObjects.setSelectedValue(object, true);
                 }
             }
 
