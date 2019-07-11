@@ -57,7 +57,8 @@ public class Konzola {
         List<FileDocument> documents = null;
 
         try {
-            documents = Files.list(documentsDir)
+            documents = Files.walk(documentsDir)
+                             .filter(Files::isRegularFile)
                              .map(FileDocument::new)
                              .collect(Collectors.toList());
         } catch (IOException e) {
