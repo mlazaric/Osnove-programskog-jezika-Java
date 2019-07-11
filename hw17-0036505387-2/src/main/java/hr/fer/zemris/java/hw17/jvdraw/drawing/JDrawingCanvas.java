@@ -29,26 +29,18 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener, 
     private final Supplier<Tool> currentTool;
 
     /**
-     * A provider for the background color.
-     */
-    private final IColorProvider background;
-
-    /**
      * Creates a new {@link JDrawingCanvas} with the given arguments.
      *
      * @param model the drawing model containing the {@link hr.fer.zemris.java.hw17.jvdraw.geometrical.GeometricalObject}s
      * @param currentTool a provider for the current tool
-     * @param background a provider for the background color
      *
      * @throws NullPointerException if any of the arguments is null
      */
-    public JDrawingCanvas(DrawingModel model, Supplier<Tool> currentTool, IColorProvider background) {
+    public JDrawingCanvas(DrawingModel model, Supplier<Tool> currentTool) {
         this.model = Objects.requireNonNull(model, "Drawing model cannot be null.");
         this.currentTool = Objects.requireNonNull(currentTool, "Current tool cannot be null.");
-        this.background = Objects.requireNonNull(background, "Background cannot be null.");
 
         this.model.addDrawingModelListener(this);
-        this.background.addColorChangeListener(this);
     }
 
     @Override
@@ -73,9 +65,6 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener, 
 
     @Override
     protected void paintComponent(Graphics g) {
-        g.setColor(background.getCurrentColor());
-        g.fillRect(0, 0, getWidth(), getHeight());
-
         GeometricalObjectPainter painter = new GeometricalObjectPainter((Graphics2D) g);
 
         model.iterator().forEachRemaining(o -> o.accept(painter));

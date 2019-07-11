@@ -191,7 +191,7 @@ public class JVDraw extends JFrame {
         });
 
         // Drawing canvas
-        canvas = new JDrawingCanvas(model, this::getCurrentTool, background);
+        canvas = new JDrawingCanvas(model, this::getCurrentTool);
         setCurrentTool(new LineTool(model, foreground, background, canvas));
 
         add(canvas, BorderLayout.CENTER);
@@ -339,9 +339,6 @@ public class JVDraw extends JFrame {
                 Graphics2D g = image.createGraphics();
 
                 g.translate(-boundingBox.x, -boundingBox.y);
-
-                g.setColor(background.getCurrentColor());
-                g.fillRect(boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height);
 
                 GeometricalObjectPainter painter = new GeometricalObjectPainter(g);
 

@@ -39,7 +39,7 @@ public class FilledCircleTool extends AbstractTool {
     @Override
     public void paint(Graphics2D g2d) {
         filledCircle.setOutlineColor(foreground.getCurrentColor());
-        filledCircle.setFillColor(foreground.getCurrentColor());
+        filledCircle.setFillColor(background.getCurrentColor());
 
         if (filledCircle.isValid()) {
             filledCircle.paint(g2d);
@@ -56,6 +56,8 @@ public class FilledCircleTool extends AbstractTool {
         }
         else {
             filledCircle.setRadius((int) filledCircle.getCenter().distance(e.getPoint()));
+            filledCircle.setOutlineColor(foreground.getCurrentColor());
+            filledCircle.setFillColor(background.getCurrentColor());
 
             model.add(filledCircle);
             filledCircle = new FilledCircle();
