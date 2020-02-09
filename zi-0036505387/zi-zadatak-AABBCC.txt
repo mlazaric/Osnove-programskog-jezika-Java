@@ -1,0 +1,56 @@
+Naputak: radite jedan Maven projekt hr.fer.zemris.java.jmbag0000000000:zi:1.0. ZIP-arhivu projekta trebat ćete uploadati na Ferka, komponente kolegija, Seminarski radovi, Završni ispit.
+
+Zadatak 1.
+
+Nadogradite 2. zadatak Vaše 17. domaće zadaće, tako da omogućite i rad s popunjenim trokutima. Dodajte alat kojim je moguće klikanjem miša zadati tri vrha trokuta. Obrub trokuta treba biti nacrtan bojom za obrub, površina trokuta treba biti ispunjena bojom za ispunu. Sliku s trokutom mora se moći snimiti u *.jvd, takva se slika mora moći učitati te se mora moći exportati u png. Kroz editor se moraju moći urediti boja obruba te boja ispune.
+
+Hint: vidi Graphics#drawPolygon(int[],int[],int) i Graphics#fillPolygon(int[],int[],int)
+
+Podrazumijeva se da je kroz korisničko sučelje aplikacije moguće dodavati i linije, kružnice i krugove.
+
+Format retka za pohranu u *.jvd:
+FTRIANGLE x0 y0 x1 y1 x2 x2 red green blue red green blue
+
+Primjer datoteke koja sadrži trokute:
+
+LINE 10 10 50 50 255 255 0
+LINE 50 90 30 10 128 0 128
+CIRCLE 40 40 18 0 0 255
+FCIRCLE 40 40 18 0 0 255 255 0 0
+FTRIANGLE 100 10 140 100 180 10 255 0 0 255 255 0
+FTRIANGLE 120 180 140 150 160 180 255 0 50 128 128 255
+
+Provjera:
+  * dodan je alat za dodavanje ispunjenih trokuta
+  * klikanjem je moguće dodati trokut koji "hvata" trenutnu boju obruba i ispune
+  * na dvoklik na trokut u LISTI objekata mora se otvoriti editor koji omogućava izmjenu obje boje trokuta
+  * radi snimanje slike koja ima sve vrste elemenata u *.jvd
+  * radi učitavanje slike koja ima sve vrste elemenata iz *.jvd
+  * radi export slike koja ima sve vrste elemenata u *.png
+
+Zadatak 2.
+
+Ovaj zadatak nastavlja se na prethodni. Radimo web-aplikaciju http://localhost:8080/grafika koja *.jvd crteže pohranjuje u WEB-INF/images direktorij web-aplikacije; ako direktorija nema, prvi puta kada bude potrebno, treba ga programski napraviti. Trebate napraviti sljedeće.
+
+Na adresi:
+http://localhost:8080/grafika/main
+korisnik treba dobiti klikabilni popis (poredanu listu sortiranu po imenima datoteka) datoteka koje su pohranjene u prethodno definiranom direktoriju za slike. Na dnu stranice treba biti prikazan jedan formular koji ima textfield za zadavanje imena datoteke, textarea za specificiranje sadržaja datoteke (u formatu *.jvd) te gumb za slanje. Preko ovog formulara korisnik može zadati željeno ime datoteke te iskopirati tijelo datoteke i pokrenuti pohranu na poslužitelj. Prilikom provjere primljenih parametara provjerite da se ime sastoji isključivo od slova, znamenki te znaka točke, te da završava ekstenzijom .jvd (za sve ostalo javite grešku).
+
+Klikom na bilo koji od linkova iz liste odlazi se NA NOVU STRANICU koja prikazuje:
+1) ime slike
+2a) ispisuje koliko slika ima linija
+2b) ispisuje koliko slika ima kružnica
+2c) ispisuje koliko slika ima krugova
+2d) ispisuje koliko slika ima trokuta
+3) prikazuje png sliku renderiranog sadržaja u *.jvd formatu koji se dinamički generira (png-slike ne smiju se pohranjivati na disk)
+4) gumb za povratak na početnu stranicu
+
+Za izradu aplikacije slobodno koristite dodatne servlete, jsp-ove i što god Vam treba da biste napravili traženo rješenje. Eksplicitno je zadana samo adresa početne stranice, te kako korisnik mora "vidjeti" aplikaciju.
+
+Provjera:
+ * aplikacija omogućava pohranjivanje novih slika u *.jvd formatu zadavanjem imena slike te sadržaja *.jvd datoteke
+ * provjerava se ispravnost imena datoteke i ektenzija
+ * aplikacija prikazuje linkove na sve uploadane datoteke
+ * klikom na link odlazi se na stranicu koja prikazuje sve iz točaka 1 do 4 s prethodnog popisa
+
+
