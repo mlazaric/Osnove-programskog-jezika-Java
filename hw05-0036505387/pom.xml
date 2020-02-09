@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>hr.fer.zemris.java.jmbag0036505387</groupId>
   <artifactId>hw05-0036505387</artifactId>
   <version>1.0</version>
-
+  
   <!-- configuration of basic properties -->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,10 +12,9 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
-    
     <junit.jupiter.version>5.4.0</junit.jupiter.version>
   </properties>
-
+  
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -38,14 +34,13 @@
       <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
-    
     <dependency>
       <groupId>lsystems</groupId>
       <artifactId>lsystems</artifactId>
       <version>1</version>
     </dependency>
   </dependencies>
-
+  
   <build>
     <plugins>
       <!-- JUnit 5 requires Surefire version 2.22.1 or higher -->
@@ -53,7 +48,28 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.1</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.1</version>
+        <configuration>
+          <groupId>lsystems</groupId>
+          <artifactId>lsystems</artifactId>
+          <version>1</version>
+          <packaging>jar</packaging>
+          <file>${basedir}/lib/lsystems.jar</file>
+          <generatePom>true</generatePom>
+        </configuration>
+        <executions>
+          <execution>
+            <id>install-jar-lib</id>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <phase>install</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
 </project>

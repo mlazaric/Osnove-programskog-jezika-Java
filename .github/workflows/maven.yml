@@ -56,7 +56,10 @@ jobs:
       with:
         java-version: 1.11
     - name: Build with Maven
-      run: cd hw05-0036505387 && mvn -B package --file pom.xml
+      run: |
+        cd hw05-0036505387
+        mvn -B install:install-file 
+        mvn -B package --file pom.xml
 
   hw06:
     runs-on: ubuntu-latest
