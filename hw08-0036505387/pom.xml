@@ -59,6 +59,43 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.1</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+        <executions>
+          <execution>
+            <id>install-jar-lib-coloring-framework</id>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <phase>install</phase>
+            <configuration>
+              <groupId>marcupic.opjj.statespace</groupId>
+              <artifactId>coloring-framework</artifactId>
+              <version>1.0</version>
+              <packaging>jar</packaging>
+              <file>${basedir}/lib/coloring-framework-1.0.jar</file>
+              <generatePom>true</generatePom>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-jar-lib-slagalica-gui</id>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <phase>install</phase>
+            <configuration>
+              <groupId>marcupic.opjj.statespace</groupId>
+              <artifactId>slagalica-gui</artifactId>
+              <version>1.0</version>
+              <packaging>jar</packaging>
+              <file>${basedir}/lib/slagalica-gui-1.0.jar</file>
+              <generatePom>true</generatePom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

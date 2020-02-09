@@ -59,6 +59,46 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.1</version>
       </plugin>
+      <!-- Multiple executions do not work (it complains about a missing 'file' parameter'). -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+        <executions>
+          <execution>
+            <id>install-jar-lib-fractal-viewer</id>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <phase>install</phase>
+            <configuration>
+              <groupId>hr.fer.zemris.java.fractals</groupId>
+              <artifactId>fractal-viewer</artifactId>
+              <version>1.0</version>
+              <packaging>jar</packaging>
+              <file>${basedir}/lib/fractal-viewer-1.0.jar</file>
+              <javadoc>${basedir}/lib/fractal-viewer-1.0-javadoc.jar</javadoc>
+              <generatePom>true</generatePom>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-jar-lib-raytracer</id>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <phase>install</phase>
+            <configuration>
+              <groupId>hr.fer.zemris.java.raytracer</groupId>
+              <artifactId>raytracer</artifactId>
+              <version>1.0</version>
+              <packaging>jar</packaging>
+              <file>${basedir}/lib/raytracer-1.0.jar</file>
+              <javadoc>${basedir}/lib/raytracer-1.0-javadoc.jar</javadoc>
+              <generatePom>true</generatePom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
