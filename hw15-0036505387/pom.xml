@@ -17,7 +17,7 @@
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 		<junit.jupiter.version>5.4.0</junit.jupiter.version>
-		<hibernateVersion>5.3.1.Final</hibernateVersion>
+		<hibernateVersion>5.3.20.Final</hibernateVersion>
 	</properties>
 
   <dependencies>
